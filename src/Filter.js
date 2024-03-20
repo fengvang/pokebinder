@@ -1,27 +1,26 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Form } from "react-bootstrap";
 
 const types = {
-  colorless: "Colorless",
-  darkness: "Darkness",
-  dragon: "Dragon",
-  fairy: "Fairy",
-  fighting: "Fighting",
-  fire: "Fire",
-  grass: "Grass",
-  lightning: "Lightning",
-  metal: "Metal",
-  psychic: "Psychic",
-  water: "Water",
+  Colorless: "Colorless",
+  Darkness: "Darkness",
+  Dragon: "Dragon",
+  Fairy: "Fairy",
+  Fighting: "Fighting",
+  Fire: "Fire",
+  Grass: "Grass",
+  Lightning: "Lightning",
+  Metal: "Metal",
+  Psychic: "Psychic",
+  Water: "Water",
 };
 
-function Filter() {
-  const [checkedItems, setCheckedItems] = useState({});
+function Filter({ checkedTypes, setCheckedTypes }) {
   const [hpValue, setHpValue] = useState(0);
 
   const handleCheckboxChange = (event) => {
-    setCheckedItems({
-      ...checkedItems,
+    setCheckedTypes({
+      ...checkedTypes,
       [event.target.name]: event.target.checked,
     });
   };
@@ -30,9 +29,11 @@ function Filter() {
     setHpValue(event.target.value);
   };
 
+  console.log(hpValue);
+
   return (
     <>
-      <Form className="my-3">
+      <Form className="my-3 filter-form">
         <Form.Label>
           <h6>Filter by type</h6>
         </Form.Label>
@@ -43,7 +44,7 @@ function Filter() {
             id={`checkbox-${key}`}
             label={value}
             name={key}
-            checked={checkedItems[key] || false}
+            checked={checkedTypes[key] || false}
             onChange={handleCheckboxChange}
           />
         ))}
