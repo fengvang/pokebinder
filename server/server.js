@@ -11,13 +11,19 @@ pokemon.configure({ apiKey: process.env.POKEMON_TCG_API_KEY });
 
 app.post("/search-card", async (req, res) => {
   try {
-    const pokemonName = req.body.query;
-    const url = process.env.POKEMON_TCG_API_URL + `?q=name:${pokemonName}`;
+    const [pokemonName, ...subtypeArray] = req.body.query.split(" ");
+    const pokemonSubtype = subtypeArray.join(" ");
+
+    let url = process.env.POKEMON_TCG_API_URL + `?q=name:${pokemonName}`;
+
+    if (pokemonSubtype !== "")
+      url =
+        process.env.POKEMON_TCG_API_URL +
+        `?q=name:${pokemonName} subtypes:${pokemonSubtype}`;
 
     const response = await fetch(url);
     const data = await response.json();
 
-    console.log(data);
     res.json(data);
   } catch (error) {
     console.error("Error fetching data:", error);

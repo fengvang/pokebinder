@@ -27,27 +27,124 @@ body {
   font-style: normal;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
 input#floatingInput.form-control {
   min-width: 20vw;
   @media screen and (max-width: 576px) {
-    min-width: 80vw;
+    max-width: 80vw;
+  }
+}
+
+.button {
+  background-color: var(--ghost) !important;
+  border-radius: 0px;
+  border: none;
+  margin-left: 30px;
+  width: 100px;
+  height: 50px;
+  @media screen and (max-width: 576px) {
+    margin-top: 30px;
   }
 }
 
 .search-button {
-  background-color: var(--ghost) !important;
-  border-radius: 0px;
-  border: none;
+  background-color: #fff !important;
+  border-radius: 7px;
+  border-left: none;
+  border-right: 1px solid #dee2e6 !important;
+  border-top: 1px solid #dee2e6ee !important;
+  border-bottom: 1px solid #dee2e6 !important;
+  margin-left: -10px !important;
 }
 
-.search-button:hover {
-  background-color: var(--flying) !important;
-  border-radius: 0px;
-  border: none;
-}
-
+.search-button:hover,
 .search-button:active {
+  background-color: #fff !important;
+  border-radius: 7px;
+  border-left: none;
+  border-right: 1px solid #dee2e6 !important;
+  border-top: 1px solid #dee2e6ee !important;
+  border-bottom: 1px solid #dee2e6 !important;
+  margin-left: -10px !important;
+}
+
+.bi.bi-search {
+  color: #dee2e6;
+}
+
+.bi.bi-search:hover {
+  color: #212529;
+  transition: 0.5s ease-in-out;
+}
+
+a:link,
+a:visited {
+  color: var(--ghost);
+  text-decoration: none;
+}
+
+a:hover,
+a:active {
+  color: var(--flying);
+  transition: 0.8s ease;
+}
+
+.button:hover {
+  background-color: var(--flying) !important;
+}
+
+.button:active {
   background-color: var(--ghost) !important;
-  border-radius: 0px;
-  border: none;
+}
+
+.my-3.card {
+  border: none !important;
+  background-color: transparent !important;
+}
+
+.card-text {
+  margin-bottom: 0px;
+}
+
+.card-image {
+  transition: width 5s ease, 0.8s ease-in-out !important;
+}
+
+.card-image:hover {
+  box-shadow: 0 0 50px 25px rgba(0, 0, 0, 0.2);
+  border-radius: 25px;
+  rotate: 1deg;
+  width: 102%;
+  z-index: 1;
+}
+
+.results-button {
+  position: fixed;
+  right: 4%;
+  bottom: 5%;
+  z-index: 2;
+}
+
+.filter.col-lg-2 {
+  @media screen and (max-width: 576px) {
+    display: none;
+  }
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: 1px solid #dee2e6 !important;
+  border-right: none !important;
 }

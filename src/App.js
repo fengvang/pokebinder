@@ -3,6 +3,7 @@ import SearchForm from "./SearchForm";
 import SearchResults from "./SearchResults";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./style.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 function App() {
   return (
