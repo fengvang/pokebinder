@@ -1,3 +1,4 @@
+import { useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Col, Row, Button, InputGroup } from "react-bootstrap";
@@ -5,6 +6,7 @@ import Form from "react-bootstrap/Form";
 
 function SearchForm() {
   const [pokemonName, setpokemonName] = useState("");
+  const location = useLocation();
   const navigate = useNavigate();
 
   const handleInputChange = (event) => {
@@ -34,7 +36,7 @@ function SearchForm() {
 
       const cardData = await response.json();
 
-      navigate(`/results?q=name:${pokemonName}`, {
+      navigate(`/results?${location.key}=${pokemonName}`, {
         state: { cardData: cardData },
       });
     } catch (error) {
@@ -42,11 +44,19 @@ function SearchForm() {
     }
   };
 
+  const goBack = () => {
+    navigate("/");
+  };
+
   return (
     <Container>
       <Row>
         <Col className="d-flex justify-content-center align-items-center">
-          <h1>Search for Pokemon Card</h1>
+          {pokemonName === "" ? (
+            <h1>Search for Pokémon Card</h1>
+          ) : (
+            <h1>Searching for "{pokemonName}"</h1>
+          )}
         </Col>
       </Row>
       <Row>
@@ -76,6 +86,11 @@ function SearchForm() {
               </Button>
             </InputGroup>
           </Form>
+          {location.pathname === "/results" ? (
+            <Button className="button results-button-mobile" onClick={goBack}>
+              <i class="bi bi-backspace"></i>
+            </Button>
+          ) : null}
         </Col>
       </Row>
     </Container>

@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Home from "./Home";
 import SearchForm from "./SearchForm";
 import SearchResults from "./SearchResults";
 
@@ -10,8 +11,9 @@ function App() {
   return (
     <>
       <BrowserRouter>
+        <SearchForm />
         <Routes>
-          <Route exact path="/" element={<SearchForm />} />
+          <Route exact path="/" element={<Home />} />
           <Route path="/results" element={<SearchResults />} />
         </Routes>
       </BrowserRouter>

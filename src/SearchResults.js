@@ -1,10 +1,12 @@
 import { useState } from "react";
-import MobileFilter from "./MobileFilter";
+import { useNavigate } from "react-router-dom";
+import { Container, Row, Col, Button } from "react-bootstrap";
 import Filter from "./Filter";
 import CardList from "./CardList";
-import { Container, Row, Col } from "react-bootstrap";
 
 function SearchResults() {
+  const navigate = useNavigate();
+
   const [checkedTypes, setCheckedTypes] = useState({
     colorless: false,
     darkness: false,
@@ -19,14 +21,14 @@ function SearchResults() {
     water: false,
   });
 
+  const goBack = () => {
+    navigate("/");
+  };
+
   return (
     <Container>
       <Row>
-        <MobileFilter
-          checkedTypes={checkedTypes}
-          setCheckedTypes={setCheckedTypes}
-        />
-        <Col className="filter" lg={2}>
+        <Col lg={2}>
           <Filter
             checkedTypes={checkedTypes}
             setCheckedTypes={setCheckedTypes}
@@ -36,6 +38,9 @@ function SearchResults() {
           <CardList checkedTypes={checkedTypes} />
         </Col>
       </Row>
+      <Button className="button results-button" onClick={goBack}>
+        Go back
+      </Button>
     </Container>
   );
 }

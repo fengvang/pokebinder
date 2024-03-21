@@ -1,22 +1,17 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Row, Button } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
+import { Row } from "react-bootstrap";
 import ShowAllCards from "./ShowAllCards";
 import TypeFilter from "./TypeFilter";
 
 function CardList({ checkedTypes }) {
   const location = useLocation();
-  const history = useNavigate();
   const [pokemonCardList, setPokemonCardList] = useState(null);
 
   useEffect(() => {
     const cardData = location.state.cardData;
     setPokemonCardList(cardData);
   }, [location.state.cardData]);
-
-  const goBack = () => {
-    history("/");
-  };
 
   const anyTypeChecked = Object.values(checkedTypes).includes(true);
   const trueTypes = Object.keys(checkedTypes).filter(
@@ -33,8 +28,13 @@ function CardList({ checkedTypes }) {
   return (
     <>
       <Row>
-        {(!anyTypeChecked &&
-          pokemonCardList?.data.map((card) => <ShowAllCards card={card} />)) ||
+        {pokemonCardList?.data.length === 0 ? (
+          <h5 className="my-3">No data found</h5>
+        ) : (
+          (!anyTypeChecked &&
+            pokemonCardList?.data.map((card, index) => (
+              <ShowAllCards key={index} card={card} />
+            ))) ||
           (anyTypeChecked &&
             pokemonCardList?.data
               .filter((card) => checkFilteredType(trueTypes, card.types))
@@ -46,11 +46,9 @@ function CardList({ checkedTypes }) {
                   filteredCard.types.join(" ")
                 );
                 return <TypeFilter filteredCard={filteredCard} />;
-              }))}
+              }))
+        )}
       </Row>
-      <Button className="button results-button" onClick={goBack}>
-        Go back
-      </Button>
     </>
   );
 }

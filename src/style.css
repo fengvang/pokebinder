@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Jaldi:wght@400;700&family=Sulphur+Point:wght@300;400;700&display=swap");
 
 :root {
+  --bgcolor: #eeebe6;
   --normal: #a8a77a;
   --fire: #ee8130;
   --water: #6390f0;
@@ -22,6 +23,7 @@
 }
 
 body {
+  background-color: #fff;
   font-family: "Jaldi", sans-serif;
   font-weight: 400;
   font-style: normal;
@@ -117,11 +119,11 @@ a:active {
 }
 
 .card-image {
-  transition: width 5s ease, 0.8s ease-in-out !important;
+  transition: width 5s ease !important;
 }
 
 .card-image:hover {
-  box-shadow: 0 0 50px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 50px 25px rgba(183, 183, 206, 0.5);
   border-radius: 25px;
   rotate: 1deg;
   width: 102%;
@@ -133,9 +135,21 @@ a:active {
   left: 4%;
   bottom: 5%;
   z-index: 2;
+  @media screen and (max-width: 576px) {
+    display: none;
+  }
 }
 
-.filter.col-lg-2 {
+.clear-button {
+  margin-left: 0;
+  margin-top: 10px;
+  width: 80px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+}
+
+.main-filter {
   @media screen and (max-width: 576px) {
     display: none;
   }
@@ -154,4 +168,50 @@ button:focus {
 .filter-form {
   position: sticky;
   top: 16px;
+}
+
+.btn.mobile-filter,
+.btn.mobile-filter:visited {
+  background-color: var(--ghost) !important;
+  border-radius: 0px;
+  border: none;
+  color: #fff;
+  margin-top: 10px;
+  width: 40px;
+  height: 40px;
+  @media screen and (min-width: 577px) {
+    display: none;
+  }
+}
+
+.no-caret::after {
+  display: none !important;
+}
+
+.btn.mobile-filter:hover,
+.btn.mobile-filter:active {
+  background-color: var(--flying) !important;
+  border-radius: 0px;
+  color: #fff;
+  @media screen and (min-width: 576px) {
+    display: none;
+  }
+}
+
+div.dropdown-menu.show {
+  border-radius: 0px;
+}
+
+div > form.my-3 {
+  max-width: 65vw;
+  padding: 0 25px 0 25px;
+}
+
+.results-button-mobile {
+  margin: 0 0 0 10px;
+  width: 50px;
+  height: 40px;
+  @media screen and (min-width: 768px) {
+    display: none;
+  }
 }
