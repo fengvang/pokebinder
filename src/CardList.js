@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Row } from "react-bootstrap";
 import ShowAllCards from "./ShowAllCards";
 import TypeFilter from "./TypeFilter";
 
-function CardList({ checkedTypes }) {
+function CardList({ checkedTypes, hpValue }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [pokemonCardList, setPokemonCardList] = useState(null);
 
   useEffect(() => {
@@ -25,27 +26,39 @@ function CardList({ checkedTypes }) {
     );
   }
 
+  const handleCardClick = (clickedCard) => {
+    navigate(`/individual?${location.key}=${clickedCard.name}`, {
+      state: { cardData: clickedCard },
+    });
+  };
+
+  // filtering by hpValue not working
+  // console.log(hpValue);
+
   return (
     <>
       <Row>
         {pokemonCardList?.data.length === 0 ? (
-          <h5 className="my-3">No data found</h5>
+          <h5 className="my-3 center-for-mobile">No data found</h5>
         ) : (
           (!anyTypeChecked &&
             pokemonCardList?.data.map((card, index) => (
-              <ShowAllCards key={index} card={card} />
+              <ShowAllCards
+                key={index}
+                card={card}
+                onCardClick={handleCardClick}
+              />
             ))) ||
           (anyTypeChecked &&
             pokemonCardList?.data
               .filter((card) => checkFilteredType(trueTypes, card.types))
               .map((filteredCard) => {
-                console.log(
-                  "Comparing",
-                  trueTypes,
-                  "and",
-                  filteredCard.types.join(" ")
+                return (
+                  <TypeFilter
+                    filteredCard={filteredCard}
+                    onCardClick={handleCardClick}
+                  />
                 );
-                return <TypeFilter filteredCard={filteredCard} />;
               }))
         )}
       </Row>

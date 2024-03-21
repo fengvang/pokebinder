@@ -23,10 +23,10 @@
 }
 
 body {
-  background-color: #fff;
   font-family: "Jaldi", sans-serif;
   font-weight: 400;
   font-style: normal;
+  font-size: 20px;
 }
 
 h1,
@@ -36,6 +36,33 @@ h4,
 h5,
 h6 {
   font-weight: bold;
+}
+
+input[type="checkbox"]:checked {
+  background: var(--ghost) !important;
+  border: none;
+}
+
+input[type="checkbox"]:checked::before {
+  content: "\2713";
+  color: #fff;
+  position: relative;
+  top: -2px;
+  left: 3px;
+}
+
+/* range slider circle color */
+input[type="range"]::-webkit-slider-thumb {
+  border-radius: 2px;
+  background: var(--ghost) !important;
+}
+
+input[type="range"]::-moz-range-thumb {
+  background: var(--ghost) !important;
+}
+
+input[type="range"]::-ms-thumb {
+  background: var(--ghost) !important;
 }
 
 input#floatingInput.form-control {
@@ -57,7 +84,8 @@ input#floatingInput.form-control {
   }
 }
 
-.search-button {
+.search-button,
+.search-button:visited {
   background-color: #fff !important;
   border-radius: 7px;
   border-left: none;
@@ -119,15 +147,15 @@ a:active {
 }
 
 .card-image {
-  transition: width 5s ease !important;
+  transition: transform 0.5s ease !important;
 }
 
 .card-image:hover {
-  box-shadow: 0 0 50px 25px rgba(183, 183, 206, 0.5);
-  border-radius: 25px;
-  rotate: 1deg;
-  width: 102%;
-  z-index: 1;
+  transform: translateY(-15px);
+}
+
+.card-img-top:hover {
+  cursor: pointer;
 }
 
 .results-button {
@@ -142,7 +170,7 @@ a:active {
 
 .clear-button {
   margin-left: 0;
-  margin-top: 10px;
+  margin-top: 0;
   width: 80px;
   height: 30px;
   display: flex;
@@ -176,7 +204,6 @@ button:focus {
   border-radius: 0px;
   border: none;
   color: #fff;
-  margin-top: 10px;
   width: 40px;
   height: 40px;
   @media screen and (min-width: 577px) {
@@ -213,5 +240,57 @@ div > form.my-3 {
   height: 40px;
   @media screen and (min-width: 768px) {
     display: none;
+  }
+}
+
+.individual-image-col {
+  min-height: auto;
+  @media screen and (max-width: 576px) {
+    min-height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.individual-page-image {
+  width: 100%;
+  @media screen and (max-width: 576px) {
+    width: 100%;
+  }
+}
+
+.individual-card-info {
+  @media screen {
+  }
+}
+
+.list {
+  margin-left: 30px;
+}
+
+div.first-row.row {
+  @media screen and (max-width: 576px) {
+    padding: 25px 0 25px 0;
+  }
+}
+
+.second-row {
+  margin-top: 30px;
+}
+
+div.list > p {
+  margin-bottom: 0;
+}
+
+.list > p:last-child {
+  margin-bottom: 8px;
+}
+
+.center-for-mobile {
+  @media screen and (max-width: 576px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }

@@ -44,8 +44,8 @@ function SearchForm() {
     }
   };
 
-  const goBack = () => {
-    navigate("/");
+  const goBackOnePage = () => {
+    window.history.go(-1);
   };
 
   return (
@@ -71,7 +71,10 @@ function SearchForm() {
         </Col>
       </Row>
       <Row>
-        <Col className="d-flex justify-content-center align-items-center">
+        <Col
+          className="d-flex justify-content-center align-items-center"
+          style={{ marginBottom: "25px" }}
+        >
           <Form>
             <InputGroup>
               <Form.Control
@@ -86,9 +89,12 @@ function SearchForm() {
               </Button>
             </InputGroup>
           </Form>
-          {location.pathname === "/results" ? (
-            <Button className="button results-button-mobile" onClick={goBack}>
-              <i class="bi bi-backspace"></i>
+          {location.pathname !== "/" ? (
+            <Button
+              className="button results-button-mobile"
+              onClick={goBackOnePage}
+            >
+              <i className="bi bi-backspace"></i>
             </Button>
           ) : null}
         </Col>

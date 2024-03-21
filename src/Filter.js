@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Row, Form, Button } from "react-bootstrap";
+import React from "react";
+import { Row, Form, Col, Button } from "react-bootstrap";
 import DropdownButton from "react-bootstrap/DropdownButton";
 
 const types = {
@@ -16,9 +16,7 @@ const types = {
   Water: "Water",
 };
 
-function Filter({ checkedTypes, setCheckedTypes }) {
-  const [hpValue, setHpValue] = useState(0);
-
+function Filter({ checkedTypes, setCheckedTypes, hpValue, setHpValue }) {
   const handleCheckboxChange = (event) => {
     setCheckedTypes({
       ...checkedTypes,
@@ -51,19 +49,39 @@ function Filter({ checkedTypes, setCheckedTypes }) {
             <Form.Label>
               <h6>Filter by type</h6>
             </Form.Label>
-            {Object.entries(types).map(([key, value]) => (
-              <Form.Check
-                key={key}
-                type="checkbox"
-                id={`checkbox-${key}`}
-                label={value}
-                name={key}
-                checked={checkedTypes[key] || false}
-                onChange={handleCheckboxChange}
-              />
-            ))}
-
             <Row>
+              <Col xs={6}>
+                {Object.entries(types)
+                  .slice(0, 6)
+                  .map(([key, value]) => (
+                    <Form.Check
+                      key={key}
+                      type="checkbox"
+                      id={`checkbox-${key}`}
+                      label={value}
+                      name={key}
+                      checked={checkedTypes[key] || false}
+                      onChange={handleCheckboxChange}
+                    />
+                  ))}
+              </Col>
+              <Col xs={6}>
+                {Object.entries(types)
+                  .slice(6)
+                  .map(([key, value]) => (
+                    <Form.Check
+                      key={key}
+                      type="checkbox"
+                      id={`checkbox-${key}`}
+                      label={value}
+                      name={key}
+                      checked={checkedTypes[key] || false}
+                      onChange={handleCheckboxChange}
+                    />
+                  ))}
+              </Col>
+            </Row>
+            <Row className="d-flex justify-content-end">
               <Button className="button clear-button" onClick={clearChecks}>
                 Clear All
               </Button>

@@ -1,14 +1,20 @@
 import { Card, Col } from "react-bootstrap";
 
-function TypeFilter({ filteredCard }) {
+function TypeFilter({ filteredCard, onCardClick }) {
+  const handleClick = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    onCardClick(filteredCard);
+  };
+
   return (
     <>
       <Col key={filteredCard.id} xs={6} sm={6} md={4} lg={3} xl={3}>
         <Card className="my-3">
-          {/* eslint-disable-next-line */}
-          <a className="card-image" href="#">
-            <Card.Img variant="top" src={filteredCard.images.large} />
-          </a>
+          <Card.Img
+            variant="top"
+            src={filteredCard.images.large}
+            onClick={handleClick}
+          />
           <Card.Body>
             <Card.Title>
               <h5>{filteredCard.name}</h5>

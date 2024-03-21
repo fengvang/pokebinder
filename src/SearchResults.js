@@ -21,6 +21,8 @@ function SearchResults() {
     water: false,
   });
 
+  const [hpValue, setHpValue] = useState(0);
+
   const goBack = () => {
     navigate("/");
   };
@@ -28,14 +30,16 @@ function SearchResults() {
   return (
     <Container>
       <Row>
-        <Col lg={2}>
+        <Col lg={3}>
           <Filter
             checkedTypes={checkedTypes}
             setCheckedTypes={setCheckedTypes}
+            hpValue={hpValue}
+            setHpValue={setHpValue}
           />
         </Col>
         <Col>
-          <CardList checkedTypes={checkedTypes} />
+          <CardList checkedTypes={checkedTypes} hpValue={hpValue} />
         </Col>
       </Row>
       <Button className="button results-button" onClick={goBack}>
