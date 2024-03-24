@@ -6,11 +6,36 @@ function TypeFilter({ filteredCard, onCardClick }) {
     onCardClick(filteredCard);
   };
 
+  // transform price type from camel case to normal
+  function formatType(type) {
+    return type
+      .replace(/([A-Z])/g, " $1")
+      .replace(/^./, (str) => str.toUpperCase());
+  }
+
+  let firstPrice = null;
+
+  // find the first price type
+  if (filteredCard && filteredCard.tcgplayer && filteredCard.tcgplayer.prices) {
+    for (const [type, prices] of Object.entries(
+      filteredCard.tcgplayer.prices
+    )) {
+      firstPrice = (
+        <span key={type}>
+          <b>Market Price ({formatType(type)}):</b>
+          <i>{prices.market ? ` $${prices.market.toFixed(2)}` : ""}</i>
+        </span>
+      );
+      break; // break after the first iteration
+    }
+  }
+
   return (
     <>
       <Col key={filteredCard.id} xs={6} sm={6} md={4} lg={3} xl={3}>
         <Card className="my-3">
           <Card.Img
+            className="card-image"
             variant="top"
             src={filteredCard.images.large}
             onClick={handleClick}
@@ -26,20 +51,7 @@ function TypeFilter({ filteredCard, onCardClick }) {
               <b>Rarity:</b> {filteredCard.rarity} #{filteredCard.number}/
               {filteredCard.set.printedTotal}
             </Card.Text>
-            <Card.Text>
-              <b>Market Price:</b>
-              {filteredCard.tcgplayer &&
-              filteredCard.tcgplayer.prices &&
-              filteredCard.tcgplayer.prices.holofoil &&
-              filteredCard.tcgplayer.prices.holofoil.market ? (
-                <i>
-                  {" "}
-                  ${filteredCard.tcgplayer.prices.holofoil.market.toFixed(2)}
-                </i>
-              ) : (
-                <i> No data</i>
-              )}
-            </Card.Text>
+            <Card.Text>{firstPrice ? firstPrice : ""}</Card.Text>
           </Card.Body>
         </Card>
       </Col>

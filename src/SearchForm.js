@@ -25,6 +25,7 @@ function SearchForm() {
       const response = await fetch("/search-card", {
         method: "POST",
         headers: {
+          "X-Api-Key": "",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ query: pokemonName.toLowerCase() }),
@@ -37,7 +38,22 @@ function SearchForm() {
       const cardData = await response.json();
 
       navigate(`/results?${location.key}=${pokemonName}`, {
-        state: { cardData: cardData },
+        state: {
+          cardData: cardData,
+          filteredTypes: {
+            Colorless: false,
+            Darkness: false,
+            Dragon: false,
+            Fairy: false,
+            Fighting: false,
+            Fire: false,
+            Grass: false,
+            Lightning: false,
+            Metal: false,
+            Psychic: false,
+            Water: false,
+          },
+        },
       });
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -52,11 +68,13 @@ function SearchForm() {
     <Container>
       <Row>
         <Col className="d-flex justify-content-center align-items-center">
-          {pokemonName === "" ? (
-            <h1>Search for Pokémon Card</h1>
-          ) : (
-            <h1>Searching for "{pokemonName}"</h1>
-          )}
+          <a className="title-link" href="/">
+            {pokemonName === "" ? (
+              <h1>Search for Pokémon Card</h1>
+            ) : (
+              <h1>Searching for "{pokemonName}"</h1>
+            )}
+          </a>
         </Col>
       </Row>
       <Row>

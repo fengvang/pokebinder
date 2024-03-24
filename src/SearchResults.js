@@ -8,17 +8,17 @@ function SearchResults() {
   const navigate = useNavigate();
 
   const [checkedTypes, setCheckedTypes] = useState({
-    colorless: false,
-    darkness: false,
-    dragon: false,
-    fairy: false,
-    fighting: false,
-    fire: false,
-    grass: false,
-    lightning: false,
-    metal: false,
-    psychic: false,
-    water: false,
+    Colorless: false,
+    Darkness: false,
+    Dragon: false,
+    Fairy: false,
+    Fighting: false,
+    Fire: false,
+    Grass: false,
+    Lightning: false,
+    Metal: false,
+    Psychic: false,
+    Water: false,
   });
 
   const [hpValue, setHpValue] = useState(0);
@@ -37,14 +37,14 @@ function SearchResults() {
             hpValue={hpValue}
             setHpValue={setHpValue}
           />
+          <Button className="button results-button" onClick={goBack}>
+            Go back
+          </Button>
         </Col>
         <Col>
           <CardList checkedTypes={checkedTypes} hpValue={hpValue} />
         </Col>
       </Row>
-      <Button className="button results-button" onClick={goBack}>
-        Go back
-      </Button>
     </Container>
   );
 }

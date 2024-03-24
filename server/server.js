@@ -21,7 +21,12 @@ app.post("/search-card", async (req, res) => {
         process.env.POKEMON_TCG_API_URL +
         `?q=name:${pokemonName} subtypes:${pokemonSubtype}`;
 
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "X-Api-Key": process.env.POKEMON_TCG_API_KEY,
+      },
+    });
+
     const data = await response.json();
 
     res.json(data);

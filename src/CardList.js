@@ -9,15 +9,15 @@ function CardList({ checkedTypes, hpValue }) {
   const navigate = useNavigate();
   const [pokemonCardList, setPokemonCardList] = useState(null);
 
-  useEffect(() => {
-    const cardData = location.state.cardData;
-    setPokemonCardList(cardData);
-  }, [location.state.cardData]);
-
   const anyTypeChecked = Object.values(checkedTypes).includes(true);
   const trueTypes = Object.keys(checkedTypes).filter(
     (type) => checkedTypes[type]
   );
+
+  useEffect(() => {
+    const cardData = location.state.cardData;
+    setPokemonCardList(cardData);
+  }, [location.state.cardData]);
 
   function checkFilteredType(trueTypes, cardTypes) {
     return (
@@ -28,7 +28,10 @@ function CardList({ checkedTypes, hpValue }) {
 
   const handleCardClick = (clickedCard) => {
     navigate(`/individual?${location.key}=${clickedCard.name}`, {
-      state: { cardData: clickedCard },
+      state: {
+        cardData: clickedCard,
+        filteredTypes: checkedTypes,
+      },
     });
   };
 
@@ -42,24 +45,24 @@ function CardList({ checkedTypes, hpValue }) {
           <h5 className="my-3 center-for-mobile">No data found</h5>
         ) : (
           (!anyTypeChecked &&
-            pokemonCardList?.data.map((card, index) => (
+            pokemonCardList?.data.map((card) => (
               <ShowAllCards
-                key={index}
+                key={card.id}
                 card={card}
                 onCardClick={handleCardClick}
               />
             ))) ||
           (anyTypeChecked &&
+            checkedTypes &&
             pokemonCardList?.data
               .filter((card) => checkFilteredType(trueTypes, card.types))
-              .map((filteredCard) => {
-                return (
-                  <TypeFilter
-                    filteredCard={filteredCard}
-                    onCardClick={handleCardClick}
-                  />
-                );
-              }))
+              .map((filteredCard) => (
+                <TypeFilter
+                  key={filteredCard.id}
+                  filteredCard={filteredCard}
+                  onCardClick={handleCardClick}
+                />
+              )))
         )}
       </Row>
     </>

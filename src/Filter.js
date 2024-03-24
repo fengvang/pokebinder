@@ -81,11 +81,11 @@ function Filter({ checkedTypes, setCheckedTypes, hpValue, setHpValue }) {
                   ))}
               </Col>
             </Row>
-            <Row className="d-flex justify-content-end">
+            <Col className="d-flex justify-content-end">
               <Button className="button clear-button" onClick={clearChecks}>
                 Clear All
               </Button>
-            </Row>
+            </Col>
 
             <Form.Label style={{ marginTop: "10px" }}>
               <h6>
@@ -100,10 +100,20 @@ function Filter({ checkedTypes, setCheckedTypes, hpValue, setHpValue }) {
               max={150}
               step={10}
             />
+
+            <Col className="d-flex justify-content-end">
+              <Button
+                className="button num-results-button"
+                onClick={clearChecks}
+              >
+                See 26 results
+              </Button>
+            </Col>
           </Form>
         </DropdownButton>
       </Row>
 
+      {/* web only filter */}
       <Form className="my-3 filter-form main-filter">
         <Form.Label>
           <h6>Filter by type</h6>

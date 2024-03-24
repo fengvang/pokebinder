@@ -1,10 +1,13 @@
 import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 
 function IndividualPage() {
   const location = useLocation();
+  const navigate = useNavigate();
   const card = location.state.cardData;
+  const types = location.state.filteredTypes;
 
   let formattedDate = null;
   let options;
@@ -28,8 +31,10 @@ function IndividualPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
+  console.log(window.history);
+
   const goBackOnePage = () => {
-    window.history.go(-1);
+    navigate(-1, { state: { cardData: card, filteredTypes: types } });
   };
 
   return (
@@ -56,13 +61,32 @@ function IndividualPage() {
             </div>
             <div>
               {card.hasOwnProperty("rules") ? (
-                <span>
-                  <b>Card Rules:</b> <i>{card.rules}</i>)
-                </span>
+                <div>
+                  <b>Rules:</b>
+                  <div className="list">
+                    <i>{card.rules}</i>
+                  </div>
+                </div>
               ) : (
                 ""
               )}
             </div>
+            <div>
+              {card.hasOwnProperty("abilities") ? (
+                <div>
+                  <b>Ability:</b>
+                  {card.abilities.map((ability, index) => (
+                    <div className="list" key={index}>
+                      <b>{ability.name}: </b>
+                      <i>{ability.text}</i>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                ""
+              )}
+            </div>
+
             <div>
               <b>Attack(s) / (Name - Damage):</b>
               {card.attacks.map((attack, index) => (
@@ -101,19 +125,25 @@ function IndividualPage() {
                     <p>
                       <b>Low:</b>{" "}
                       <i>
-                        {prices.low ? `$${prices.low.toFixed(2)}` : "No data"}
+                        {prices.low
+                          ? `$${prices.low.toFixed(2)}`
+                          : "No data available"}
                       </i>
                     </p>
                     <p>
                       <b>Mid:</b>{" "}
                       <i>
-                        {prices.mid ? `$${prices.mid.toFixed(2)}` : "No data"}
+                        {prices.mid
+                          ? `$${prices.mid.toFixed(2)}`
+                          : "No data available"}
                       </i>
                     </p>
                     <p>
                       <b>High:</b>{" "}
                       <i>
-                        {prices.high ? `$${prices.high.toFixed(2)}` : "No data"}
+                        {prices.high
+                          ? `$${prices.high.toFixed(2)}`
+                          : "No data available"}
                       </i>
                     </p>
                     <p>
@@ -121,7 +151,7 @@ function IndividualPage() {
                       <i>
                         {prices.market
                           ? `$${prices.market.toFixed(2)}`
-                          : "No data"}
+                          : "No data available"}
                       </i>
                     </p>
                     <p>
@@ -129,7 +159,7 @@ function IndividualPage() {
                       <i>
                         {prices.directLow
                           ? `$${prices.directLow.toFixed(2)}`
-                          : "No data"}
+                          : "No data available"}
                       </i>
                     </p>
                   </div>
@@ -141,7 +171,8 @@ function IndividualPage() {
           </Row>
         </Col>
       </Row>
-      <Button className="button results-button" onClick={goBackOnePage}>
+      {/* when clicked and if filtered, return to filtered state */}
+      <Button className="button results-individual" onClick={goBackOnePage}>
         Go back
       </Button>
     </Container>

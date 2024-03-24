@@ -5,6 +5,28 @@ function ShowAllCards({ card, onCardClick }) {
     onCardClick(card);
   };
 
+  // transform price type from camel case to normal
+  function formatType(type) {
+    return type
+      .replace(/([A-Z])/g, " $1")
+      .replace(/^./, (str) => str.toUpperCase());
+  }
+
+  let firstPrice = null;
+
+  // find the first price type
+  if (card && card.tcgplayer && card.tcgplayer.prices) {
+    for (const [type, prices] of Object.entries(card.tcgplayer.prices)) {
+      firstPrice = (
+        <span key={type}>
+          <b>Market Price ({formatType(type)}):</b>
+          <i>{prices.market ? ` $${prices.market.toFixed(2)}` : ""}</i>
+        </span>
+      );
+      break; // break after the first iteration
+    }
+  }
+
   return (
     <>
       <Col key={card.id} xs={6} sm={6} md={4} lg={3} xl={3}>
@@ -26,34 +48,7 @@ function ShowAllCards({ card, onCardClick }) {
               <b>Rarity:</b> {card.rarity} #{card.number}/
               {card.set.printedTotal}
             </Card.Text>
-            <Card.Text>
-              {card.tcgplayer &&
-              card.tcgplayer.prices &&
-              card.tcgplayer.prices.holofoil &&
-              card.tcgplayer.prices.holofoil.market ? (
-                <span>
-                  <b>Market Price (Holofoil):</b>
-                  <i> ${card.tcgplayer.prices.holofoil.market.toFixed(2)}</i>
-                </span>
-              ) : card.tcgplayer &&
-                card.tcgplayer.prices &&
-                card.tcgplayer.prices.normal &&
-                card.tcgplayer.prices.normal.market ? (
-                <span>
-                  <b>Market Price (Normal):</b>
-                  <i> ${card.tcgplayer.prices.normal.market.toFixed(2)}</i>
-                </span>
-              ) : card.cardmarket &&
-                card.cardmarket.prices &&
-                card.cardmarket.prices.averageSellPrice ? (
-                <span>
-                  <b>Avg Sell Price:</b>
-                  <i> ${card.cardmarket.prices.averageSellPrice.toFixed(2)}</i>
-                </span>
-              ) : (
-                ""
-              )}
-            </Card.Text>
+            <Card.Text>{firstPrice ? firstPrice : ""}</Card.Text>
           </Card.Body>
         </Card>
       </Col>
