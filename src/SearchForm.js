@@ -1,6 +1,5 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Container, Col, Row, Button, InputGroup } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 
@@ -25,7 +24,6 @@ function SearchForm() {
       const response = await fetch("/search-card", {
         method: "POST",
         headers: {
-          "X-Api-Key": "",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ query: pokemonName.toLowerCase() }),
@@ -38,22 +36,7 @@ function SearchForm() {
       const cardData = await response.json();
 
       navigate(`/results?${location.key}=${pokemonName}`, {
-        state: {
-          cardData: cardData,
-          filteredTypes: {
-            Colorless: false,
-            Darkness: false,
-            Dragon: false,
-            Fairy: false,
-            Fighting: false,
-            Fire: false,
-            Grass: false,
-            Lightning: false,
-            Metal: false,
-            Psychic: false,
-            Water: false,
-          },
-        },
+        state: { cardData: cardData },
       });
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -61,22 +44,36 @@ function SearchForm() {
   };
 
   const goBackOnePage = () => {
-    window.history.go(-1);
+    navigate(-1);
   };
 
   return (
     <Container>
-      <Row>
-        <Col className="d-flex justify-content-center align-items-center">
-          <a className="title-link" href="/">
-            {pokemonName === "" ? (
-              <h1>Search for Pokémon Card</h1>
-            ) : (
-              <h1>Searching for "{pokemonName}"</h1>
-            )}
-          </a>
-        </Col>
-      </Row>
+      {location.pathname === "/" ? (
+        <Row style={{ marginTop: "40vh" }}>
+          <Col className="d-flex justify-content-center align-items-center">
+            <a className="title-link" href="/">
+              {pokemonName === "" ? (
+                <h1>Search for Pokémon Card</h1>
+              ) : (
+                <h1>Searching for "{pokemonName}"</h1>
+              )}
+            </a>
+          </Col>
+        </Row>
+      ) : (
+        <Row className="header" style={{ marginTop: "25px" }}>
+          <Col className="d-flex justify-content-center align-items-center">
+            <a className="title-link" href="/">
+              {pokemonName === "" ? (
+                <h1>Search for Pokémon Card</h1>
+              ) : (
+                <h1>Searching for "{pokemonName}"</h1>
+              )}
+            </a>
+          </Col>
+        </Row>
+      )}
       <Row>
         <Col
           className="d-flex justify-content-center align-items-center"

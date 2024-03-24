@@ -29,6 +29,8 @@ function CardList({ checkedTypes, hpValue }) {
   const handleCardClick = (clickedCard) => {
     navigate(`/individual?${location.key}=${clickedCard.name}`, {
       state: {
+        prevURL: { path: location.pathname, search: location.search },
+        originalCardData: location.state.cardData,
         cardData: clickedCard,
         filteredTypes: checkedTypes,
       },

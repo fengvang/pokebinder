@@ -179,7 +179,7 @@ a:active {
 /* need to fix */
 .results-button {
   position: fixed;
-  top: 700px;
+  top: 730px;
 }
 
 .results-individual {
@@ -255,6 +255,20 @@ div.list > p {
 
 /* mobile styles */
 @media only screen and (max-width: 576px) {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: inherit;
+    font-weight: bold;
+  }
+
+  a > h1 {
+    color: var(--bgcolor);
+  }
+
   input#floatingInput.form-control {
     max-width: 80vw;
   }
@@ -316,6 +330,10 @@ div.list > p {
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .results-individual {
+    display: none;
   }
 }
 

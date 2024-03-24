@@ -1,13 +1,15 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import Filter from "./Filter";
 import CardList from "./CardList";
 
 function SearchResults() {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const [checkedTypes, setCheckedTypes] = useState({
+  // set initial checked types to either false or to location state
+  const initialCheckedTypes = location.state.filteredTypes || {
     Colorless: false,
     Darkness: false,
     Dragon: false,
@@ -19,12 +21,14 @@ function SearchResults() {
     Metal: false,
     Psychic: false,
     Water: false,
-  });
+  };
+
+  const [checkedTypes, setCheckedTypes] = useState(initialCheckedTypes);
 
   const [hpValue, setHpValue] = useState(0);
 
-  const goBack = () => {
-    navigate("/");
+  const goBackOnePage = () => {
+    navigate(-1);
   };
 
   return (
@@ -37,7 +41,8 @@ function SearchResults() {
             hpValue={hpValue}
             setHpValue={setHpValue}
           />
-          <Button className="button results-button" onClick={goBack}>
+
+          <Button className="button results-button" onClick={goBackOnePage}>
             Go back
           </Button>
         </Col>

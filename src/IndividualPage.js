@@ -1,5 +1,4 @@
-import { useLocation } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 
@@ -7,7 +6,10 @@ function IndividualPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const card = location.state.cardData;
-  const types = location.state.filteredTypes;
+  const originalCardData = location.state.originalCardData;
+  const type = location.state.filteredTypes;
+  const prevURLPath = location.state.prevURL.path;
+  const prevURLSearch = location.state.prevURL.search;
 
   let formattedDate = null;
   let options;
@@ -31,11 +33,16 @@ function IndividualPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  console.log(window.history);
-
   const goBackOnePage = () => {
-    navigate(-1, { state: { cardData: card, filteredTypes: types } });
+    navigate(`${prevURLPath}${prevURLSearch}`, {
+      state: {
+        cardData: originalCardData,
+        filteredTypes: type,
+      },
+    });
   };
+
+  console.log(location);
 
   return (
     <Container>
