@@ -42,7 +42,14 @@ function IndividualPage() {
     });
   };
 
-  console.log(location);
+  window.onpopstate = function (event) {
+    navigate(`${prevURLPath}${prevURLSearch}`, {
+      state: {
+        cardData: originalCardData,
+        filteredTypes: type,
+      },
+    });
+  };
 
   return (
     <Container>

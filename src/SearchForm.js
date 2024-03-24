@@ -104,14 +104,14 @@ function SearchForm() {
               </Button>
             </InputGroup>
           </Form>
-          {location.pathname !== "/" ? (
+          {/* {location.pathname !== "/" ? (
             <Button
               className="button results-button-mobile"
               onClick={goBackOnePage}
             >
               <i className="bi bi-backspace"></i>
             </Button>
-          ) : null}
+          ) : null} */}
         </Col>
       </Row>
     </Container>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import Filter from "./Filter";
@@ -30,6 +30,14 @@ function SearchResults() {
   const goBackOnePage = () => {
     navigate(-1);
   };
+
+  useEffect(() => {
+    const updatedCheckedTypes =
+      location.state.filteredTypes || initialCheckedTypes;
+    setCheckedTypes(updatedCheckedTypes);
+  }, [location.state.filteredTypes]);
+
+  console.log("From SearchResults:", checkedTypes);
 
   return (
     <Container>
