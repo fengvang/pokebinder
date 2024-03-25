@@ -73,11 +73,8 @@ input[type="range"]::-ms-thumb {
   background: var(--ghost) !important;
 }
 
-input#floatingInput.form-control {
-  min-width: 20vw;
-  @media screen and (max-width: 576px) {
-    max-width: 80vw;
-  }
+input.form-range {
+  max-width: 18vw;
 }
 
 .button {
@@ -196,16 +193,6 @@ a:active {
   align-items: center;
 }
 
-.num-results-button {
-  margin-left: 0;
-  margin-top: 0;
-  width: 110px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 input:focus,
 select:focus,
 textarea:focus,
@@ -253,6 +240,24 @@ div.list > p {
   margin-bottom: 8px;
 }
 
+.loading-div-root {
+  position: fixed;
+  top: 45vh;
+  left: 50vw;
+}
+
+.loading-div {
+  position: fixed;
+  top: 45vh;
+  left: 50vw;
+  z-index: 1;
+  background-color: var(--bgcolor);
+  width: 150px;
+  height: 50px;
+  border-radius: 5px;
+  color: #000;
+}
+
 /* mobile styles */
 @media only screen and (max-width: 576px) {
   h1,
@@ -291,17 +296,12 @@ div.list > p {
   .btn.mobile-filter:active {
     background-color: var(--flying) !important;
     border-radius: 0px;
+    border: none;
     color: #fff;
   }
 
   .results-button {
     display: none;
-  }
-
-  .results-button-mobile {
-    margin: 0 0 0 10px;
-    width: 50px;
-    height: 40px;
   }
 
   .main-filter {
@@ -335,6 +335,35 @@ div.list > p {
   .results-individual {
     display: none;
   }
+
+  .dropdown-menu {
+    min-width: 100vw;
+    min-height: 100vh;
+    background-color: #292a30;
+    border: none;
+    color: var(--bgcolor);
+  }
+
+  button.dropdown-toggle::after {
+    content: none;
+  }
+
+  div > form.my-3 {
+    min-width: 100vw;
+    padding: 0 25px 0 25px;
+  }
+
+  .num-results-button {
+    width: 120px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  input.form-range {
+    max-width: 100vw;
+  }
 }
 
 @media only screen and (min-width: 576px) {
@@ -345,12 +374,6 @@ div.list > p {
 
   .btn.mobile-filter:hover,
   .btn.mobile-filter:active {
-    display: none;
-  }
-}
-
-@media screen and (min-width: 768px) {
-  .results-button-mobile {
     display: none;
   }
 }

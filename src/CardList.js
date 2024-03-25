@@ -40,11 +40,30 @@ function CardList({ checkedTypes, hpValue }) {
   // filtering by hpValue not working
   // console.log(hpValue);
 
+  useEffect(() => {
+    const length = pokemonCardList?.data.filter((card) =>
+      checkFilteredType(trueTypes, card.types)
+    ).length;
+
+    if (document.getElementById("length-id")) {
+      if (length > 0) {
+        document.getElementById("res-length-btn").style.display = "inline";
+        document.getElementById(
+          "length-id"
+        ).innerHTML = `See ${length} results`;
+      } else {
+        document.getElementById("res-length-btn").style.display = "none";
+      }
+    }
+  });
+
   return (
     <>
-      <Row>
+      <Row id="card-results-count">
         {pokemonCardList?.data.length === 0 ? (
-          <h5 className="my-3 center-for-mobile">No data found</h5>
+          <>
+            <h5 className="my-3 center-for-mobile">No data found</h5>
+          </>
         ) : (
           (!anyTypeChecked &&
             pokemonCardList?.data.map((card) => (

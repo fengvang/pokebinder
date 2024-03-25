@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Row, Form, Col, Button } from "react-bootstrap";
 import DropdownButton from "react-bootstrap/DropdownButton";
+import * as MuiIcon from "./MuiIcons";
 
 const types = {
   Colorless: "Colorless",
@@ -17,6 +18,15 @@ const types = {
 };
 
 function Filter({ checkedTypes, setCheckedTypes, hpValue, setHpValue }) {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    const handleBodyOverflow = () => {
+      document.body.style.overflow = isDropdownOpen ? "hidden" : "auto";
+    };
+    handleBodyOverflow();
+  }, [isDropdownOpen]);
+
   const handleCheckboxChange = (event) => {
     setCheckedTypes({
       ...checkedTypes,
@@ -36,14 +46,20 @@ function Filter({ checkedTypes, setCheckedTypes, hpValue, setHpValue }) {
     setCheckedTypes(updatedCheckedTypes);
   };
 
+  const handleSeeResultsButtonClicked = () => {
+    setIsDropdownOpen(false);
+  };
+
   return (
     <>
       <Row>
         <DropdownButton
-          title={<i className="bi bi-funnel"></i>}
+          title={<MuiIcon.TuneIcon />}
           size="sm"
           variant="light mobile-filter"
           className="no-caret"
+          show={isDropdownOpen}
+          onToggle={(isOpen) => setIsDropdownOpen(isOpen)}
         >
           <Form className="my-3">
             <Form.Label>
@@ -104,9 +120,11 @@ function Filter({ checkedTypes, setCheckedTypes, hpValue, setHpValue }) {
             <Col className="d-flex justify-content-end">
               <Button
                 className="button num-results-button"
-                onClick={clearChecks}
+                id="res-length-btn"
+                style={{ display: "none" }}
+                onClick={handleSeeResultsButtonClicked}
               >
-                See 26 results
+                <span id="length-id"></span>
               </Button>
             </Col>
           </Form>

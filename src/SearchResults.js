@@ -37,8 +37,6 @@ function SearchResults() {
     setCheckedTypes(updatedCheckedTypes);
   }, [location.state.filteredTypes]);
 
-  console.log("From SearchResults:", checkedTypes);
-
   return (
     <Container>
       <Row>
