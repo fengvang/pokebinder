@@ -7,12 +7,15 @@ import {
   Button,
   InputGroup,
   Spinner,
+  ToastContainer,
+  Toast,
 } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 
 function SearchForm() {
   const [pokemonName, setpokemonName] = useState("");
   const [isLoading, setLoading] = useState(false);
+  const [showToast, setShowToast] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -28,6 +31,11 @@ function SearchForm() {
   };
 
   const searchCard = async () => {
+    if (!pokemonName.trim()) {
+      setShowToast(true);
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await fetch("/search-card", {
@@ -123,6 +131,20 @@ function SearchForm() {
           </Form>
         </Col>
       </Row>
+
+      <ToastContainer position="middle-center">
+        <Toast
+          show={showToast}
+          onClose={() => setShowToast(false)}
+          autohide="true"
+          delay="5000"
+        >
+          <Toast.Header closeButton={false} closeVariant="light">
+            <strong className="mr-auto">Invalid search</strong>
+          </Toast.Header>
+          <Toast.Body>Please enter a valid Pokémon name or keyword.</Toast.Body>
+        </Toast>
+      </ToastContainer>
 
       {isLoading && location.pathname === "/" ? (
         <Row className="d-flex flex-column justify-content-center align-items-center">

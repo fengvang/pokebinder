@@ -263,6 +263,17 @@ div.spinner-border {
   margin-bottom: 30px;
 }
 
+.toast-body {
+  background-color: var(--ghost);
+  color: var(--bgcolor);
+  border-bottom-left-radius: calc(
+    var(--bs-toast-border-radius) - var(--bs-toast-border-width)
+  );
+  border-bottom-right-radius: calc(
+    var(--bs-toast-border-radius) - var(--bs-toast-border-width)
+  );
+}
+
 /* mobile styles */
 @media only screen and (max-width: 576px) {
   h1,
