@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Container,
   Col,
@@ -54,126 +54,90 @@ function SearchForm() {
     }
   };
 
+  useEffect(() => {
+    const overflowHiddenWhenIsLoading = () => {
+      document.body.style.overflow =
+        isLoading && location.pathname !== "/" ? "hidden" : "auto";
+    };
+    overflowHiddenWhenIsLoading();
+  }, [isLoading, location.pathname]);
+
   return (
     <Container>
-      {isLoading ? (
-        <div className="d-flex justify-content-center align-items-center loading-div-root">
-          <Spinner animation="border" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>
-        </div>
+      {/* if root header should be in middle of page; otherwise, render at top */}
+      {location.pathname === "/" ? (
+        <Row style={{ marginTop: "40vh" }}>
+          <Col className="d-flex justify-content-center align-items-center">
+            <a className="title-link" href="/">
+              {pokemonName === "" ? (
+                <h1>Search for Pokémon Card</h1>
+              ) : (
+                <h1>Searching for "{pokemonName}"</h1>
+              )}
+            </a>
+          </Col>
+        </Row>
       ) : (
-        <>
-          {location.pathname === "/" ? (
-            <Row style={{ marginTop: "40vh" }}>
-              <Col className="d-flex justify-content-center align-items-center">
-                <a className="title-link" href="/">
-                  {pokemonName === "" ? (
-                    <h1>Search for Pokémon Card</h1>
-                  ) : (
-                    <h1>Searching for "{pokemonName}"</h1>
-                  )}
-                </a>
-              </Col>
-            </Row>
-          ) : (
-            <Row className="header" style={{ marginTop: "25px" }}>
-              <Col className="d-flex justify-content-center align-items-center">
-                <a className="title-link" href="/">
-                  {pokemonName === "" ? (
-                    <h1>Search for Pokémon Card</h1>
-                  ) : (
-                    <h1>Searching for "{pokemonName}"</h1>
-                  )}
-                </a>
-              </Col>
-            </Row>
-          )}
-          <Row>
-            <Col
-              className="d-flex justify-content-center align-items-center"
-              style={{ marginBottom: "20px" }}
-            >
-              By Feng Vang with&nbsp;
-              <a href="http://pokemontcg.io" target="_blank" rel="noreferrer">
-                Pokémon TCG API
-              </a>
-            </Col>
-          </Row>
-          <Row>
-            <Col
-              className="d-flex justify-content-center align-items-center"
-              style={{ marginBottom: "25px" }}
-            >
-              <Form>
-                <InputGroup>
-                  <Form.Control
-                    type="text"
-                    placeholder="Search card by name"
-                    value={pokemonName}
-                    onChange={handleInputChange}
-                    onKeyDown={handleKeyPress}
-                  />
-                  <Button className="search-button" onClick={searchCard}>
-                    <i className="bi bi-search"></i>
-                  </Button>
-                </InputGroup>
-              </Form>
-            </Col>
-          </Row>
-        </>
+        <Row style={{ marginTop: "25px" }}>
+          <Col className="d-flex justify-content-center align-items-center">
+            <a className="title-link" href="/">
+              {pokemonName === "" ? (
+                <h1>Search for Pokémon Card</h1>
+              ) : (
+                <h1>Searching for "{pokemonName}"</h1>
+              )}
+            </a>
+          </Col>
+        </Row>
       )}
-      {isLoading && location.pathname !== "/" ? (
-        <>
-          <div className="d-flex justify-content-center align-items-center loading-div">
-            <Spinner animation="border" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </Spinner>
-          </div>
-          <Row className="header" style={{ marginTop: "25px" }}>
-            <Col className="d-flex justify-content-center align-items-center">
-              <a className="title-link" href="/">
-                {pokemonName === "" ? (
-                  <h1>Search for Pokémon Card</h1>
-                ) : (
-                  <h1>Searching for "{pokemonName}"</h1>
-                )}
-              </a>
-            </Col>
-          </Row>
-          <Row>
-            <Col
-              className="d-flex justify-content-center align-items-center"
-              style={{ marginBottom: "20px" }}
-            >
-              By Feng Vang with&nbsp;
-              <a href="http://pokemontcg.io" target="_blank" rel="noreferrer">
-                Pokémon TCG API
-              </a>
-            </Col>
-          </Row>
-          <Row>
-            <Col
-              className="d-flex justify-content-center align-items-center"
-              style={{ marginBottom: "25px" }}
-            >
-              <Form>
-                <InputGroup>
-                  <Form.Control
-                    type="text"
-                    placeholder="Search card by name"
-                    value={pokemonName}
-                    onChange={handleInputChange}
-                    onKeyDown={handleKeyPress}
-                  />
-                  <Button className="search-button" onClick={searchCard}>
-                    <i className="bi bi-search"></i>
-                  </Button>
-                </InputGroup>
-              </Form>
-            </Col>
-          </Row>
-        </>
+      {/* for either, always render search bar */}
+      <Row>
+        <Col
+          className="d-flex justify-content-center align-items-center"
+          style={{ marginBottom: "20px" }}
+        >
+          By Feng Vang with&nbsp;
+          <a href="http://pokemontcg.io" target="_blank" rel="noreferrer">
+            Pokémon TCG API
+          </a>
+        </Col>
+      </Row>
+      <Row>
+        <Col
+          className="d-flex justify-content-center align-items-center"
+          style={{ marginBottom: "25px" }}
+        >
+          <Form>
+            <InputGroup>
+              <Form.Control
+                type="text"
+                placeholder="Search card by name"
+                value={pokemonName}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyPress}
+              />
+              <Button className="search-button" onClick={searchCard}>
+                <i className="bi bi-search"></i>
+              </Button>
+            </InputGroup>
+          </Form>
+        </Col>
+      </Row>
+
+      {isLoading && location.pathname === "/" ? (
+        <Row className="d-flex flex-column justify-content-center align-items-center">
+          <Spinner
+            animation="border"
+            role="status"
+            style={{ marginTop: "0px" }}
+          />
+          {pokemonName ? `Loading results for "${pokemonName}"` : null}
+        </Row>
+      ) : isLoading && location.pathname !== "/" ? (
+        <Row className="d-flex flex-column justify-content-center align-items-center loading-div">
+          <Spinner animation="border" role="status" />
+          {pokemonName ? `Loading results for "${pokemonName}"` : null}
+        </Row>
       ) : null}
     </Container>
   );
