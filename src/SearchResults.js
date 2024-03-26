@@ -65,7 +65,11 @@ function SearchResults() {
     const updatedCheckedSubtypes =
       location.state.filteredSubtypes || initialCheckedSubtypes;
     setCheckedSubtypes(updatedCheckedSubtypes);
-  }, [location.state.filteredTypes, location.state.filteredSubtypes]);
+  }, [
+    location.state.filteredTypes,
+    location.state.filteredSubtypes,
+    location.search,
+  ]);
 
   return (
     <>

@@ -1,6 +1,6 @@
 import { Card, Col } from "react-bootstrap";
 
-function TypeFilter({ filteredCard, onCardClick }) {
+function Cards({ filteredCard, onCardClick }) {
   const handleClick = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     onCardClick(filteredCard);
@@ -59,4 +59,4 @@ function TypeFilter({ filteredCard, onCardClick }) {
   );
 }
 
-export default TypeFilter;
+export default Cards;

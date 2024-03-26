@@ -8,6 +8,7 @@ function IndividualPage() {
   const card = location.state.cardData;
   const originalCardData = location.state.originalCardData;
   const type = location.state.filteredTypes;
+  const subtype = location.state.filteredSubtypes;
   const prevURLPath = location.state.prevURL.path;
   const prevURLSearch = location.state.prevURL.search;
 
@@ -38,6 +39,7 @@ function IndividualPage() {
       state: {
         cardData: originalCardData,
         filteredTypes: type,
+        filteredSubtypes: subtype,
       },
     });
   };
@@ -47,6 +49,7 @@ function IndividualPage() {
       state: {
         cardData: originalCardData,
         filteredTypes: type,
+        filteredSubtypes: subtype,
       },
     });
   };

@@ -40,8 +40,6 @@ app.post("/search-card", async (req, res) => {
 
     await Promise.all(promises);
 
-    console.log(pokemonData);
-
     res.json(pokemonData);
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -49,30 +47,30 @@ app.post("/search-card", async (req, res) => {
   }
 });
 
-app.post("/filter-by-subtypes", async (req, res) => {
-  try {
-    const subtypeObj = req.body.query;
-    const promises = [];
-    const subtypeCardList = {};
+// app.post("/filter-by-subtypes", async (req, res) => {
+//   try {
+//     const subtypeObj = req.body.query;
+//     const promises = [];
+//     const subtypeCardList = {};
 
-    for (const subtype of subtypeObj) {
-      promises.push(
-        pokemon.card.where({ q: `subtypes:${subtype}` }).then((result) => {
-          Object.entries(result).forEach(([key, value]) => {
-            subtypeCardList[key] = value;
-          });
+//     for (const subtype of subtypeObj) {
+//       promises.push(
+//         pokemon.card.where({ q: `subtypes:${subtype}` }).then((result) => {
+//           Object.entries(result).forEach(([key, value]) => {
+//             subtypeCardList[key] = value;
+//           });
 
-          // delete subtype to prevent duplication
-          delete subtypeObj[subtype];
-        })
-      );
-    }
+//           // delete subtype to prevent duplication
+//           delete subtypeObj[subtype];
+//         })
+//       );
+//     }
 
-    await Promise.all(promises);
+//     await Promise.all(promises);
 
-    res.json(subtypeCardList);
-  } catch (error) {}
-});
+//     res.json(subtypeCardList);
+//   } catch (error) {}
+// });
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

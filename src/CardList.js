@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Row } from "react-bootstrap";
-import ShowAllCards from "./ShowAllCards";
-import TypeFilter from "./TypeFilter";
+import Cards from "./Cards";
 
 function CardList({ checkedTypes, checkedSubtypes, hpValue }) {
   const location = useLocation();
@@ -24,12 +23,15 @@ function CardList({ checkedTypes, checkedSubtypes, hpValue }) {
     setPokemonCardList(cardData);
   }, [location.state.cardData]);
 
+  /* Need to filter for subtypes with multiple subs */
   function checkFilteredType(trueTypes, cardTypes) {
-    return (
+    for (const type of cardTypes) {
       Array.isArray(cardTypes) &&
-      cardTypes.some((type) => trueTypes.includes(type))
-    );
+        cardTypes.some((type) => trueTypes.includes(type));
+    }
   }
+
+  console.log(trueTypes);
 
   const handleCardClick = (clickedCard) => {
     navigate(`/individual?${location.key}=${clickedCard.name}`, {
@@ -43,13 +45,21 @@ function CardList({ checkedTypes, checkedSubtypes, hpValue }) {
     });
   };
 
-  // filtering by hpValue not working
-  // console.log(hpValue);
-
   useEffect(() => {
-    const length = pokemonCardList?.data.filter((card) =>
-      checkFilteredType(trueTypes, card.types)
-    ).length;
+    // Filter the cards based on all conditions
+    const filteredCards = pokemonCardList?.data.filter((card) => {
+      const cardTypesMatch =
+        !anyTypeChecked || trueTypes.some((type) => card.types?.includes(type));
+      const cardSubtypesMatch =
+        !anySubtypeChecked ||
+        trueSubtypes.some((subtype) => card.subtypes?.includes(subtype));
+      const cardHPMatch =
+        hpValue <= 0 || hpValue >= 150 || parseInt(card.hp) <= hpValue;
+      return cardTypesMatch && cardSubtypesMatch && cardHPMatch;
+    });
+
+    // Calculate the length of the filtered array
+    const length = filteredCards ? filteredCards.length : 0;
 
     if (document.getElementById("length-id")) {
       if (length > 0) {
@@ -63,61 +73,32 @@ function CardList({ checkedTypes, checkedSubtypes, hpValue }) {
     }
   });
 
-  let filteredSubTypesCardData;
-
-  const filterBySubtypes = async () => {
-    try {
-      const response = await fetch("/filter-by-subtypes", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ query: trueSubtypes }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch end point");
-      }
-
-      filteredSubTypesCardData = await response.json();
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (trueSubtypes.length > 0) {
-      filterBySubtypes();
-    }
-  }, [trueSubtypes]);
-
   return (
     <>
       <Row id="card-results-count">
         {pokemonCardList?.data.length === 0 ? (
-          <>
-            <h5 className="my-3 center-for-mobile">No data found</h5>
-          </>
+          <h5 className="my-3 d-flex align-items-center justify-content-center">
+            No data found
+          </h5>
         ) : (
-          (!anyTypeChecked &&
-            pokemonCardList?.data.map((card) => (
-              <ShowAllCards
-                key={card.id}
-                card={card}
+          pokemonCardList?.data
+            .filter((card) => {
+              const cardTypesMatch =
+                !anyTypeChecked || checkFilteredType(trueTypes, card.types);
+              const cardSubtypesMatch =
+                !anySubtypeChecked ||
+                checkFilteredType(trueSubtypes, card.subtypes);
+              const cardHPMatch =
+                hpValue <= 0 || hpValue >= 150 || parseInt(card.hp) <= hpValue;
+              return cardTypesMatch && cardSubtypesMatch && cardHPMatch;
+            })
+            .map((filteredCard) => (
+              <Cards
+                key={filteredCard.id}
+                filteredCard={filteredCard}
                 onCardClick={handleCardClick}
               />
-            ))) ||
-          (anyTypeChecked &&
-            checkedTypes &&
-            pokemonCardList?.data
-              .filter((card) => checkFilteredType(trueTypes, card.types))
-              .map((filteredCard) => (
-                <TypeFilter
-                  key={filteredCard.id}
-                  filteredCard={filteredCard}
-                  onCardClick={handleCardClick}
-                />
-              )))
+            ))
         )}
       </Row>
     </>

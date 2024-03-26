@@ -48,7 +48,7 @@ h6 {
 
 input[type="checkbox"]:checked {
   background: var(--ghost) !important;
-  border: none;
+  border: none !important;
 }
 
 input[type="checkbox"]:checked::before {
@@ -80,7 +80,7 @@ input.form-range {
 .button {
   background-color: var(--ghost) !important;
   border-radius: 0px;
-  border: none;
+  border: none !important;
   margin-left: 30px;
   width: 100px;
   height: 50px;
@@ -90,7 +90,7 @@ input.form-range {
 .search-button:visited {
   background-color: #fff !important;
   border-radius: 7px;
-  border-left: none;
+  border-left: none !important;
   border-right: 1px solid #dee2e6 !important;
   border-top: 1px solid #dee2e6ee !important;
   border-bottom: 1px solid #dee2e6 !important;
@@ -101,7 +101,7 @@ input.form-range {
 .search-button:active {
   background-color: #fff !important;
   border-radius: 7px;
-  border-left: none;
+  border-left: none !important;
   border-right: 1px solid #dee2e6 !important;
   border-top: 1px solid #dee2e6ee !important;
   border-bottom: 1px solid #dee2e6 !important;
@@ -171,7 +171,7 @@ a:active {
 .btn.filter:visited {
   background-color: var(--ghost) !important;
   border-radius: 0px;
-  border: none;
+  border: none !important;
   color: #fff;
   width: 40px;
   height: 40px;
@@ -184,7 +184,7 @@ a:active {
 .btn.filter:active {
   background-color: var(--flying) !important;
   border-radius: 0px;
-  border: none;
+  border: none !important;
   color: #fff;
   display: flex;
   align-items: center;
@@ -318,8 +318,13 @@ div.spinner-border {
   background: #555;
 }
 
-#collapse-card-special {
-  padding-left: 70px;
+/* changed on mac */
+div.card-body {
+  padding-left: 0;
+}
+
+#temp-fix-for-filter-menu {
+  min-height: auto;
 }
 
 /* mobile styles */
@@ -350,7 +355,7 @@ div.spinner-border {
   .btn.mobile-filter:visited {
     background-color: var(--ghost) !important;
     border-radius: 0px;
-    border: none;
+    border: none !important;
     color: #fff;
     width: 40px;
     height: 40px;
@@ -360,7 +365,7 @@ div.spinner-border {
   .btn.mobile-filter:active {
     background-color: var(--flying) !important;
     border-radius: 0px;
-    border: none;
+    border: none !important;
     color: #fff;
   }
 
@@ -368,7 +373,7 @@ div.spinner-border {
   .btn.filter:visited {
     background-color: var(--ghost) !important;
     border-radius: 0px;
-    border: none;
+    border: none !important;
     color: #fff;
     width: 40px;
     height: 40px;
@@ -381,7 +386,7 @@ div.spinner-border {
   .btn.filter:active {
     background-color: var(--flying) !important;
     border-radius: 0px;
-    border: none;
+    border: none !important;
     color: #fff;
     display: flex;
     align-items: center;
@@ -414,12 +419,6 @@ div.spinner-border {
     padding: 25px 0 25px 0;
   }
 
-  .center-for-mobile {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
   .results-individual {
     display: none;
   }
@@ -428,7 +427,7 @@ div.spinner-border {
     min-width: 100vw;
     min-height: 100vh;
     background-color: #292a30;
-    border: none;
+    border: none !important;
     color: var(--bgcolor);
   }
 
@@ -467,6 +466,10 @@ div.spinner-border {
   #collapse-card-special {
     padding-left: 0px;
     padding-right: 10px;
+  }
+
+  #temp-fix-for-filter-menu {
+    margin-bottom: 15vh;
   }
 }
 

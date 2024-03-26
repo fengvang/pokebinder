@@ -55,6 +55,8 @@ function SearchForm() {
 
       const cardData = await response.json();
 
+      console.log(cardData);
+
       navigate(`/results?${location.key}=${pokemonName}`, {
         state: { cardData: cardData },
       });

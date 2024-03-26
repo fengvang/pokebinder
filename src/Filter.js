@@ -120,150 +120,176 @@ function Filter({
           aria-expanded={open}
           variant="light filter"
         >
-          <MuiIcon.TuneIcon />
+          {open ? <MuiIcon.CloseIcon /> : <MuiIcon.TuneIcon />}
         </Button>
       </Container>
 
-      <Collapse in={open}>
-        <Form>
-          <Card
-            body
-            style={{
-              color: "#eeebe6",
-              fontSize: "18px",
-              backgroundColor: "#292a30",
-              border: "none",
-            }}
-            id="collapse-card-special"
-          >
-            <Row>
-              <Form.Label>
-                <Row>
-                  <Col md={3}>
-                    <h6>Filter by type</h6>
-                  </Col>
-                  <Col md={3}></Col>
-                  <Col md={3}>
-                    <h6>Filter by subtype</h6>
-                  </Col>
-                </Row>
-              </Form.Label>
-              <Col xs={6} md={3}>
-                {Object.entries(typesWithIcon)
-                  .slice(0, 6)
-                  .map(([key, value]) => (
-                    <Form.Check
-                      key={key}
-                      type="checkbox"
-                      id={`checkbox-${key}`}
-                      label={
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          <img
-                            src={value.img}
-                            alt={""}
-                            style={{ width: "20px", marginRight: "10px" }}
-                          />
-                          {value.name}
-                        </div>
-                      }
-                      name={key}
-                      checked={checkedTypes[key] || false}
-                      onChange={handleTypesChange}
-                    />
-                  ))}
-              </Col>
-              <Col xs={6} md={3}>
-                {Object.entries(typesWithIcon)
-                  .slice(6)
-                  .map(([key, value]) => (
-                    <Form.Check
-                      key={key}
-                      type="checkbox"
-                      id={`checkbox-${key}`}
-                      label={
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          <img
-                            src={value.img}
-                            alt={""}
-                            style={{ width: "20px", marginRight: "10px" }}
-                          />
-                          {value.name}
-                        </div>
-                      }
-                      name={key}
-                      checked={checkedTypes[key] || false}
-                      onChange={handleTypesChange}
-                    />
-                  ))}
-              </Col>
+      <Container>
+        <Collapse in={open}>
+          <Form>
+            <Card
+              body
+              style={{
+                color: "#eeebe6",
+                fontSize: "18px",
+                backgroundColor: "#292a30",
+                border: "none",
+              }}
+              id="collapse-card-special"
+            >
+              <Row>
+                <Form.Label>
+                  <Row>
+                    <Col xs={12} md={3}>
+                      <h6>Filter by type</h6>
+                    </Col>
 
-              <Col xs={6} md={3}>
-                {Object.entries(subTypes)
-                  .slice(0, 13)
-                  .map(([key, value]) => (
-                    <Form.Check
-                      key={key}
-                      type="checkbox"
-                      id={`checkbox-${key}`}
-                      label={value}
-                      name={key}
-                      checked={checkedSubtypes[key] || false}
-                      onChange={handleSubtypesChange}
-                    />
-                  ))}
-              </Col>
+                    {window.innerWidth > 576 ? (
+                      <>
+                        <Col xs={12} md={3}></Col>
+                        <Col md={3}>
+                          <h6>Filter by subtype</h6>
+                        </Col>
+                      </>
+                    ) : null}
+                  </Row>
+                </Form.Label>
+                <Col xs={6} md={3}>
+                  {Object.entries(typesWithIcon)
+                    .slice(0, 6)
+                    .map(([key, value]) => (
+                      <Form.Check
+                        key={key}
+                        type="checkbox"
+                        id={`checkbox-${key}`}
+                        label={
+                          <div
+                            style={{ display: "flex", alignItems: "center" }}
+                          >
+                            <img
+                              src={value.img}
+                              alt={""}
+                              style={{ width: "20px", marginRight: "10px" }}
+                            />
+                            {value.name}
+                          </div>
+                        }
+                        name={key}
+                        checked={checkedTypes[key] || false}
+                        onChange={handleTypesChange}
+                      />
+                    ))}
+                </Col>
+                <Col xs={6} md={3}>
+                  {Object.entries(typesWithIcon)
+                    .slice(6)
+                    .map(([key, value]) => (
+                      <Form.Check
+                        key={key}
+                        type="checkbox"
+                        id={`checkbox-${key}`}
+                        label={
+                          <div
+                            style={{ display: "flex", alignItems: "center" }}
+                          >
+                            <img
+                              src={value.img}
+                              alt={""}
+                              style={{ width: "20px", marginRight: "10px" }}
+                            />
+                            {value.name}
+                          </div>
+                        }
+                        name={key}
+                        checked={checkedTypes[key] || false}
+                        onChange={handleTypesChange}
+                      />
+                    ))}
+                </Col>
 
-              <Col xs={6} md={3}>
-                {Object.entries(subTypes)
-                  .slice(13)
-                  .map(([key, value]) => (
-                    <Form.Check
-                      key={key}
-                      type="checkbox"
-                      id={`checkbox-${key}`}
-                      label={value}
-                      name={key}
-                      checked={checkedSubtypes[key] || false}
-                      onChange={handleSubtypesChange}
-                    />
-                  ))}
-              </Col>
-            </Row>
-            <Button className="button clear-button" onClick={clearChecks}>
-              Clear All
-            </Button>
+                {window.innerWidth < 576 ? (
+                  <>
+                    <Row style={{ marginTop: "25px" }}>
+                      <h6>Filter by subtype</h6>
+                    </Row>
+                  </>
+                ) : null}
 
-            <Row>
-              <Form.Label style={{ marginTop: "10px" }}>
-                <h6>
-                  Filter by HP, max HP:
-                  {hpValue >= 150 ? " 150+" : ` ${hpValue}`}
-                </h6>
-              </Form.Label>
-            </Row>
-            <Row>
-              <Form.Range
-                value={hpValue}
-                onChange={handleHpChange}
-                min={0}
-                max={150}
-                step={10}
-              />
-            </Row>
+                <Col xs={6} md={3}>
+                  {Object.entries(subTypes)
+                    .slice(0, 13)
+                    .map(([key, value]) => (
+                      <Form.Check
+                        key={key}
+                        type="checkbox"
+                        id={`checkbox-${key}`}
+                        label={value}
+                        name={key}
+                        checked={checkedSubtypes[key] || false}
+                        onChange={handleSubtypesChange}
+                      />
+                    ))}
+                </Col>
 
-            <Col className="d-flex justify-content-end">
-              <Button
-                className="button num-results-button"
-                id="res-length-btn"
-                style={{ display: "none" }}
-                onClick={handleSeeResultsButtonClicked}
-              >
-                <span id="length-id"></span>
+                <Col xs={6} md={3}>
+                  {Object.entries(subTypes)
+                    .slice(13)
+                    .map(([key, value]) => (
+                      <Form.Check
+                        key={key}
+                        type="checkbox"
+                        id={`checkbox-${key}`}
+                        label={value}
+                        name={key}
+                        checked={checkedSubtypes[key] || false}
+                        onChange={handleSubtypesChange}
+                      />
+                    ))}
+                </Col>
+              </Row>
+              <Button className="button clear-button" onClick={clearChecks}>
+                Clear All
               </Button>
-            </Col>
-          </Card>
-        </Form>
-      </Collapse>
+
+              <Row>
+                <Form.Label style={{ marginTop: "10px" }}>
+                  <h6>
+                    Filter by HP
+                    {hpValue >= 150
+                      ? ", max HP: 150+"
+                      : hpValue <= 0
+                      ? null
+                      : `, max HP: ${hpValue}`}
+                  </h6>
+                </Form.Label>
+              </Row>
+              <Row style={{ marginLeft: "1px" }}>
+                <Form.Range
+                  value={hpValue}
+                  onChange={handleHpChange}
+                  min={0}
+                  max={150}
+                  step={10}
+                />
+              </Row>
+
+              <Col
+                className="d-flex justify-content-end"
+                id="temp-fix-for-filter-menu"
+              >
+                <Button
+                  className="button num-results-button"
+                  id="res-length-btn"
+                  style={{ display: "none" }}
+                  onClick={handleSeeResultsButtonClicked}
+                >
+                  <span id="length-id"></span>
+                </Button>
+              </Col>
+            </Card>
+          </Form>
+        </Collapse>
+      </Container>
     </>
   );
 }
