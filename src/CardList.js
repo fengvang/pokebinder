@@ -4,7 +4,7 @@ import { Row } from "react-bootstrap";
 import ShowAllCards from "./ShowAllCards";
 import TypeFilter from "./TypeFilter";
 
-function CardList({ checkedTypes, hpValue }) {
+function CardList({ checkedTypes, checkedSubtypes, hpValue }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [pokemonCardList, setPokemonCardList] = useState(null);
@@ -12,6 +12,11 @@ function CardList({ checkedTypes, hpValue }) {
   const anyTypeChecked = Object.values(checkedTypes).includes(true);
   const trueTypes = Object.keys(checkedTypes).filter(
     (type) => checkedTypes[type]
+  );
+
+  const anySubtypeChecked = Object.values(checkedSubtypes).includes(true);
+  const trueSubtypes = Object.keys(checkedSubtypes).filter(
+    (type) => checkedSubtypes[type]
   );
 
   useEffect(() => {
@@ -33,6 +38,7 @@ function CardList({ checkedTypes, hpValue }) {
         originalCardData: location.state.cardData,
         cardData: clickedCard,
         filteredTypes: checkedTypes,
+        filteredSubtypes: checkedSubtypes,
       },
     });
   };
@@ -56,6 +62,34 @@ function CardList({ checkedTypes, hpValue }) {
       }
     }
   });
+
+  let filteredSubTypesCardData;
+
+  const filterBySubtypes = async () => {
+    try {
+      const response = await fetch("/filter-by-subtypes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query: trueSubtypes }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch end point");
+      }
+
+      filteredSubTypesCardData = await response.json();
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (trueSubtypes.length > 0) {
+      filterBySubtypes();
+    }
+  }, [trueSubtypes]);
 
   return (
     <>

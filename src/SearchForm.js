@@ -16,6 +16,7 @@ function SearchForm() {
   const [pokemonName, setpokemonName] = useState("");
   const [isLoading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [toastCountdown, setToastCountdown] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -32,7 +33,9 @@ function SearchForm() {
 
   const searchCard = async () => {
     if (!pokemonName.trim()) {
+      const delay = 5;
       setShowToast(true);
+      setToastCountdown(delay);
       return;
     }
 
@@ -47,7 +50,7 @@ function SearchForm() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch data");
+        throw new Error("Failed to fetch end point");
       }
 
       const cardData = await response.json();
@@ -68,7 +71,16 @@ function SearchForm() {
         isLoading && location.pathname !== "/" ? "hidden" : "auto";
     };
     overflowHiddenWhenIsLoading();
-  }, [isLoading, location.pathname]);
+
+    if (toastCountdown > 0) {
+      const countdownInterval = setInterval(() => {
+        setToastCountdown((prevCountdown) => prevCountdown - 1);
+      }, 1000);
+
+      // Clear the interval when toastCountdown reaches 0
+      return () => clearInterval(countdownInterval);
+    }
+  }, [isLoading, location.pathname, toastCountdown]);
 
   return (
     <Container>
@@ -139,8 +151,11 @@ function SearchForm() {
           autohide="true"
           delay="5000"
         >
-          <Toast.Header closeButton={false} closeVariant="light">
-            <strong className="mr-auto">Invalid search</strong>
+          <Toast.Header closeButton={true} closeVariant="light">
+            <strong className="me-auto">Invalid search</strong>
+            {toastCountdown > 0 ? (
+              <small>Closing in {toastCountdown}s</small>
+            ) : null}
           </Toast.Header>
           <Toast.Body>Please enter a valid Pokémon name or keyword.</Toast.Body>
         </Toast>

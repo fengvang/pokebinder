@@ -167,10 +167,33 @@ a:active {
   cursor: pointer;
 }
 
-/* need to fix */
-.main-filter {
-  position: fixed;
-  top: inherit;
+.btn.filter,
+.btn.filter:visited {
+  background-color: var(--ghost) !important;
+  border-radius: 0px;
+  border: none;
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn.filter:hover,
+.btn.filter:active {
+  background-color: var(--flying) !important;
+  border-radius: 0px;
+  border: none;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+div > form > div.card {
+  border-radius: 0px;
+  height: calc(100vh - 200px);
 }
 
 /* need to fix */
@@ -248,12 +271,12 @@ div.list > p {
 
 .loading-div {
   position: fixed;
-  top: 200px;
+  top: 190px;
   left: 0;
   z-index: 1;
   background-color: #292a30;
   min-width: 100vw;
-  min-height: calc(100% - 200px);
+  min-height: calc(100% - 190px);
   color: var(--bgcolor);
   align-items: calc((flex-start + flex-end) / 2);
 }
@@ -272,6 +295,31 @@ div.spinner-border {
   border-bottom-right-radius: calc(
     var(--bs-toast-border-radius) - var(--bs-toast-border-width)
   );
+}
+
+.num-results-button {
+  width: 130px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 70px;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+#collapse-card-special {
+  padding-left: 70px;
 }
 
 /* mobile styles */
@@ -314,6 +362,30 @@ div.spinner-border {
     border-radius: 0px;
     border: none;
     color: #fff;
+  }
+
+  .btn.filter,
+  .btn.filter:visited {
+    background-color: var(--ghost) !important;
+    border-radius: 0px;
+    border: none;
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn.filter:hover,
+  .btn.filter:active {
+    background-color: var(--flying) !important;
+    border-radius: 0px;
+    border: none;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .results-button {
@@ -375,6 +447,7 @@ div.spinner-border {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-right: -10px;
   }
 
   input.form-range {
@@ -389,6 +462,11 @@ div.spinner-border {
     min-width: 100vw;
     min-height: calc(100% - 180px);
     color: var(--bgcolor);
+  }
+
+  #collapse-card-special {
+    padding-left: 0px;
+    padding-right: 10px;
   }
 }
 
