@@ -29,6 +29,7 @@ const subTypes = {
   BREAK: "BREAK",
   Baby: "Baby",
   Basic: "Basic",
+  ex: "ex",
   EX: "EX",
   GX: "GX",
   "Goldenrod Game Corner": "Goldenrod Game Corner",
@@ -49,6 +50,7 @@ const subTypes = {
   Supporter: "Supporter",
   "TAG TEAM": "TAG TEAM",
   "Technical Machine": "Technical Machine",
+  Tera: "Tera",
   V: "V",
   VMAX: "VMAX",
 };
@@ -69,6 +71,9 @@ function Filter({
       document.getElementById("collapse-card-special").style.overflow = open
         ? "auto"
         : "hidden";
+      document.getElementById("card-results-count").style.display = open
+        ? "none"
+        : "flex";
     };
     handleBodyOverflow();
   }, [open]);
@@ -105,6 +110,7 @@ function Filter({
 
     setCheckedTypes(updatedCheckedTypes);
     setCheckedSubtypes(updatedCheckedSubtypes);
+    setHpValue(0);
   };
 
   const handleSeeResultsButtonClicked = () => {
@@ -136,6 +142,7 @@ function Filter({
                 border: "none",
               }}
               id="collapse-card-special"
+              className="my-3"
             >
               <Row>
                 <Form.Label>
@@ -247,16 +254,13 @@ function Filter({
                     ))}
                 </Col>
               </Row>
-              <Button className="button clear-button" onClick={clearChecks}>
-                Clear All
-              </Button>
 
               <Row>
                 <Form.Label style={{ marginTop: "10px" }}>
                   <h6>
                     Filter by HP
-                    {hpValue >= 150
-                      ? ", max HP: 150+"
+                    {hpValue >= 300
+                      ? ", max HP: 300+"
                       : hpValue <= 0
                       ? null
                       : `, max HP: ${hpValue}`}
@@ -268,7 +272,7 @@ function Filter({
                   value={hpValue}
                   onChange={handleHpChange}
                   min={0}
-                  max={150}
+                  max={300}
                   step={10}
                 />
               </Row>
@@ -284,6 +288,9 @@ function Filter({
                   onClick={handleSeeResultsButtonClicked}
                 >
                   <span id="length-id"></span>
+                </Button>
+                <Button className="button clear-button" onClick={clearChecks}>
+                  Clear All
                 </Button>
               </Col>
             </Card>

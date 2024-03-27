@@ -25,16 +25,14 @@ function CardList({ checkedTypes, checkedSubtypes, hpValue }) {
 
   /* Need to filter for subtypes with multiple subs */
   function checkFilteredType(trueTypes, cardTypes) {
-    for (const type of cardTypes) {
+    return (
       Array.isArray(cardTypes) &&
-        cardTypes.some((type) => trueTypes.includes(type));
-    }
+      cardTypes.some((type) => trueTypes.includes(type))
+    );
   }
 
-  console.log(trueTypes);
-
   const handleCardClick = (clickedCard) => {
-    navigate(`/individual?${location.key}=${clickedCard.name}`, {
+    navigate(`/card?${location.key}=${clickedCard.name}`, {
       state: {
         prevURL: { path: location.pathname, search: location.search },
         originalCardData: location.state.cardData,
@@ -49,12 +47,13 @@ function CardList({ checkedTypes, checkedSubtypes, hpValue }) {
     // Filter the cards based on all conditions
     const filteredCards = pokemonCardList?.data.filter((card) => {
       const cardTypesMatch =
-        !anyTypeChecked || trueTypes.some((type) => card.types?.includes(type));
+        !anyTypeChecked ||
+        trueTypes.some((type) => card.types && card.types.includes(type));
       const cardSubtypesMatch =
         !anySubtypeChecked ||
         trueSubtypes.some((subtype) => card.subtypes?.includes(subtype));
       const cardHPMatch =
-        hpValue <= 0 || hpValue >= 150 || parseInt(card.hp) <= hpValue;
+        hpValue <= 0 || hpValue >= 300 || parseInt(card.hp) <= hpValue;
       return cardTypesMatch && cardSubtypesMatch && cardHPMatch;
     });
 
@@ -62,7 +61,10 @@ function CardList({ checkedTypes, checkedSubtypes, hpValue }) {
     const length = filteredCards ? filteredCards.length : 0;
 
     if (document.getElementById("length-id")) {
-      if (length > 0) {
+      if (length === pokemonCardList?.count) {
+        document.getElementById("res-length-btn").style.display = "inline";
+        document.getElementById("length-id").innerHTML = `See all results`;
+      } else if (length > 0) {
         document.getElementById("res-length-btn").style.display = "inline";
         document.getElementById(
           "length-id"
@@ -89,7 +91,7 @@ function CardList({ checkedTypes, checkedSubtypes, hpValue }) {
                 !anySubtypeChecked ||
                 checkFilteredType(trueSubtypes, card.subtypes);
               const cardHPMatch =
-                hpValue <= 0 || hpValue >= 150 || parseInt(card.hp) <= hpValue;
+                hpValue <= 0 || hpValue >= 300 || parseInt(card.hp) <= hpValue;
               return cardTypesMatch && cardSubtypesMatch && cardHPMatch;
             })
             .map((filteredCard) => (

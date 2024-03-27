@@ -28,7 +28,7 @@ body {
   font-family: "Jaldi", sans-serif;
   font-weight: 400;
   font-style: normal;
-  font-size: 20px;
+  font-size: 19px;
 }
 
 .card-title,
@@ -208,12 +208,12 @@ div > form > div.card {
 }
 
 .clear-button {
-  margin-left: 0;
   margin-top: 0;
-  width: 80px;
-  height: 30px;
+  width: 130px;
+  height: 40px;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 input:focus,
@@ -244,15 +244,22 @@ div > form.my-3 {
 }
 
 .individual-page-image {
-  width: 100%;
+  width: 80%;
 }
 
 .list {
   margin-left: 30px;
 }
 
+.list-2 {
+  margin-left: 60px;
+}
+
 .second-row {
   margin-top: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 div.list > p {
@@ -300,6 +307,7 @@ div.spinner-border {
 .num-results-button {
   width: 130px;
   height: 40px;
+  margin-right: 0px !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -325,6 +333,22 @@ div.card-body {
 
 #temp-fix-for-filter-menu {
   min-height: auto;
+}
+
+.individual-price-container {
+  border: 1px solid var(--bs-gray);
+  border-radius: 10px;
+  padding: 25px;
+}
+
+.launch-tcgplayer {
+  color: var(--bs-gray);
+}
+
+.launch-tcgplayer:hover {
+  color: #fff;
+  cursor: pointer;
+  transition: 0.8s ease-in-out;
 }
 
 /* mobile styles */
@@ -413,8 +437,9 @@ div.card-body {
   }
 
   .individual-page-image {
-    width: 100%;
+    width: 90%;
   }
+
   div.first-row.row {
     padding: 25px 0 25px 0;
   }
@@ -446,6 +471,14 @@ div.card-body {
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .clear-button {
+    width: 120px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-right: -10px;
   }
 
@@ -470,6 +503,25 @@ div.card-body {
 
   #temp-fix-for-filter-menu {
     margin-bottom: 15vh;
+  }
+
+  .price-list {
+    margin-left: 0px;
+  }
+
+  .individual-price-container {
+    border: none;
+    margin: 0px;
+  }
+
+  .launch-tcgplayer {
+    color: var(--bs-gray);
+  }
+
+  .launch-tcgplayer:hover {
+    color: #fff;
+    cursor: pointer;
+    transition: 0.8s ease-in-out;
   }
 }
 

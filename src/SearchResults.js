@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
 import Filter from "./Filter";
 import CardList from "./CardList";
+import SearchForm from "./SearchForm";
 
 function SearchResults() {
   const location = useLocation();
@@ -73,6 +74,7 @@ function SearchResults() {
 
   return (
     <>
+      <SearchForm />
       <Filter
         checkedTypes={checkedTypes}
         setCheckedTypes={setCheckedTypes}

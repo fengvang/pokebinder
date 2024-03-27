@@ -1,13 +1,37 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import reportWebVitals from "./reportWebVitals";
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  RouterProvider,
+  Route,
+  ScrollRestoration,
+} from "react-router-dom";
+import App from "./App";
+import SearchResults from "./SearchResults";
+import IndividualPage from "./IndividualPage";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./style.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <React.Fragment>
+      <Route exact path="/" element={<App />} />
+      <Route path="/results" element={<SearchResults />} />
+      <Route path="/card" element={<IndividualPage />} />
+    </React.Fragment>
+  )
+);
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <App />
+    <RouterProvider router={router}>
+      <ScrollRestoration />
+    </RouterProvider>
   </React.StrictMode>
 );
 
