@@ -3,7 +3,6 @@ import { useLocation } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
 import Filter from "./Filter";
 import CardList from "./CardList";
-import SearchForm from "./SearchForm";
 
 function SearchResults() {
   const location = useLocation();
@@ -66,15 +65,16 @@ function SearchResults() {
     const updatedCheckedSubtypes =
       location.state.filteredSubtypes || initialCheckedSubtypes;
     setCheckedSubtypes(updatedCheckedSubtypes);
-  }, [
-    location.state.filteredTypes,
-    location.state.filteredSubtypes,
-    location.search,
-  ]);
+
+    document.getElementById("title-row").style.display = "block";
+    document.getElementById("caption-row").style.display = "block";
+    document.getElementById("search-row").style.display = "block";
+
+    // eslint-disable-next-line
+  }, [location.state.filteredTypes, location.state.filteredSubtypes]);
 
   return (
     <>
-      <SearchForm />
       <Filter
         checkedTypes={checkedTypes}
         setCheckedTypes={setCheckedTypes}

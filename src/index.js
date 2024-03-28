@@ -3,37 +3,54 @@ import ReactDOM from "react-dom/client";
 import reportWebVitals from "./reportWebVitals";
 import {
   createBrowserRouter,
-  createRoutesFromElements,
   RouterProvider,
-  Route,
+  Outlet,
   ScrollRestoration,
 } from "react-router-dom";
-import App from "./App";
+import Home from "./Home";
 import SearchResults from "./SearchResults";
 import IndividualPage from "./IndividualPage";
+import SearchBySet from "./SearchBySet";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./style.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
-const router = createBrowserRouter(
-  createRoutesFromElements(
-    <React.Fragment>
-      <Route exact path="/" element={<App />} />
-      <Route path="/results" element={<SearchResults />} />
-      <Route path="/card" element={<IndividualPage />} />
-    </React.Fragment>
-  )
-);
+function Layout() {
+  return (
+    <>
+      <Home />
+      <Outlet />
+      <ScrollRestoration />
+    </>
+  );
+}
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      {
+        path: "/results",
+        element: <SearchResults preventScrollReset={true} />,
+      },
+      {
+        path: "/card",
+        element: <IndividualPage preventScrollReset={true} />,
+      },
+      {
+        path: "/search-by-set",
+        element: <SearchBySet preventScrollReset={true} />,
+      },
+    ],
+  },
+]);
+
+console.log(router.state);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-  <React.StrictMode>
-    <RouterProvider router={router}>
-      <ScrollRestoration />
-    </RouterProvider>
-  </React.StrictMode>
-);
+root.render(<RouterProvider router={router} />);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

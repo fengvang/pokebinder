@@ -11,10 +11,12 @@ pokemon.configure({ apiKey: process.env.POKEMON_TCG_API_KEY });
 
 app.post("/search-card", async (req, res) => {
   try {
-    const [pokemonName, ...subtypeArray] = req.body.query.split(" ");
-    const pokemonSubtype = subtypeArray.join(" ");
+    const pokemonName = req.body.query.name;
+    const pokemonSubtype = req.body.query.subtype;
     const promises = [];
     const pokemonData = {};
+
+    if (pokemonSubtype === "All") pokemonSubtype = "";
 
     if (pokemonSubtype !== "") {
       promises.push(
@@ -45,6 +47,51 @@ app.post("/search-card", async (req, res) => {
     console.error("Error fetching data:", error);
     res.status(500).json({ error: "Internal server error" });
   }
+});
+
+app.post("/search-set", async (req, res) => {
+  try {
+    const pokemonName = req.body.query.name;
+    const set = req.body.query.set;
+    const promises = [];
+    const pokemonData = {};
+
+    if (pokemonName !== "") {
+      promises.push(
+        pokemon.card
+          .where({
+            q: `name:${pokemonName} subtypes:${pokemonSubtype}`,
+          })
+          .then((result) => {
+            Object.entries(result).forEach(([key, value]) => {
+              pokemonData[key] = value;
+            });
+          })
+      );
+    } else {
+      promises.push(
+        pokemon.card.where({ q: `name:${pokemonName}` }).then((result) => {
+          Object.entries(result).forEach(([key, value]) => {
+            pokemonData[key] = value;
+          });
+        })
+      );
+    }
+
+    await Promise.all(promises);
+
+    res.json(pokemonData);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Get all sets
+pokemon.set.all().then((sets) => {
+  Object.entries(sets).forEach(([key, value]) => {
+    console.log(value.series, " - ", value.name);
+  });
 });
 
 // app.post("/filter-by-subtypes", async (req, res) => {

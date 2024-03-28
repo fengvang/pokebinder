@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import * as MuiIcon from "./MuiIcons";
 import * as TypeIcon from "./Icons";
-import SearchForm from "./SearchForm";
 
 function IndividualPage() {
   const location = useLocation();
@@ -25,7 +24,7 @@ function IndividualPage() {
     formattedDateString = formattedDate.toLocaleDateString("en-US", options);
   }
 
-  // transform price type from camel case to normal
+  // transform price type (holofoil, 1st edition, reverse holofoil etc) from camel case to normal
   function formatType(type) {
     return type
       .replace(/([A-Z])/g, " $1")
@@ -34,7 +33,13 @@ function IndividualPage() {
 
   // scroll to top when page loads, for fix on mobile
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // window.scrollTo({ top: 0, behavior: "smooth" });
+
+    if (window.innerWidth < 576) {
+      document.getElementById("title-row").style.display = "none";
+      document.getElementById("caption-row").style.display = "none";
+      document.getElementById("search-row").style.display = "none";
+    }
   }, []);
 
   function getTypeImg(type) {
@@ -101,11 +106,12 @@ function IndividualPage() {
         key={index}
         src={getTypeTextImgColor(type)}
         alt={type}
-        style={{ paddingRight: "10px" }}
+        style={{ paddingRight: "8px" }}
       />
     ));
   }
 
+  // when going back, send filtered info to preserve filtering
   const goBackOnePage = () => {
     navigate(`${prevURLPath}${prevURLSearch}`, {
       state: {
@@ -132,17 +138,69 @@ function IndividualPage() {
     }
   }
 
+  const searchCard = async () => {
+    const pokemonName = card?.evolvesFrom;
+
+    try {
+      const response = await fetch("/search-card", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query: pokemonName.toLowerCase() }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch end point");
+      }
+
+      const evolvesFromPokemon = await response.json();
+
+      navigate(`/results?${pokemonName}`, {
+        state: { cardData: evolvesFromPokemon },
+      });
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   return (
     <Container style={{ marginBottom: "20px" }}>
-      <SearchForm />
-      <h1 className="d-flex align-items-center">
-        {card.name} - {card.number}
-        <img
-          src={getTypeImg(card.types[0])}
-          alt={card.types[0]}
-          style={{ paddingLeft: "10px" }}
-        />
-      </h1>
+      {window.innerWidth < 576 ? (
+        <Row style={{ marginTop: "-35px" }}>
+          <Col
+            xs="auto"
+            md={12}
+            className="d-flex align-items-center justify-content-start"
+          >
+            <h1 className="d-flex align-items-center">
+              {card.name}
+              <img
+                src={getTypeImg(card.types[0])}
+                alt={card.types[0]}
+                style={{ paddingLeft: "10px" }}
+              />
+            </h1>
+          </Col>
+        </Row>
+      ) : (
+        <Row>
+          <Col
+            xs="auto"
+            md={12}
+            className="d-flex align-items-center justify-content-start"
+          >
+            <h1 className="d-flex align-items-center">
+              {card.name}
+              <img
+                src={getTypeImg(card.types[0])}
+                alt={card.types[0]}
+                style={{ paddingLeft: "10px" }}
+              />
+            </h1>
+          </Col>
+        </Row>
+      )}
 
       {window.innerWidth < 576 ? (
         <Row xs={12}>
@@ -224,122 +282,148 @@ function IndividualPage() {
             alt={card.name}
           />
         </Col>
+
         <Col md={7} className="individual-card-info">
-          <Row className="first-row">
-            <h4>Card Description</h4>
-            <div>
-              <b>HP:</b> <i>{card.hp}</i>
-            </div>
-            <div>
-              <b>Type(s):</b>{" "}
-              <span className="mx-1">{getMultipleTypes(card.types)}</span>
-            </div>
-            <div>
-              {card.hasOwnProperty("rules") ? (
-                <div>
-                  <b>Rules:</b>
-                  {card.rules.map((rule, index) => (
-                    <div className="list" key={index}>
-                      <p>
-                        <b>{rule.split(":")[0] + ":"}</b>
-                        <i>{rule.split(":")[1]}</i>
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                ""
-              )}
-            </div>
-            <div>
-              {card.hasOwnProperty("abilities") ? (
-                <div>
-                  <b>Ability:</b>
-                  {card.abilities.map((ability, index) => (
-                    <div className="list" key={index}>
-                      <b>{ability.name}: </b>
-                      <i>{ability.text}</i>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                ""
-              )}
-            </div>
+          <h4>Card Description</h4>
 
-            <div>
-              <b>Attack(s) / (Name - Damage):</b>
-              {card.attacks.map((attack, index) => (
-                <div className="list" key={index}>
-                  <b>
+          <div>
+            <b>HP:</b> <i>{card.hp}</i>
+          </div>
+
+          <div>
+            {card.hasOwnProperty("evolvesFrom") ? (
+              <>
+                <b>Evolves from:</b> {/* doesn't link back properly */}
+                <span className="launch-evolves-from" onClick={searchCard}>
+                  {card.evolvesFrom}
+                </span>
+              </>
+            ) : (
+              ""
+            )}
+          </div>
+
+          <div>
+            <b>Type(s):</b>{" "}
+            <span className="mx-1">{getMultipleTypes(card.types)}</span>
+          </div>
+
+          <div>
+            {card.hasOwnProperty("rules") ? (
+              <div>
+                <b>Rules:</b>
+                {card.rules.map((rule, index) => (
+                  <div className="list" key={index}>
+                    <p>
+                      <b>{rule.split(":")[0] + ":"}</b>
+                      <i>{rule.split(":")[1]}</i>
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              ""
+            )}
+          </div>
+
+          <div>
+            {card.hasOwnProperty("abilities") ? (
+              <div>
+                <b>Ability:</b>
+                {card.abilities.map((ability, index) => (
+                  <div className="list" key={index}>
+                    <b>{ability.name}: </b>
+                    <i>{ability.text}</i>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              ""
+            )}
+          </div>
+
+          <div>
+            <b>Attack(s):</b>
+            {card.attacks.map((attack, index) => (
+              <Row className="list" key={index}>
+                <Row>
+                  <Col
+                    xs={5}
+                    md={5}
+                    style={{ paddingLeft: "0px", paddingRight: "0px" }}
+                  >
                     {getMultipleTypes(attack.cost)}
-                    {attack.name}{" "}
-                    {attack.damage !== "" ? `- ${attack.damage}` : ""}
-                  </b>
-                  <div className="list-2">
-                    <i>{attack.text}</i>
+                  </Col>
+                  <Col xs={7} md={5} className="d-flex justify-content-between">
+                    <span>{attack.name}</span>
+                    <span>
+                      {attack.damage !== "" ? `${attack.damage}` : ""}
+                    </span>
+                  </Col>
+                </Row>
+                <Row style={{ paddingLeft: "0px", paddingRight: "0px" }}>
+                  <i>{attack.text}</i>
+                </Row>
+              </Row>
+            ))}
+
+            <div>
+              {card.hasOwnProperty("weaknesses") ? (
+                <div>
+                  <b>Weakness:</b>
+                  {card.weaknesses.map((weakness, index) => (
+                    <div className="list" key={index}>
+                      <img
+                        src={getTypeTextImgColor(weakness.type)}
+                        alt={weakness.type}
+                        style={{ paddingRight: "8px" }}
+                      />
+                      <span>{weakness.value}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                ""
+              )}
+            </div>
+
+            <div>
+              {card.hasOwnProperty("resistances") ? (
+                <div>
+                  <b>Resistance:</b>
+                  {card.resistances.map((resistance, index) => (
+                    <div className="list" key={index}>
+                      <img
+                        src={getTypeTextImgColor(resistance.type)}
+                        alt={resistance.type}
+                        style={{ paddingRight: "8px" }}
+                      />
+                      <i>{resistance.value}</i>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                ""
+              )}
+            </div>
+
+            <div>
+              {card.hasOwnProperty("retreatCost") ? (
+                <div>
+                  <b>Retreat:</b>
+                  <div className="list">
+                    {getMultipleTypes(card.retreatCost)}
                   </div>
                 </div>
-              ))}
-
-              <div>
-                {card.hasOwnProperty("weaknesses") ? (
-                  <div>
-                    <b>Weakness:</b>
-                    {card.weaknesses.map((weakness, index) => (
-                      <div className="list" key={index}>
-                        <img
-                          src={getTypeTextImgColor(weakness.type)}
-                          alt={weakness.type}
-                          style={{ paddingRight: "10px" }}
-                        />
-                        <span>{weakness.value}</span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  ""
-                )}
-              </div>
-
-              <div>
-                {card.hasOwnProperty("resistances") ? (
-                  <div>
-                    <b>Resistance:</b>
-                    {card.resistances.map((resistance, index) => (
-                      <div className="list" key={index}>
-                        <img
-                          src={getTypeTextImgColor(resistance.type)}
-                          alt={resistance.type}
-                          style={{ paddingRight: "10px" }}
-                        />
-                        <i>{resistance.value}</i>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  ""
-                )}
-              </div>
-
-              <div>
-                {card.hasOwnProperty("retreatCost") ? (
-                  <div>
-                    <b>Retreat:</b>
-                    <div className="list">
-                      {getMultipleTypes(card.retreatCost)}
-                    </div>
-                  </div>
-                ) : (
-                  ""
-                )}
-              </div>
-
-              <div>
-                <b>Artist:</b> <i>{card.artist}</i>
-              </div>
+              ) : (
+                ""
+              )}
             </div>
-          </Row>
+
+            <div>
+              <b>Artist:</b> <i>{card.artist}</i>
+            </div>
+          </div>
         </Col>
       </Row>
 

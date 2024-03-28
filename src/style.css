@@ -88,23 +88,23 @@ input.form-range {
 
 .search-button,
 .search-button:visited {
-  background-color: #fff !important;
+  background-color: var(--ghost) !important;
   border-radius: 7px;
   border-left: none !important;
-  border-right: 1px solid #dee2e6 !important;
-  border-top: 1px solid #dee2e6ee !important;
-  border-bottom: 1px solid #dee2e6 !important;
+  border-right: 1px solid var(--ghost) !important;
+  border-top: 1px solid var(--ghost) !important;
+  border-bottom: 1px solid var(--ghost) !important;
   margin-left: -10px !important;
 }
 
 .search-button:hover,
 .search-button:active {
-  background-color: #fff !important;
+  background-color: var(--ghost) !important;
   border-radius: 7px;
   border-left: none !important;
-  border-right: 1px solid #dee2e6 !important;
-  border-top: 1px solid #dee2e6ee !important;
-  border-bottom: 1px solid #dee2e6 !important;
+  border-right: 1px solid var(--ghost) !important;
+  border-top: 1px solid var(--ghost) !important;
+  border-bottom: 1px solid var(--ghost) !important;
   margin-left: -10px !important;
 }
 
@@ -121,7 +121,7 @@ input.form-range {
 
 .bi.bi-search:hover {
   color: #595c5f;
-  transition: 0.5s ease-in-out;
+  transition: 0.15s ease-in-out;
 }
 
 a:link,
@@ -133,7 +133,7 @@ a:visited {
 a:hover,
 a:active {
   color: var(--flying);
-  transition: 0.8s ease;
+  transition: 0.15s ease;
 }
 
 .button:hover {
@@ -241,6 +241,9 @@ div > form.my-3 {
 
 .individual-image-col {
   min-height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .individual-page-image {
@@ -248,11 +251,11 @@ div > form.my-3 {
 }
 
 .list {
-  margin-left: 30px;
+  margin-left: 15px;
 }
 
 .list-2 {
-  margin-left: 60px;
+  margin-left: 30px;
 }
 
 .second-row {
@@ -348,7 +351,48 @@ div.card-body {
 .launch-tcgplayer:hover {
   color: #fff;
   cursor: pointer;
-  transition: 0.8s ease-in-out;
+  transition: 0.15s ease-in-out;
+}
+
+.launch-evolves-from {
+  color: var(--ghost);
+}
+
+.launch-evolves-from:hover {
+  color: var(--flying);
+  transition: 0.15s ease-in-out;
+  cursor: pointer;
+}
+
+.main-search-bar {
+  border-right: none !important;
+}
+
+input[type="text"] {
+  width: 180px !important;
+  -webkit-transition: width 0.35s ease-in-out;
+  transition: width 0.35s ease-in-out;
+}
+input[type="text"]:focus {
+  width: 260px !important;
+}
+
+.form-control:focus {
+  box-shadow: 0px 0px 5px var(--ghost) !important;
+  outline: none;
+}
+
+select.subtype-select {
+  font-size: 1rem;
+  color: var(--bs-body-color);
+  background-color: rgba(255, 255, 255, 0.95);
+  border-top: 1px solid #dee2e6 !important;
+  border-bottom: 1px solid #dee2e6 !important;
+  border-left: 1px solid #dee2e6 !important;
+  border-right: none !important;
+  width: 100px;
+  margin-right: 10px;
+  padding-left: 5px;
 }
 
 /* mobile styles */
@@ -365,10 +409,6 @@ div.card-body {
 
   a > h1 {
     color: var(--bgcolor);
-  }
-
-  input#floatingInput.form-control {
-    max-width: 80vw;
   }
 
   .button {
@@ -521,7 +561,11 @@ div.card-body {
   .launch-tcgplayer:hover {
     color: #fff;
     cursor: pointer;
-    transition: 0.8s ease-in-out;
+    transition: 0.15s ease-in-out;
+  }
+
+  .individual-card-info {
+    padding-top: 15px;
   }
 }
 

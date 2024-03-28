@@ -14,6 +14,7 @@ import Form from "react-bootstrap/Form";
 
 function SearchForm() {
   const [pokemonName, setpokemonName] = useState("");
+  const [pokemonSubtype, setPokemonSubtype] = useState("");
   const [isLoading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastCountdown, setToastCountdown] = useState("");
@@ -22,6 +23,10 @@ function SearchForm() {
 
   const handleInputChange = (event) => {
     setpokemonName(event.target.value);
+  };
+
+  const handlePokemonSubtypeChange = (event) => {
+    setPokemonSubtype(event.target.value);
   };
 
   const handleKeyPress = (event) => {
@@ -46,7 +51,9 @@ function SearchForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ query: pokemonName.toLowerCase() }),
+        body: JSON.stringify({
+          query: { name: pokemonName, subtype: pokemonSubtype },
+        }),
       });
 
       if (!response.ok) {
@@ -55,7 +62,7 @@ function SearchForm() {
 
       const cardData = await response.json();
 
-      navigate(`/results?${location.key}=${pokemonName}`, {
+      navigate(`/results?${pokemonName}`, {
         state: { cardData: cardData },
       });
     } catch (error) {
@@ -82,6 +89,9 @@ function SearchForm() {
     }
   }, [isLoading, location.pathname, toastCountdown]);
 
+  console.log(pokemonName);
+  console.log(pokemonSubtype);
+
   return (
     <Container>
       {/* if root header should be in middle of page; otherwise, render at top */}
@@ -98,7 +108,7 @@ function SearchForm() {
           </Col>
         </Row>
       ) : (
-        <Row style={{ marginTop: "25px" }}>
+        <Row style={{ marginTop: "25px" }} id="title-row">
           <Col className="d-flex justify-content-center align-items-center">
             <a className="title-link" href="/">
               {pokemonName === "" ? (
@@ -116,10 +126,12 @@ function SearchForm() {
           className="d-flex justify-content-center align-items-center"
           style={{ marginBottom: "20px" }}
         >
-          By Feng Vang with&nbsp;
-          <a href="http://pokemontcg.io" target="_blank" rel="noreferrer">
-            Pokémon TCG API
-          </a>
+          <span id="caption-row">
+            By Feng Vang with&nbsp;
+            <a href="http://pokemontcg.io" target="_blank" rel="noreferrer">
+              Pokémon TCG API
+            </a>
+          </span>
         </Col>
       </Row>
       <Row>
@@ -127,7 +139,7 @@ function SearchForm() {
           className="d-flex justify-content-center align-items-center"
           style={{ marginBottom: "25px" }}
         >
-          <Form>
+          <Form id="search-row">
             <InputGroup>
               <Form.Control
                 type="text"
@@ -135,7 +147,49 @@ function SearchForm() {
                 value={pokemonName}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyPress}
+                className="main-search-bar"
               />
+              <Form.Select
+                aria-label="Subtype dropdown"
+                bsPrefix="subtype-select"
+                value={pokemonSubtype}
+                onChange={handlePokemonSubtypeChange}
+                onKeyDown={handleKeyPress}
+              >
+                <option defaultValue="">Subtype</option>
+                <option value="All">All</option>
+                <option value="BREAK">BREAK</option>
+                <option value="Baby">Baby</option>
+                <option value="Basic">Basic</option>
+                <option value="ex">ex</option>
+                <option value="EX">EX</option>
+                <option value="GX">GX</option>
+                <option value="Goldenrod Game Corner">
+                  Goldenrod Game Corner
+                </option>
+                <option value="Item">Item</option>
+                <option value="LEGEND">LEGEND</option>
+                <option value="Level-Up">Level-Up</option>
+                <option value="MEGA">MEGA</option>
+                <option value="Pokémon Tool">Pokémon Tool</option>
+                <option value="Pokémon Tool F">Pokémon Tool F</option>
+                <option value="Rapid Strike">Rapid Strike</option>
+                <option value="Restored">Restored</option>
+                <option value="Rocket's Secret Machine">
+                  Rocket's Secret Machine
+                </option>
+                <option value="Single Strike">Single Strike</option>
+                <option value="Special">Special</option>
+                <option value="Stadium">Stadium</option>
+                <option value="Stage 1">Stage 1</option>
+                <option value="Stage 2">Stage 2</option>
+                <option value="Supporter">Supporter</option>
+                <option value="TAG TEAM">TAG TEAM</option>
+                <option value="Technical Machine">Technical Machine</option>
+                <option value="Tera">Tera</option>
+                <option value="V">V</option>
+                <option value="VMAX">VMAX</option>
+              </Form.Select>
               <Button className="search-button" onClick={searchCard}>
                 <i className="bi bi-search"></i>
               </Button>
@@ -168,12 +222,16 @@ function SearchForm() {
             role="status"
             style={{ marginTop: "0px" }}
           />
-          {pokemonName ? `Loading results for "${pokemonName}"` : null}
+          {pokemonName
+            ? `Loading results for "${pokemonName} ${pokemonSubtype}"`
+            : null}
         </Row>
       ) : isLoading && location.pathname !== "/" ? (
         <Row className="d-flex flex-column justify-content-center align-items-center loading-div">
           <Spinner animation="border" role="status" />
-          {pokemonName ? `Loading results for "${pokemonName}"` : null}
+          {pokemonName
+            ? `Loading results for "${pokemonName} ${pokemonSubtype}"`
+            : null}
         </Row>
       ) : null}
     </Container>
