@@ -15,6 +15,7 @@ import Form from "react-bootstrap/Form";
 function SearchBySet() {
   const [pokemonName, setpokemonName] = useState("");
   const [set, setSet] = useState("");
+  const [setSeries, setSetSeries] = useState("");
   const [isLoading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastCountdown, setToastCountdown] = useState("");
@@ -27,6 +28,7 @@ function SearchBySet() {
 
   const handleSetChange = (event) => {
     setSet(event.target.value);
+    setSetSeries(event.target.selectedOptions[0].parentNode.label);
   };
 
   const handleKeyPress = (event) => {
@@ -65,6 +67,8 @@ function SearchBySet() {
 
       const cardData = await response.json();
 
+      console.log(cardData);
+
       navigate(`/results?${pokemonName}${set}`, {
         state: { cardData: cardData },
       });
@@ -91,9 +95,6 @@ function SearchBySet() {
       return () => clearInterval(countdownInterval);
     }
   }, [isLoading, location.pathname, toastCountdown]);
-
-  console.log(pokemonName);
-  console.log(set);
 
   return (
     <Container>
@@ -427,14 +428,6 @@ function SearchBySet() {
             </InputGroup>
           </Form>
         </Col>
-        <div
-          className="d-flex justify-content-center align-items-center"
-          style={{ fontSize: ".78em" }}
-        >
-          <Link to="/" className="text-decoration-none">
-            I changed my mind.
-          </Link>
-        </div>
       </Row>
 
       <ToastContainer position="middle-center">
@@ -454,7 +447,7 @@ function SearchBySet() {
         </Toast>
       </ToastContainer>
 
-      {isLoading && location.pathname === "/" ? (
+      {isLoading && location.pathname === "/search-by-set" ? (
         <Row className="d-flex flex-column justify-content-center align-items-center">
           <Spinner
             animation="border"
@@ -462,17 +455,23 @@ function SearchBySet() {
             style={{ marginTop: "0px" }}
           />
           {pokemonName
-            ? `Loading results for "${pokemonName} in ${set}"`
-            : null}
-        </Row>
-      ) : isLoading && location.pathname !== "/" ? (
-        <Row className="d-flex flex-column justify-content-center align-items-center loading-div">
-          <Spinner animation="border" role="status" />
-          {pokemonName
-            ? `Loading results for "${pokemonName} in ${set}"`
+            ? `Loading results for "${pokemonName} in ${setSeries} - ${set}"`
             : null}
         </Row>
       ) : null}
+
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ fontSize: ".78em" }}
+      >
+        <Link to="/" className="text-decoration-none">
+          Changed your mind?
+        </Link>
+        <span style={{ marginLeft: "10px", marginRight: "10px" }}></span>
+        <Link to="/sets" className="text-decoration-none">
+          Or browse by sets instead.
+        </Link>
+      </div>
     </Container>
   );
 }

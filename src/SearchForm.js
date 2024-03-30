@@ -62,6 +62,8 @@ function SearchForm() {
 
       const cardData = await response.json();
 
+      console.log(cardData);
+
       navigate(`/results?${pokemonName}`, {
         state: { cardData: cardData },
       });
@@ -205,7 +207,7 @@ function SearchForm() {
           autohide="true"
           delay="5000"
         >
-          <Toast.Header closeButton={true} closeVariant="light">
+          <Toast.Header closeButton={true}>
             <strong className="me-auto">Invalid search</strong>
             {toastCountdown > 0 ? (
               <small>Closing in {toastCountdown}s</small>

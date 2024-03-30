@@ -1,7 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Jaldi:wght@400;700&family=Sulphur+Point:wght@300;400;700&display=swap");
 
 :root {
-  --bgcolor: #eeebe6;
+  --textcolor: #eeebe6;
+  --bgcolor: #24292e;
   --normal: #a8a77a;
   --fire: #ee8130;
   --water: #6390f0;
@@ -23,8 +24,8 @@
 }
 
 body {
-  background-color: #292a30;
-  color: var(--bgcolor);
+  background-color: var(--bgcolor);
+  color: var(--textcolor);
   font-family: "Jaldi", sans-serif;
   font-weight: 400;
   font-style: normal;
@@ -33,7 +34,7 @@ body {
 
 .card-title,
 .card-text {
-  color: var(--bgcolor);
+  color: var(--textcolor);
 }
 
 h1,
@@ -42,7 +43,7 @@ h3,
 h4,
 h5,
 h6 {
-  color: var(--bgcolor);
+  color: var(--textcolor);
   font-weight: bold;
 }
 
@@ -284,10 +285,10 @@ div.list > p {
   top: 190px;
   left: 0;
   z-index: 1;
-  background-color: #292a30;
+  background-color: var(--bgcolor);
   min-width: 100vw;
   min-height: calc(100% - 190px);
-  color: var(--bgcolor);
+  color: var(--textcolor);
   align-items: calc((flex-start + flex-end) / 2);
 }
 
@@ -298,7 +299,7 @@ div.spinner-border {
 
 .toast-body {
   background-color: var(--ghost);
-  color: var(--bgcolor);
+  color: var(--textcolor);
   border-bottom-left-radius: calc(
     var(--bs-toast-border-radius) - var(--bs-toast-border-width)
   );
@@ -395,6 +396,11 @@ select.subtype-select {
   padding-left: 5px;
 }
 
+/* .WizardsBlackStarPromos {
+  width: auto !important;
+  height: 100px !important;
+} */
+
 /* mobile styles */
 @media only screen and (max-width: 576px) {
   h1,
@@ -408,7 +414,7 @@ select.subtype-select {
   }
 
   a > h1 {
-    color: var(--bgcolor);
+    color: var(--textcolor);
   }
 
   .button {
@@ -491,9 +497,9 @@ select.subtype-select {
   .dropdown-menu {
     min-width: 100vw;
     min-height: 100vh;
-    background-color: #292a30;
+    background-color: var(--bgcolor);
     border: none !important;
-    color: var(--bgcolor);
+    color: var(--text);
   }
 
   button.dropdown-toggle::after {
@@ -530,10 +536,10 @@ select.subtype-select {
     top: 180px;
     left: 0;
     z-index: 1;
-    background-color: #292a30;
+    background-color: var(--bgcolor);
     min-width: 100vw;
     min-height: calc(100% - 180px);
-    color: var(--bgcolor);
+    color: var(--textcolor);
   }
 
   #collapse-card-special {

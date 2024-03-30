@@ -55,32 +55,70 @@ app.post("/search-set", async (req, res) => {
     const set = req.body.query.set;
     const promises = [];
     const pokemonData = {};
+    const filteredPokemonSetData = {};
 
+    // get Pokemon by name and set
     if (pokemonName !== "") {
       promises.push(
         pokemon.card
           .where({
-            q: `name:${pokemonName} subtypes:${pokemonSubtype}`,
+            q: `name:${pokemonName}`,
           })
           .then((result) => {
             Object.entries(result).forEach(([key, value]) => {
               pokemonData[key] = value;
             });
+
+            Object.entries(pokemonData).forEach(([key, value]) => {
+              if (Array.isArray(value)) {
+                value.forEach((pokemon) => {
+                  if (pokemon.set.name === set) {
+                    if (!filteredPokemonSetData[key]) {
+                      filteredPokemonSetData[key] = [];
+                    }
+                    filteredPokemonSetData[key].push(pokemon);
+                  }
+                });
+              }
+            });
           })
-      );
-    } else {
-      promises.push(
-        pokemon.card.where({ q: `name:${pokemonName}` }).then((result) => {
-          Object.entries(result).forEach(([key, value]) => {
-            pokemonData[key] = value;
-          });
-        })
       );
     }
 
     await Promise.all(promises);
+    res.json(filteredPokemonSetData);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
-    res.json(pokemonData);
+app.post("/get-series", async (req, res) => {
+  try {
+    const series = req.body;
+    const promises = [];
+    const data = {};
+
+    Object.entries(series).forEach(([key, value]) => {
+      value.forEach((seriesName) => {
+        data[seriesName] = {};
+        promises.push(
+          pokemon.set.all().then((sets) => {
+            Object.entries(sets).forEach(([i, set]) => {
+              if (seriesName === set.series) {
+                data[seriesName][set.name] = {};
+              }
+              if (seriesName === set.series) {
+                data[seriesName][set.name] = set.images.logo;
+              }
+            });
+          })
+        );
+      });
+    });
+
+    await Promise.all(promises);
+    res.json(data);
   } catch (error) {
     console.error("Error fetching data:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -88,11 +126,15 @@ app.post("/search-set", async (req, res) => {
 });
 
 // Get all sets
-pokemon.set.all().then((sets) => {
-  Object.entries(sets).forEach(([key, value]) => {
-    console.log(value.series, " - ", value.name);
-  });
-});
+// pokemon.set.all().then((sets) => {
+//   Object.entries(sets).forEach(([key, value]) => {
+//     console.log(value.name);
+//   });
+// });
+
+// pokemon.card.all({ q: "name:charizard subtypes:tera" }).then((result) => {
+//   console.log(result);
+// });
 
 // app.post("/filter-by-subtypes", async (req, res) => {
 //   try {
