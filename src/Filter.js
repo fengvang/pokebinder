@@ -224,7 +224,7 @@ function Filter({
 
                 <Col xs={6} md={3}>
                   {Object.entries(subTypes)
-                    .slice(0, 13)
+                    .slice(0, 14)
                     .map(([key, value]) => (
                       <Form.Check
                         key={key}
@@ -240,7 +240,7 @@ function Filter({
 
                 <Col xs={6} md={3}>
                   {Object.entries(subTypes)
-                    .slice(13)
+                    .slice(14)
                     .map(([key, value]) => (
                       <Form.Check
                         key={key}

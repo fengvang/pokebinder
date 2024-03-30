@@ -62,7 +62,7 @@ function SearchForm() {
 
       const cardData = await response.json();
 
-      console.log(cardData);
+      console.log(JSON.stringify(cardData));
 
       navigate(`/results?${pokemonName}`, {
         state: { cardData: cardData },

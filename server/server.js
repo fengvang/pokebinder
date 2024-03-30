@@ -23,6 +23,8 @@ app.post("/search-card", async (req, res) => {
         pokemon.card
           .where({
             q: `name:${pokemonName} subtypes:${pokemonSubtype}`,
+            pageSize: 16,
+            page: 1,
           })
           .then((result) => {
             Object.entries(result).forEach(([key, value]) => {
@@ -32,15 +34,19 @@ app.post("/search-card", async (req, res) => {
       );
     } else {
       promises.push(
-        pokemon.card.where({ q: `name:${pokemonName}` }).then((result) => {
-          Object.entries(result).forEach(([key, value]) => {
-            pokemonData[key] = value;
-          });
-        })
+        pokemon.card
+          .where({ q: `name:${pokemonName}`, pageSize: 16 })
+          .then((result) => {
+            Object.entries(result).forEach(([key, value]) => {
+              pokemonData[key] = value;
+            });
+          })
       );
     }
 
     await Promise.all(promises);
+
+    console.log(pokemonData);
 
     res.json(pokemonData);
   } catch (error) {
@@ -132,9 +138,11 @@ app.post("/get-series", async (req, res) => {
 //   });
 // });
 
-// pokemon.card.all({ q: "name:charizard subtypes:tera" }).then((result) => {
-//   console.log(result);
-// });
+// pokemon.card
+//   .all({ q: "name:charizard (subtypes:vmax OR subtypes:tera)" })
+//   .then((result) => {
+//     console.log(result);
+//   });
 
 // app.post("/filter-by-subtypes", async (req, res) => {
 //   try {
