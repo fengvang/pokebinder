@@ -1,20 +1,17 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Row, Col, Card } from "react-bootstrap";
+import { Row, Col, Card, Pagination } from "react-bootstrap";
 
-function CardList({ checkedTypes, checkedSubtypes, hpValue }) {
+function CardList({
+  checkedTypes,
+  checkedSubtypes,
+  hpValue,
+  pokemonName,
+  pokemonSubtype,
+}) {
   const location = useLocation();
   const navigate = useNavigate();
   const [pokemonCardList, setPokemonCardList] = useState(null);
-
-  useEffect(() => {
-    const cardData = location.state.cardData;
-    setPokemonCardList(cardData);
-
-    // const cardHPMatch =
-    //   hpValue <= 0 || hpValue >= 300 || parseInt(card.hp) <= hpValue;
-    // return cardHPMatch;
-  }, [location.state.cardData]);
 
   const handleCardClick = (clickedCard) => {
     navigate(`/card?${clickedCard.name}`, {
@@ -24,9 +21,82 @@ function CardList({ checkedTypes, checkedSubtypes, hpValue }) {
         cardData: clickedCard,
         filteredTypes: checkedTypes,
         filteredSubtypes: checkedSubtypes,
+        query: {
+          name: pokemonName,
+          subtype: pokemonSubtype,
+        },
       },
     });
   };
+
+  const goToNextPage = async (clickedPage) => {
+    try {
+      console.log("pokemon ", pokemonName);
+      console.log("subtype ", pokemonSubtype);
+      console.log("going to page ", clickedPage);
+      const response = await fetch("/search-card", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: {
+            name: pokemonName,
+            subtype: pokemonSubtype,
+            page: clickedPage,
+            pageSize: 16,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error();
+      }
+
+      const cardData = await response.json();
+
+      navigate(`/results?${pokemonName}`, {
+        state: {
+          cardData: cardData,
+          query: {
+            name: pokemonName,
+            subtype: pokemonSubtype,
+          },
+        },
+      });
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  let active = pokemonCardList?.page;
+  let items = [];
+
+  for (
+    let number = 1;
+    number <= pokemonCardList?.totalCount / pokemonCardList?.pageSize + 1;
+    number++
+  ) {
+    items.push(
+      <Pagination.Item
+        key={number}
+        active={number === active}
+        onClick={() => goToNextPage(number)}
+        linkClassName="pagination-buttons"
+      >
+        {number}
+      </Pagination.Item>
+    );
+  }
+
+  useEffect(() => {
+    const cardData = location.state.cardData;
+    setPokemonCardList(cardData);
+
+    // const cardHPMatch =
+    //   hpValue <= 0 || hpValue >= 300 || parseInt(card.hp) <= hpValue;
+    // return cardHPMatch;
+  }, [location.state.cardData]);
 
   return (
     <>
@@ -43,12 +113,15 @@ function CardList({ checkedTypes, checkedSubtypes, hpValue }) {
                   className="card-image"
                   src={card.images.large}
                   alt={card.name}
-                  onClick={handleCardClick}
+                  onClick={() => handleCardClick(card)}
                 />
               </Card>
             </Col>
           ))
         )}
+      </Row>
+      <Row className="pagination-row">
+        {items.length === 1 ? null : <Pagination>{items}</Pagination>}
       </Row>
     </>
   );

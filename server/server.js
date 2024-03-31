@@ -13,6 +13,8 @@ app.post("/search-card", async (req, res) => {
   try {
     const pokemonName = req.body.query.name;
     const pokemonSubtype = req.body.query.subtype;
+    const page = req.body.query.page;
+    const pageSize = req.body.query.pageSize;
     const promises = [];
     const pokemonData = {};
 
@@ -24,7 +26,7 @@ app.post("/search-card", async (req, res) => {
           .where({
             q: `name:${pokemonName} subtypes:${pokemonSubtype}`,
             pageSize: 16,
-            page: 1,
+            page: page,
           })
           .then((result) => {
             Object.entries(result).forEach(([key, value]) => {
@@ -35,7 +37,11 @@ app.post("/search-card", async (req, res) => {
     } else {
       promises.push(
         pokemon.card
-          .where({ q: `name:${pokemonName}`, pageSize: 16 })
+          .where({
+            q: `name:${pokemonName}`,
+            page: page,
+            pageSize: pageSize,
+          })
           .then((result) => {
             Object.entries(result).forEach(([key, value]) => {
               pokemonData[key] = value;
@@ -45,9 +51,7 @@ app.post("/search-card", async (req, res) => {
     }
 
     await Promise.all(promises);
-
     console.log(pokemonData);
-
     res.json(pokemonData);
   } catch (error) {
     console.error("Error fetching data:", error);

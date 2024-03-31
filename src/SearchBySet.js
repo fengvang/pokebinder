@@ -70,7 +70,13 @@ function SearchBySet() {
       console.log(cardData);
 
       navigate(`/results?${pokemonName}${set}`, {
-        state: { cardData: cardData },
+        state: {
+          cardData: cardData,
+          query: {
+            name: pokemonName,
+            series: setSeries,
+          },
+        },
       });
     } catch (error) {
       console.error("Error fetching data:", error);

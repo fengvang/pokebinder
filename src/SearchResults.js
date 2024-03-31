@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
-import Filter from "./Filter";
+// import Filter from "./Filter";
 import CardList from "./CardList";
 
 function SearchResults() {
@@ -55,7 +55,10 @@ function SearchResults() {
     initialCheckedSubtypes
   );
 
-  const [hpValue, setHpValue] = useState(0);
+  // const [hpValue, setHpValue] = useState(0);
+
+  const [pokemonName, setPokemonName] = useState("");
+  const [pokemonSubtype, setPokemonSubtype] = useState("");
 
   useEffect(() => {
     const updatedCheckedTypes =
@@ -70,26 +73,36 @@ function SearchResults() {
     document.getElementById("caption-row").style.display = "block";
     document.getElementById("search-row").style.display = "block";
 
+    setPokemonName(location.state.query.name);
+    setPokemonSubtype(location.state.query.subtype);
+
     // eslint-disable-next-line
-  }, [location.state.filteredTypes, location.state.filteredSubtypes]);
+  }, [
+    location.state.filteredTypes,
+    location.state.filteredSubtypes,
+    location.state.query.name,
+    location.state.query.subtype,
+  ]);
 
   return (
     <>
-      <Filter
+      {/* <Filter
         checkedTypes={checkedTypes}
         setCheckedTypes={setCheckedTypes}
         checkedSubtypes={checkedSubtypes}
         setCheckedSubtypes={setCheckedSubtypes}
         hpValue={hpValue}
         setHpValue={setHpValue}
-      />
+      /> */}
       <Container>
         <Row>
           <Col>
             <CardList
               checkedTypes={checkedTypes}
               checkedSubtypes={checkedSubtypes}
-              hpValue={hpValue}
+              // hpValue={hpValue}
+              pokemonName={pokemonName}
+              pokemonSubtype={pokemonSubtype}
             />
           </Col>
         </Row>

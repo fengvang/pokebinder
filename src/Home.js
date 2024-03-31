@@ -18,7 +18,9 @@ function Home() {
           className="d-flex justify-content-center align-items-center"
           style={{ fontSize: ".78em" }}
         >
-          <Link to="/search-by-set">Want to search by sets instead?</Link>
+          <Link to="/search-by-set" id="search-by-set-row">
+            Want to search by sets instead?
+          </Link>
         </Container>
       )}
     </>

@@ -39,6 +39,7 @@ function IndividualPage() {
       document.getElementById("title-row").style.display = "none";
       document.getElementById("caption-row").style.display = "none";
       document.getElementById("search-row").style.display = "none";
+      document.getElementById("search-by-set-row").style.display = "none";
     }
   }, []);
 
@@ -118,6 +119,10 @@ function IndividualPage() {
         cardData: originalCardData,
         filteredTypes: type,
         filteredSubtypes: subtype,
+        query: {
+          name: location.state.query.name,
+          subtype: location.state.query.subtype,
+        },
       },
     });
   };
@@ -128,6 +133,10 @@ function IndividualPage() {
         cardData: originalCardData,
         filteredTypes: type,
         filteredSubtypes: subtype,
+        query: {
+          name: location.state.query.name,
+          subtype: location.state.query.subtype,
+        },
       },
     });
   };

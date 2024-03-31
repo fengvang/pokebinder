@@ -52,7 +52,12 @@ function SearchForm() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          query: { name: pokemonName, subtype: pokemonSubtype },
+          query: {
+            name: pokemonName,
+            subtype: pokemonSubtype,
+            page: 1,
+            pageSize: 16,
+          },
         }),
       });
 
@@ -62,10 +67,14 @@ function SearchForm() {
 
       const cardData = await response.json();
 
-      console.log(JSON.stringify(cardData));
-
       navigate(`/results?${pokemonName}`, {
-        state: { cardData: cardData },
+        state: {
+          cardData: cardData,
+          query: {
+            name: pokemonName,
+            subtype: pokemonSubtype,
+          },
+        },
       });
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -90,9 +99,6 @@ function SearchForm() {
       return () => clearInterval(countdownInterval);
     }
   }, [isLoading, location.pathname, toastCountdown]);
-
-  console.log(pokemonName);
-  console.log(pokemonSubtype);
 
   return (
     <Container>

@@ -66,28 +66,32 @@ function BrowseSets() {
       {seriesLogoImg !== null &&
         Object.entries(seriesLogoImg).map(([setName, imageURL]) => (
           <React.Fragment key={setName}>
-            <h3>{setName}</h3>
+            <h1 style={{ marginTop: "80px" }}>{setName}</h1>
             <Row key={setName}>
               {Object.entries(imageURL).map(([seriesName, image]) => (
-                <Col key={seriesName}>
-                  <Card className="my-3">
+                <Col
+                  key={seriesName}
+                  xs={2}
+                  sm={2}
+                  md={4}
+                  className="series-col mx-1 my-1"
+                >
+                  <Card className="my-3 series-card">
                     <Card.Img
                       variant="top"
                       src={image}
                       style={{
-                        width: "400px",
-                        height: "200px",
+                        objectFit: "contain",
+                        height: "125px",
                       }}
                       className={`card-series-img ${removeNonLetters(
                         seriesName
                       )}`}
                     />
                     <Card.Body>
-                      <div style={{ height: "100px", overflow: "hidden" }}>
-                        <Card.Title>
-                          <h5>{seriesName}</h5>
-                        </Card.Title>
-                      </div>
+                      <Card.Title>
+                        <h4>{seriesName}</h4>
+                      </Card.Title>
                     </Card.Body>
                   </Card>
                 </Col>
