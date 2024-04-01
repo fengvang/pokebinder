@@ -57,7 +57,7 @@ function SearchForm() {
             name: pokemonName,
             subtype: pokemonSubtype,
             page: 1,
-            pageSize: 30,
+            pageSize: 32,
           },
         }),
       });

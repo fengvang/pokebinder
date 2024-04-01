@@ -29,6 +29,7 @@ function BrowseSets() {
   const [isClicked, setClicked] = useState(false);
   const [clickedSeries, setClickedSeries] = useState("");
   const [clickedSet, setClickedSet] = useState("");
+  const [dataLoaded, setdataLoaded] = useState(false);
 
   const getSets = async () => {
     setLoading(true);
@@ -83,7 +84,7 @@ function BrowseSets() {
           query: {
             setID: clickedSet.id,
             page: 1,
-            pageSize: 30,
+            pageSize: 32,
           },
         }),
       });
@@ -116,7 +117,11 @@ function BrowseSets() {
     document.body.style.overflow = isClicked ? "hidden" : "auto";
   }, [isClicked]);
 
-  console.log(seriesSets);
+  useEffect(() => {
+    if (seriesSets !== null) {
+      setdataLoaded(true);
+    }
+  }, [seriesSets]);
 
   return (
     <Container>
@@ -182,7 +187,12 @@ function BrowseSets() {
             Object.entries(seriesSets).map(([seriesName, data]) => (
               <React.Fragment key={seriesName}>
                 <h1 style={{ marginTop: "80px" }}>{seriesName}</h1>
-                <Row key={seriesName}>
+                <Row
+                  key={seriesName}
+                  className={`series-row ${
+                    dataLoaded ? "series-row-loaded" : ""
+                  }`}
+                >
                   {Object.entries(data).map(([setName, setData]) => (
                     <Col
                       key={setName}
@@ -206,6 +216,11 @@ function BrowseSets() {
                         />
                         <Card.Body>
                           <Card.Title>
+                            <img
+                              src={setData.images.symbol}
+                              alt={setName}
+                              style={{ objectFit: "contain", height: "32px" }}
+                            />
                             <h4>{setName}</h4>
                           </Card.Title>
                           <Card.Text style={{ fontSize: "1rem" }}>

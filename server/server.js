@@ -25,8 +25,8 @@ app.post("/search-card", async (req, res) => {
         pokemon.card
           .where({
             q: `name:${pokemonName} subtypes:${pokemonSubtype}`,
-            pageSize: 32,
             page: page,
+            pageSize: pageSize,
           })
           .then((result) => {
             Object.entries(result).forEach(([key, value]) => {
@@ -128,8 +128,6 @@ app.post("/get-sets", async (req, res) => {
 
     await Promise.all(promises);
 
-    console.log(data);
-
     res.json(data);
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -149,8 +147,6 @@ app.post("/get-set-data", async (req, res) => {
       page: page,
       pageSize: pageSize,
     });
-
-    console.log(data);
 
     res.json(data);
   } catch (error) {

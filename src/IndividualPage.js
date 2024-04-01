@@ -9,10 +9,11 @@ function IndividualPage() {
   const navigate = useNavigate();
   const card = location.state.cardData;
   const originalCardData = location.state.originalCardData;
-  const type = location.state.filteredTypes;
-  const subtype = location.state.filteredSubtypes;
+  // const type = location.state.filteredTypes;
+  // const subtype = location.state.filteredSubtypes;
   const prevURLPath = location.state.prevURL.path;
   const prevURLSearch = location.state.prevURL.search;
+  const set = location.state.set;
 
   let formattedDate = null;
   let options;
@@ -117,8 +118,7 @@ function IndividualPage() {
     navigate(`${prevURLPath}${prevURLSearch}`, {
       state: {
         cardData: originalCardData,
-        filteredTypes: type,
-        filteredSubtypes: subtype,
+        set: set,
         query: {
           name: location.state.query.name,
           subtype: location.state.query.subtype,
@@ -131,8 +131,7 @@ function IndividualPage() {
     navigate(`${prevURLPath}${prevURLSearch}`, {
       state: {
         cardData: originalCardData,
-        filteredTypes: type,
-        filteredSubtypes: subtype,
+        set: set,
         query: {
           name: location.state.query.name,
           subtype: location.state.query.subtype,
@@ -147,31 +146,46 @@ function IndividualPage() {
     }
   }
 
-  const searchCard = async () => {
-    const pokemonName = card?.evolvesFrom;
+  // const searchCard = async () => {
+  //   const pokemonName = card?.evolvesFrom;
 
-    try {
-      const response = await fetch("/search-card", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ query: pokemonName }),
-      });
+  //   try {
+  //     const response = await fetch("/search-card", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         query: {
+  //           name: pokemonName,
+  //           subtype: "",
+  //           page: 1,
+  //           pageSize: 32,
+  //         },
+  //       }),
+  //     });
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch end point");
-      }
+  //     if (!response.ok) {
+  //       throw new Error("Failed to fetch end point");
+  //     }
 
-      const evolvesFromPokemon = await response.json();
+  //     const evolvesFromPokemon = await response.json();
 
-      navigate(`/results?${pokemonName}`, {
-        state: { cardData: evolvesFromPokemon },
-      });
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
+  //     navigate(`/results?${pokemonName}`, {
+  //       state: {
+  //         prevURL: { path: location.pathname, search: location.search },
+  //         cardData: evolvesFromPokemon,
+  //         set: set,
+  //         query: {
+  //           name: pokemonName,
+  //           subtype: "",
+  //         },
+  //       },
+  //     });
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //   }
+  // };
 
   return (
     <Container style={{ marginBottom: "20px" }}>
@@ -297,19 +311,6 @@ function IndividualPage() {
 
           <div>
             <b>HP:</b> <i>{card.hp}</i>
-          </div>
-
-          <div>
-            {card.hasOwnProperty("evolvesFrom") ? (
-              <>
-                <b>Evolves from:</b> {/* doesn't link back properly */}
-                <span className="launch-evolves-from" onClick={searchCard}>
-                  {card.evolvesFrom}
-                </span>
-              </>
-            ) : (
-              ""
-            )}
           </div>
 
           <div>

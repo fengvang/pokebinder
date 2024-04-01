@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
 // import Filter from "./Filter";
 import CardList from "./CardList";
 
 function SearchResults() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   // set initial checked types to either false or to location state
   const initialCheckedTypes = location.state.filteredTypes || {
@@ -83,6 +84,24 @@ function SearchResults() {
     location.state.query.name,
     location.state.query.subtype,
   ]);
+
+  const prevURLPath = location.state.path;
+  const prevURLSearch = location.state.search;
+
+  window.onpopstate = function (event) {
+    navigate(`${prevURLPath}${prevURLSearch}`, {
+      state: {
+        prevURL: { path: location.pathname, search: location.search },
+        cardData: location.state.cardData,
+        filteredTypes: checkedTypes,
+        filteredSubtypes: checkedSubtypes,
+        query: {
+          name: location.state.query.name,
+          subtype: location.state.query.subtype,
+        },
+      },
+    });
+  };
 
   return (
     <>

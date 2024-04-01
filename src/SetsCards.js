@@ -1,15 +1,30 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { Container, Row, Col, Card, Pagination } from "react-bootstrap";
 
+import * as MuiIcon from "./MuiIcons";
+
 function SetsCards() {
   const location = useLocation();
   const navigate = useNavigate();
   const set = location.state.set;
-  const setData = location.state.setData;
+  const setData = location.state.setData || location.state.cardData;
+
+  const handleCardClick = (clickedCard) => {
+    navigate(`/card?${clickedCard.name}`, {
+      state: {
+        prevURL: { path: location.pathname, search: location.search },
+        originalCardData: location.state.setData,
+        cardData: clickedCard,
+        set: set,
+        query: {
+          name: clickedCard.name,
+        },
+      },
+    });
+  };
 
   const goToNextPage = async (clickedPage) => {
     try {
-      console.log(set.id);
       const response = await fetch("/get-set-data", {
         method: "POST",
         headers: {
@@ -19,7 +34,7 @@ function SetsCards() {
           query: {
             setID: set.id,
             page: clickedPage,
-            pageSize: 30,
+            pageSize: 32,
           },
         }),
       });
@@ -43,23 +58,73 @@ function SetsCards() {
 
   let active = setData?.page;
   let items = [];
+  let number;
 
-  for (
-    let number = 1;
-    number < setData?.totalCount / setData?.pageSize + 1;
-    number++
-  ) {
-    items.push(
-      <Pagination.Item
-        key={number}
-        active={number === active}
-        onClick={() => goToNextPage(number)}
-        linkClassName="pagination-buttons"
-      >
-        {number}
-      </Pagination.Item>
-    );
+  const threshold = parseInt(setData?.totalCount / setData?.pageSize + 1) + 1;
+  const currentPage = parseInt(
+    location.search.charAt(location.search.length - 1)
+  );
+
+  const nextPageValue =
+    currentPage + 1 < threshold ? currentPage + 1 : threshold;
+  const nextPage =
+    nextPageValue === threshold ? nextPageValue - 1 : nextPageValue;
+
+  const prevPageValue = currentPage - 1 > 1 ? currentPage - 1 : 1;
+  const prevPage = prevPageValue < 1 ? prevPageValue + 1 : prevPageValue;
+
+  items.push(
+    <Pagination.Item
+      key={-1}
+      onClick={() => goToNextPage(1)}
+      linkClassName="pagination-buttons first-last-next-prev-buttons"
+    >
+      <MuiIcon.FirstPageIcon />
+    </Pagination.Item>
+  );
+  items.push(
+    <Pagination.Item
+      key={0}
+      onClick={() => goToNextPage(prevPage)}
+      linkClassName="pagination-buttons first-last-next-prev-buttons"
+    >
+      <MuiIcon.NavigateBeforeIcon />
+    </Pagination.Item>
+  );
+
+  for (let number = 1; number < threshold; number++) {
+    ((num) => {
+      items.push(
+        <Pagination.Item
+          key={num}
+          active={num === active}
+          onClick={() => goToNextPage(num)}
+          linkClassName="pagination-buttons"
+        >
+          {num}
+        </Pagination.Item>
+      );
+    })(number);
   }
+
+  items.push(
+    <Pagination.Item
+      key={`next-${number + 1}`}
+      onClick={() => goToNextPage(nextPage)}
+      linkClassName="pagination-buttons first-last-next-prev-buttons"
+    >
+      <MuiIcon.NavigateNextIcon />
+    </Pagination.Item>
+  );
+  items.push(
+    <Pagination.Item
+      key={`last-${number + 2}`}
+      onClick={() => goToNextPage(threshold - 1)}
+      linkClassName="pagination-buttons first-last-next-prev-buttons"
+    >
+      <MuiIcon.LastPageIcon />
+    </Pagination.Item>
+  );
 
   return (
     <Container>
@@ -70,13 +135,18 @@ function SetsCards() {
           </h5>
         ) : (
           setData?.data.map((card) => (
-            <Col key={card.id} xs={6} sm={6} md={2} lg={2} xl={2}>
-              <Card className="my-3">
+            <Col key={card.id} xs={6} sm={6} md={3} lg={3} xl={3}>
+              <Card
+                className="my-3 d-flex justify-content-center align-items-center"
+                style={{ padding: "0px" }}
+              >
                 <Card.Img
                   className="card-image"
                   src={card.images.large}
                   alt={card.name}
                   style={{ width: "100%" }}
+                  onClick={() => handleCardClick(card)}
+                  onLoad={(e) => e.target.classList.add("card-image-loaded")}
                 />
               </Card>
             </Col>
