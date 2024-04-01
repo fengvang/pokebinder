@@ -44,7 +44,6 @@ h4,
 h5,
 h6 {
   color: var(--textcolor);
-  font-weight: bold;
 }
 
 input[type="checkbox"]:checked {
@@ -100,7 +99,7 @@ input.form-range {
 
 .search-button:hover,
 .search-button:active {
-  background-color: var(--ghost) !important;
+  background-color: #674e87 !important;
   border-radius: 7px;
   border-left: none !important;
   border-right: 1px solid var(--ghost) !important;
@@ -162,7 +161,7 @@ a:active {
 
 .card-image:hover {
   cursor: pointer;
-  transform: translateY(-15px);
+  transform: scale(1.2);
 }
 
 .btn.filter,
@@ -429,22 +428,30 @@ select.subtype-select {
 }
 
 .series-card {
-  display: flex;
+  /* display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 10px;
+  justify-content: center; */
+  padding: 5px;
 }
 
 .series-col {
-  background-color: #1b1f23;
+  background-color: rgba(0, 0, 0, 0.15);
   width: 32%;
   transition: 0.3s ease-in-out;
 }
 
 .series-col:hover {
-  background-color: #0a0c0d;
-  transform: scale(1.04);
+  background-color: rgba(0, 0, 0, 0.4);
+  transform: scaleX(1.04) scaleY(1.053);
   cursor: pointer;
+}
+
+.bi.bi.bi-search:hover {
+  color: var(--textcolor);
+}
+
+#card-results-count {
+  margin-top: 25px;
 }
 
 /* mobile styles */
@@ -456,7 +463,6 @@ select.subtype-select {
   h5,
   h6 {
     color: inherit;
-    font-weight: bold;
   }
 
   a > h1 {
@@ -622,6 +628,10 @@ select.subtype-select {
 
   .series-col {
     width: 48%;
+  }
+
+  div.text-center.loading-div-mobile {
+    width: 70vw !important;
   }
 }
 

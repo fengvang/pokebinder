@@ -12,6 +12,7 @@ import SearchResults from "./SearchResults";
 import IndividualPage from "./IndividualPage";
 import SearchBySet from "./SearchBySet";
 import BrowseSets from "./BrowseSets";
+import SetsCards from "./SetsCards";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./style.css";
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
       {
         path: "/sets",
         element: <BrowseSets preventScrollReset={true} />,
+      },
+      {
+        path: "/browse-by-set",
+        element: <SetsCards preventScrollReset={true} />,
       },
     ],
   },

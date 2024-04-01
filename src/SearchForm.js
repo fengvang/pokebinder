@@ -45,6 +45,7 @@ function SearchForm() {
     }
 
     setLoading(true);
+
     try {
       const response = await fetch("/search-card", {
         method: "POST",
@@ -56,7 +57,7 @@ function SearchForm() {
             name: pokemonName,
             subtype: pokemonSubtype,
             page: 1,
-            pageSize: 16,
+            pageSize: 30,
           },
         }),
       });
@@ -67,7 +68,7 @@ function SearchForm() {
 
       const cardData = await response.json();
 
-      navigate(`/results?${pokemonName}`, {
+      navigate(`/results?${pokemonName}&page=1`, {
         state: {
           cardData: cardData,
           query: {
@@ -110,7 +111,10 @@ function SearchForm() {
               {pokemonName === "" ? (
                 <h1>Search for Pokémon Card</h1>
               ) : (
-                <h1>Searching for "{pokemonName}"</h1>
+                <h1>
+                  Searching for "{pokemonName}
+                  {`${pokemonSubtype}` !== "All" ? ` ${pokemonSubtype}` : ""}"
+                </h1>
               )}
             </a>
           </Col>
@@ -122,7 +126,10 @@ function SearchForm() {
               {pokemonName === "" ? (
                 <h1>Search for Pokémon Card</h1>
               ) : (
-                <h1>Searching for "{pokemonName}"</h1>
+                <h1>
+                  Searching for "{pokemonName}
+                  {`${pokemonSubtype}` !== "All" ? ` ${pokemonSubtype}` : ""}"
+                </h1>
               )}
             </a>
           </Col>
@@ -231,14 +238,18 @@ function SearchForm() {
             style={{ marginTop: "0px" }}
           />
           {pokemonName
-            ? `Loading results for "${pokemonName} ${pokemonSubtype}"`
+            ? `Loading results for "${pokemonName} ${
+                pokemonSubtype !== "All" ? ` ${pokemonSubtype}` : ""
+              }"`
             : null}
         </Row>
       ) : isLoading && location.pathname !== "/" ? (
         <Row className="d-flex flex-column justify-content-center align-items-center loading-div">
           <Spinner animation="border" role="status" />
           {pokemonName
-            ? `Loading results for "${pokemonName} ${pokemonSubtype}"`
+            ? `Loading results for "${pokemonName} ${
+                pokemonSubtype !== "All" ? ` ${pokemonSubtype}` : ""
+              }"`
             : null}
         </Row>
       ) : null}

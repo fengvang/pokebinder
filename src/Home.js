@@ -3,17 +3,19 @@ import { Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import SearchForm from "./SearchForm";
+import SearchBySet from "./SearchBySet";
 
 function Home() {
   const location = useLocation();
 
   const searchBySetPath = location.pathname === "/search-by-set";
-  const browseSetsPath = location.pathname === "/sets";
+  const setsPath = location.pathname === "/sets";
+  const browseBySetsPath = location.pathname === "/browse-by-set";
 
   return (
     <>
-      {searchBySetPath || browseSetsPath ? null : <SearchForm />}
-      {searchBySetPath || browseSetsPath ? null : (
+      {searchBySetPath || setsPath || browseBySetsPath ? null : <SearchForm />}
+      {searchBySetPath || setsPath || browseBySetsPath ? null : (
         <Container
           className="d-flex justify-content-center align-items-center"
           style={{ fontSize: ".78em" }}
@@ -23,6 +25,7 @@ function Home() {
           </Link>
         </Container>
       )}
+      {browseBySetsPath ? <SearchBySet /> : null}
     </>
   );
 }

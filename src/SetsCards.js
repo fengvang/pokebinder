@@ -1,45 +1,23 @@
-import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Row, Col, Card, Pagination } from "react-bootstrap";
+import { Container, Row, Col, Card, Pagination } from "react-bootstrap";
 
-function CardList({
-  checkedTypes,
-  checkedSubtypes,
-  hpValue,
-  pokemonName,
-  pokemonSubtype,
-}) {
+function SetsCards() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [pokemonCardList, setPokemonCardList] = useState(null);
-
-  const handleCardClick = (clickedCard) => {
-    navigate(`/card?${clickedCard.name}`, {
-      state: {
-        prevURL: { path: location.pathname, search: location.search },
-        originalCardData: location.state.cardData,
-        cardData: clickedCard,
-        filteredTypes: checkedTypes,
-        filteredSubtypes: checkedSubtypes,
-        query: {
-          name: pokemonName,
-          subtype: pokemonSubtype,
-        },
-      },
-    });
-  };
+  const set = location.state.set;
+  const setData = location.state.setData;
 
   const goToNextPage = async (clickedPage) => {
     try {
-      const response = await fetch("/search-card", {
+      console.log(set.id);
+      const response = await fetch("/get-set-data", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           query: {
-            name: pokemonName,
-            subtype: pokemonSubtype,
+            setID: set.id,
             page: clickedPage,
             pageSize: 30,
           },
@@ -52,13 +30,10 @@ function CardList({
 
       const cardData = await response.json();
 
-      navigate(`/results?${pokemonName}&page=${clickedPage}`, {
+      navigate(`/browse-by-set?${set.series}=${set.name}&page=${clickedPage}`, {
         state: {
-          cardData: cardData,
-          query: {
-            name: pokemonName,
-            subtype: pokemonSubtype,
-          },
+          set: set,
+          setData: cardData,
         },
       });
     } catch (error) {
@@ -66,12 +41,12 @@ function CardList({
     }
   };
 
-  let active = pokemonCardList?.page;
+  let active = setData?.page;
   let items = [];
 
   for (
     let number = 1;
-    number <= pokemonCardList?.totalCount / pokemonCardList?.pageSize + 1;
+    number < setData?.totalCount / setData?.pageSize + 1;
     number++
   ) {
     items.push(
@@ -86,24 +61,15 @@ function CardList({
     );
   }
 
-  useEffect(() => {
-    const cardData = location.state.cardData;
-    setPokemonCardList(cardData);
-
-    // const cardHPMatch =
-    //   hpValue <= 0 || hpValue >= 300 || parseInt(card.hp) <= hpValue;
-    // return cardHPMatch;
-  }, [location.state.cardData]);
-
   return (
-    <>
+    <Container>
       <Row id="card-results-count">
-        {pokemonCardList?.data.length === 0 ? (
+        {setData?.length === 0 ? (
           <h5 className="my-3 d-flex align-items-center justify-content-center">
             No data found
           </h5>
         ) : (
-          pokemonCardList?.data.map((card) => (
+          setData?.data.map((card) => (
             <Col key={card.id} xs={6} sm={6} md={2} lg={2} xl={2}>
               <Card className="my-3">
                 <Card.Img
@@ -111,7 +77,6 @@ function CardList({
                   src={card.images.large}
                   alt={card.name}
                   style={{ width: "100%" }}
-                  onClick={() => handleCardClick(card)}
                 />
               </Card>
             </Col>
@@ -121,8 +86,8 @@ function CardList({
       <Row className="pagination-row">
         {items.length === 1 ? null : <Pagination>{items}</Pagination>}
       </Row>
-    </>
+    </Container>
   );
 }
 
-export default CardList;
+export default SetsCards;

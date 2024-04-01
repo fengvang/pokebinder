@@ -33,7 +33,7 @@ function IndividualPage() {
 
   // scroll to top when page loads, for fix on mobile
   useEffect(() => {
-    // window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "smooth" });
 
     if (window.innerWidth < 576) {
       document.getElementById("title-row").style.display = "none";

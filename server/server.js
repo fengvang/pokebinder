@@ -12,7 +12,7 @@ pokemon.configure({ apiKey: process.env.POKEMON_TCG_API_KEY });
 app.post("/search-card", async (req, res) => {
   try {
     const pokemonName = req.body.query.name;
-    const pokemonSubtype = req.body.query.subtype;
+    let pokemonSubtype = req.body.query.subtype;
     const page = req.body.query.page;
     const pageSize = req.body.query.pageSize;
     const promises = [];
@@ -25,7 +25,7 @@ app.post("/search-card", async (req, res) => {
         pokemon.card
           .where({
             q: `name:${pokemonName} subtypes:${pokemonSubtype}`,
-            pageSize: 16,
+            pageSize: 32,
             page: page,
           })
           .then((result) => {
@@ -51,7 +51,7 @@ app.post("/search-card", async (req, res) => {
     }
 
     await Promise.all(promises);
-    console.log(pokemonData);
+
     res.json(pokemonData);
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -103,7 +103,8 @@ app.post("/search-set", async (req, res) => {
   }
 });
 
-app.post("/get-series", async (req, res) => {
+// may need to rewrite
+app.post("/get-sets", async (req, res) => {
   try {
     const series = req.body;
     const promises = [];
@@ -113,13 +114,11 @@ app.post("/get-series", async (req, res) => {
       value.forEach((seriesName) => {
         data[seriesName] = {};
         promises.push(
-          pokemon.set.all().then((sets) => {
+          pokemon.set.all({ orderBy: "-releaseDate" }).then((sets) => {
             Object.entries(sets).forEach(([i, set]) => {
               if (seriesName === set.series) {
                 data[seriesName][set.name] = {};
-              }
-              if (seriesName === set.series) {
-                data[seriesName][set.name] = set.images.logo;
+                data[seriesName][set.name] = set;
               }
             });
           })
@@ -128,6 +127,9 @@ app.post("/get-series", async (req, res) => {
     });
 
     await Promise.all(promises);
+
+    console.log(data);
+
     res.json(data);
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -135,43 +137,33 @@ app.post("/get-series", async (req, res) => {
   }
 });
 
-// Get all sets
-// pokemon.set.all().then((sets) => {
-//   Object.entries(sets).forEach(([key, value]) => {
-//     console.log(value.name);
-//   });
-// });
+app.post("/get-set-data", async (req, res) => {
+  try {
+    const setID = req.body.query.setID;
+    const page = req.body.query.page;
+    const pageSize = req.body.query.pageSize;
+
+    const data = await pokemon.card.where({
+      q: `set.id:${setID}`,
+      orderBy: "number",
+      page: page,
+      pageSize: pageSize,
+    });
+
+    console.log(data);
+
+    res.json(data);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 // pokemon.card
-//   .all({ q: "name:charizard (subtypes:vmax OR subtypes:tera)" })
+//   .where({ q: "set.id:sv3pt5", orderBy: "number", page: 1, pageSize: 16 })
 //   .then((result) => {
 //     console.log(result);
 //   });
-
-// app.post("/filter-by-subtypes", async (req, res) => {
-//   try {
-//     const subtypeObj = req.body.query;
-//     const promises = [];
-//     const subtypeCardList = {};
-
-//     for (const subtype of subtypeObj) {
-//       promises.push(
-//         pokemon.card.where({ q: `subtypes:${subtype}` }).then((result) => {
-//           Object.entries(result).forEach(([key, value]) => {
-//             subtypeCardList[key] = value;
-//           });
-
-//           // delete subtype to prevent duplication
-//           delete subtypeObj[subtype];
-//         })
-//       );
-//     }
-
-//     await Promise.all(promises);
-
-//     res.json(subtypeCardList);
-//   } catch (error) {}
-// });
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
