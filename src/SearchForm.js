@@ -7,8 +7,6 @@ import {
   Button,
   InputGroup,
   Spinner,
-  ToastContainer,
-  Toast,
 } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 
@@ -16,8 +14,6 @@ function SearchForm() {
   const [pokemonName, setpokemonName] = useState("");
   const [pokemonSubtype, setPokemonSubtype] = useState("");
   const [isLoading, setLoading] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const [toastCountdown, setToastCountdown] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -37,15 +33,6 @@ function SearchForm() {
   };
 
   const searchCard = async () => {
-    if (!pokemonName.trim()) {
-      const delay = 5;
-      setShowToast(true);
-      setToastCountdown(delay);
-      return;
-    }
-
-    setLoading(true);
-
     try {
       const response = await fetch("/search-card", {
         method: "POST",
@@ -90,16 +77,7 @@ function SearchForm() {
         isLoading && location.pathname !== "/" ? "hidden" : "auto";
     };
     overflowHiddenWhenIsLoading();
-
-    if (toastCountdown > 0) {
-      const countdownInterval = setInterval(() => {
-        setToastCountdown((prevCountdown) => prevCountdown - 1);
-      }, 1000);
-
-      // Clear the interval when toastCountdown reaches 0
-      return () => clearInterval(countdownInterval);
-    }
-  }, [isLoading, location.pathname, toastCountdown]);
+  }, [isLoading, location.pathname]);
 
   return (
     <Container>
@@ -179,28 +157,28 @@ function SearchForm() {
                 <option value="ex">ex</option>
                 <option value="EX">EX</option>
                 <option value="GX">GX</option>
-                <option value="Goldenrod Game Corner">
+                <option value='"Goldenrod Game Corner"'>
                   Goldenrod Game Corner
                 </option>
                 <option value="Item">Item</option>
                 <option value="LEGEND">LEGEND</option>
                 <option value="Level-Up">Level-Up</option>
                 <option value="MEGA">MEGA</option>
-                <option value="Pokémon Tool">Pokémon Tool</option>
-                <option value="Pokémon Tool F">Pokémon Tool F</option>
-                <option value="Rapid Strike">Rapid Strike</option>
+                <option value='"Pokémon Tool"'>Pokémon Tool</option>
+                <option value='"Pokémon Tool F"'>Pokémon Tool F</option>
+                <option value='"Rapid Strike"'>Rapid Strike</option>
                 <option value="Restored">Restored</option>
-                <option value="Rocket's Secret Machine">
+                <option value='"Rocket&apos;s Secret Machine"'>
                   Rocket's Secret Machine
                 </option>
-                <option value="Single Strike">Single Strike</option>
+                <option value='"Single Strike"'>Single Strike</option>
                 <option value="Special">Special</option>
                 <option value="Stadium">Stadium</option>
-                <option value="Stage 1">Stage 1</option>
-                <option value="Stage 2">Stage 2</option>
+                <option value='"Stage 1"'>Stage 1</option>
+                <option value='"Stage 2"'>Stage 2</option>
                 <option value="Supporter">Supporter</option>
-                <option value="TAG TEAM">TAG TEAM</option>
-                <option value="Technical Machine">Technical Machine</option>
+                <option value='"TAG TEAM"'>TAG TEAM</option>
+                <option value='"Technical Machine"'>Technical Machine</option>
                 <option value="Tera">Tera</option>
                 <option value="V">V</option>
                 <option value="VMAX">VMAX</option>
@@ -212,23 +190,6 @@ function SearchForm() {
           </Form>
         </Col>
       </Row>
-
-      <ToastContainer position="middle-center">
-        <Toast
-          show={showToast}
-          onClose={() => setShowToast(false)}
-          autohide="true"
-          delay="5000"
-        >
-          <Toast.Header closeButton={true}>
-            <strong className="me-auto">Invalid search</strong>
-            {toastCountdown > 0 ? (
-              <small>Closing in {toastCountdown}s</small>
-            ) : null}
-          </Toast.Header>
-          <Toast.Body>Please enter a valid Pokémon name or keyword.</Toast.Body>
-        </Toast>
-      </ToastContainer>
 
       {isLoading && location.pathname === "/" ? (
         <Row className="d-flex flex-column justify-content-center align-items-center">

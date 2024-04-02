@@ -20,11 +20,25 @@ app.post("/search-card", async (req, res) => {
 
     if (pokemonSubtype === "All") pokemonSubtype = "";
 
-    if (pokemonSubtype !== "") {
+    if (pokemonName !== "" && pokemonSubtype !== "") {
       promises.push(
         pokemon.card
           .where({
             q: `name:${pokemonName} subtypes:${pokemonSubtype}`,
+            page: page,
+            pageSize: pageSize,
+          })
+          .then((result) => {
+            Object.entries(result).forEach(([key, value]) => {
+              pokemonData[key] = value;
+            });
+          })
+      );
+    } else if (pokemonName === "" && pokemonSubtype !== "") {
+      promises.push(
+        pokemon.card
+          .where({
+            q: `subtypes:${pokemonSubtype}`,
             page: page,
             pageSize: pageSize,
           })
