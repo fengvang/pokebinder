@@ -117,11 +117,11 @@ input.form-range {
 
 .bi.bi-search {
   color: #dee2e6;
+  transition: 0.15s ease-in-out;
 }
 
 .bi.bi-search:hover {
   color: #595c5f;
-  transition: 0.15s ease-in-out;
 }
 
 a:link,
@@ -397,7 +397,7 @@ select.subtype-select {
   padding-left: 5px;
 }
 
-.pagination {
+/* .pagination {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -420,9 +420,9 @@ select.subtype-select {
   --bs-pagination-disabled-color: var(--ghost);
   --bs-pagination-disabled-bg: var(--bgcolor);
   --bs-pagination-disabled-border-color: none;
-}
+} */
 
-.pagination-buttons {
+/* .pagination-buttons {
   border: none;
   transition: 0.15s ease-in-out;
 }
@@ -430,9 +430,42 @@ select.subtype-select {
 .pagination-buttons:hover {
   border: none;
   transition: 0.15s ease-in-out;
+} */
+
+.MuiPagination-outlined {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-top: 50px;
+  margin-bottom: 50px;
 }
 
-.first-last-next-prev-buttons {
+.css-r93niq-MuiButtonBase-root-MuiPaginationItem-root {
+  font-family: "Jaldi", sans-serif !important;
+  color: #fff !important;
+  border: 1px solid rgba(0, 0, 0, 0.4) !important;
+  transition: 0.15s ease-in-out !important;
+}
+
+.css-r93niq-MuiButtonBase-root-MuiPaginationItem-root:active {
+  border: none !important;
+}
+
+.css-r93niq-MuiButtonBase-root-MuiPaginationItem-root:hover,
+.css-r93niq-MuiButtonBase-root-MuiPaginationItem-root:active {
+  background-color: rgba(0, 0, 0, 0.4) !important;
+  color: #fff !important;
+  transform: scale(1.2) !important;
+}
+
+.css-r93niq-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected {
+  background-color: var(--ghost) !important;
+  border: 1px solid var(--flying) !important;
+  color: #fff !important;
+  transform: scale(1.2) !important;
+}
+
+/* .first-last-next-prev-buttons {
   color: var(--ghost) !important;
   padding-left: 5px;
   padding-right: 5px;
@@ -444,7 +477,7 @@ select.subtype-select {
 
 .first-last-next-prev-buttons:active {
   color: var(--textcolor) !important;
-}
+} */
 
 .series-card {
   /* display: flex;

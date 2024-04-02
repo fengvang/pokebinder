@@ -1,29 +1,37 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { Container, Row, Col, Card, Pagination } from "react-bootstrap";
-
-import * as MuiIcon from "./MuiIcons";
+import { useState } from "react";
+import { Container, Row, Col, Card } from "react-bootstrap";
+import Pagination from "@mui/material/Pagination";
 
 function SetsCards() {
   const location = useLocation();
   const navigate = useNavigate();
   const set = location.state.set;
   const setData = location.state.setData || location.state.cardData;
+  const numPages = parseInt(setData?.totalCount / setData?.pageSize + 1);
+  const [currentPage, setCurrentPage] = useState(
+    parseInt(location.search.substring(location.search.indexOf("=") + 1))
+  );
 
   const handleCardClick = (clickedCard) => {
-    navigate(`/card?${clickedCard.name}`, {
-      state: {
-        prevURL: { path: location.pathname, search: location.search },
-        originalCardData: location.state.setData,
-        cardData: clickedCard,
-        set: set,
-        query: {
-          name: clickedCard.name,
+    if (clickedCard.supertype === "Pokémon") {
+      navigate(`/card?${clickedCard.name}`, {
+        state: {
+          prevURL: { path: location.pathname, search: location.search },
+          originalCardData: setData,
+          cardData: clickedCard,
+          set: set,
+          query: {
+            name: clickedCard.name,
+          },
         },
-      },
-    });
+      });
+    } else console.log("RIP beach");
   };
 
-  const goToNextPage = async (clickedPage) => {
+  const handleChange = async (page) => {
+    setCurrentPage(page);
+
     try {
       const response = await fetch("/get-set-data", {
         method: "POST",
@@ -33,7 +41,7 @@ function SetsCards() {
         body: JSON.stringify({
           query: {
             setID: set.id,
-            page: clickedPage,
+            page: page,
             pageSize: 32,
           },
         }),
@@ -45,7 +53,7 @@ function SetsCards() {
 
       const cardData = await response.json();
 
-      navigate(`/browse-by-set?${set.series}=${set.name}&page=${clickedPage}`, {
+      navigate(`/browse-by-set?${set.series}=${set.name}&page=${page}`, {
         state: {
           set: set,
           setData: cardData,
@@ -55,76 +63,6 @@ function SetsCards() {
       console.error("Error fetching data:", error);
     }
   };
-
-  let active = setData?.page;
-  let items = [];
-  let number;
-
-  const threshold = parseInt(setData?.totalCount / setData?.pageSize + 1) + 1;
-  const currentPage = parseInt(
-    location.search.charAt(location.search.length - 1)
-  );
-
-  const nextPageValue =
-    currentPage + 1 < threshold ? currentPage + 1 : threshold;
-  const nextPage =
-    nextPageValue === threshold ? nextPageValue - 1 : nextPageValue;
-
-  const prevPageValue = currentPage - 1 > 1 ? currentPage - 1 : 1;
-  const prevPage = prevPageValue < 1 ? prevPageValue + 1 : prevPageValue;
-
-  items.push(
-    <Pagination.Item
-      key={-1}
-      onClick={() => goToNextPage(1)}
-      linkClassName="pagination-buttons first-last-next-prev-buttons"
-    >
-      <MuiIcon.FirstPageIcon />
-    </Pagination.Item>
-  );
-  items.push(
-    <Pagination.Item
-      key={0}
-      onClick={() => goToNextPage(prevPage)}
-      linkClassName="pagination-buttons first-last-next-prev-buttons"
-    >
-      <MuiIcon.NavigateBeforeIcon />
-    </Pagination.Item>
-  );
-
-  for (let number = 1; number < threshold; number++) {
-    ((num) => {
-      items.push(
-        <Pagination.Item
-          key={num}
-          active={num === active}
-          onClick={() => goToNextPage(num)}
-          linkClassName="pagination-buttons"
-        >
-          {num}
-        </Pagination.Item>
-      );
-    })(number);
-  }
-
-  items.push(
-    <Pagination.Item
-      key={`next-${number + 1}`}
-      onClick={() => goToNextPage(nextPage)}
-      linkClassName="pagination-buttons first-last-next-prev-buttons"
-    >
-      <MuiIcon.NavigateNextIcon />
-    </Pagination.Item>
-  );
-  items.push(
-    <Pagination.Item
-      key={`last-${number + 2}`}
-      onClick={() => goToNextPage(threshold - 1)}
-      linkClassName="pagination-buttons first-last-next-prev-buttons"
-    >
-      <MuiIcon.LastPageIcon />
-    </Pagination.Item>
-  );
 
   return (
     <Container>
@@ -153,8 +91,36 @@ function SetsCards() {
           ))
         )}
       </Row>
-      <Row className="pagination-row">
-        {items.length === 1 ? null : <Pagination>{items}</Pagination>}
+      <Row>
+        {window.innerWidth < 576 ? (
+          <Pagination
+            count={numPages}
+            color="primary"
+            shape="rounded"
+            variant="outlined"
+            showFirstButton={true}
+            showLastButton={true}
+            hideNextButton={true}
+            hidePrevButton={true}
+            boundaryCount={1}
+            siblingCount={1}
+            page={currentPage}
+            onChange={(event, page) => handleChange(page)}
+          />
+        ) : (
+          <Pagination
+            count={numPages}
+            color="primary"
+            shape="rounded"
+            variant="outlined"
+            showFirstButton={true}
+            showLastButton={true}
+            boundaryCount={1}
+            siblingCount={4}
+            page={currentPage}
+            onChange={(event, page) => handleChange(page)}
+          />
+        )}
       </Row>
     </Container>
   );

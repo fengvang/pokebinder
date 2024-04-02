@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Row, Col, Card, Pagination } from "react-bootstrap";
-
-import * as MuiIcon from "./MuiIcons";
+import { Row, Col, Card } from "react-bootstrap";
+import Pagination from "@mui/material/Pagination";
 
 function CardList({
   checkedTypes,
@@ -14,24 +13,34 @@ function CardList({
   const location = useLocation();
   const navigate = useNavigate();
   const [pokemonCardList, setPokemonCardList] = useState(null);
+  const numPages = parseInt(
+    pokemonCardList?.totalCount / pokemonCardList?.pageSize + 1
+  );
+  const [currentPage, setCurrentPage] = useState(
+    parseInt(location.search.substring(location.search.indexOf("=") + 1))
+  );
 
   const handleCardClick = (clickedCard) => {
-    navigate(`/card?${clickedCard.name}`, {
-      state: {
-        prevURL: { path: location.pathname, search: location.search },
-        originalCardData: location.state.cardData,
-        cardData: clickedCard,
-        filteredTypes: checkedTypes,
-        filteredSubtypes: checkedSubtypes,
-        query: {
-          name: pokemonName,
-          subtype: pokemonSubtype,
+    if (clickedCard.supertype === "Pokémon") {
+      navigate(`/card?${clickedCard.name}`, {
+        state: {
+          prevURL: { path: location.pathname, search: location.search },
+          originalCardData: location.state.cardData,
+          cardData: clickedCard,
+          filteredTypes: checkedTypes,
+          filteredSubtypes: checkedSubtypes,
+          query: {
+            name: pokemonName,
+            subtype: pokemonSubtype,
+          },
         },
-      },
-    });
+      });
+    } else console.log("RIP beach");
   };
 
-  const goToNextPage = async (clickedPage) => {
+  const handleChange = async (page) => {
+    setCurrentPage(page);
+
     try {
       const response = await fetch("/search-card", {
         method: "POST",
@@ -42,7 +51,7 @@ function CardList({
           query: {
             name: pokemonName,
             subtype: pokemonSubtype,
-            page: clickedPage,
+            page: page,
             pageSize: 32,
           },
         }),
@@ -54,7 +63,7 @@ function CardList({
 
       const cardData = await response.json();
 
-      navigate(`/results?${pokemonName}&page=${clickedPage}`, {
+      navigate(`/results?${pokemonName}&page=${page}`, {
         state: {
           cardData: cardData,
           query: {
@@ -67,78 +76,6 @@ function CardList({
       console.error("Error fetching data:", error);
     }
   };
-
-  let active = pokemonCardList?.page;
-  let items = [];
-  let number;
-
-  const threshold =
-    parseInt(pokemonCardList?.totalCount / pokemonCardList?.pageSize + 1) + 1;
-  const currentPage = parseInt(
-    location.search.charAt(location.search.length - 1)
-  );
-
-  const nextPageValue =
-    currentPage + 1 < threshold ? currentPage + 1 : threshold;
-  const nextPage =
-    nextPageValue === threshold ? nextPageValue - 1 : nextPageValue;
-
-  const prevPageValue = currentPage - 1 > 1 ? currentPage - 1 : 1;
-  const prevPage = prevPageValue < 1 ? prevPageValue + 1 : prevPageValue;
-
-  items.push(
-    <Pagination.Item
-      key={-1}
-      onClick={() => goToNextPage(1)}
-      linkClassName="pagination-buttons first-last-next-prev-buttons"
-    >
-      <MuiIcon.FirstPageIcon />
-    </Pagination.Item>
-  );
-  items.push(
-    <Pagination.Item
-      key={0}
-      onClick={() => goToNextPage(prevPage)}
-      linkClassName="pagination-buttons first-last-next-prev-buttons"
-    >
-      <MuiIcon.NavigateBeforeIcon />
-    </Pagination.Item>
-  );
-
-  for (let number = 1; number < threshold; number++) {
-    ((num) => {
-      items.push(
-        <Pagination.Item
-          key={num}
-          active={num === active}
-          onClick={() => goToNextPage(num)}
-          linkClassName="pagination-buttons"
-        >
-          {num}
-        </Pagination.Item>
-      );
-    })(number);
-  }
-
-  items.push(
-    <Pagination.Item
-      key={`next-${number + 1}`}
-      onClick={() => goToNextPage(nextPage)}
-      linkClassName="pagination-buttons first-last-next-prev-buttons"
-    >
-      <MuiIcon.NavigateNextIcon />
-    </Pagination.Item>
-  );
-
-  items.push(
-    <Pagination.Item
-      key={`last-${number + 2}`}
-      onClick={() => goToNextPage(threshold - 1)}
-      linkClassName="pagination-buttons first-last-next-prev-buttons"
-    >
-      <MuiIcon.LastPageIcon />
-    </Pagination.Item>
-  );
 
   useEffect(() => {
     const cardData = location.state.cardData;
@@ -173,8 +110,36 @@ function CardList({
           ))
         )}
       </Row>
-      <Row className="pagination-row">
-        {items.length === 1 ? null : <Pagination>{items}</Pagination>}
+      <Row>
+        {window.innerWidth < 576 ? (
+          <Pagination
+            count={numPages}
+            color="primary"
+            shape="rounded"
+            variant="outlined"
+            showFirstButton={true}
+            showLastButton={true}
+            hideNextButton={true}
+            hidePrevButton={true}
+            boundaryCount={1}
+            siblingCount={1}
+            page={currentPage}
+            onChange={(event, page) => handleChange(page)}
+          />
+        ) : (
+          <Pagination
+            count={numPages}
+            color="primary"
+            shape="rounded"
+            variant="outlined"
+            showFirstButton={true}
+            showLastButton={true}
+            boundaryCount={1}
+            siblingCount={4}
+            page={currentPage}
+            onChange={(event, page) => handleChange(page)}
+          />
+        )}
       </Row>
     </>
   );

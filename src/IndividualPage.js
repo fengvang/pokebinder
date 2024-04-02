@@ -127,6 +127,7 @@ function IndividualPage() {
     });
   };
 
+  // need to fix
   window.onpopstate = function (event) {
     navigate(`${prevURLPath}${prevURLSearch}`, {
       state: {
@@ -198,6 +199,7 @@ function IndividualPage() {
           >
             <h1 className="d-flex align-items-center">
               {card.name}
+
               <img
                 src={getTypeImg(card.types[0])}
                 alt={card.types[0]}
@@ -310,18 +312,25 @@ function IndividualPage() {
           <h4>Card Description</h4>
 
           <div>
-            <b>HP:</b> <i>{card.hp}</i>
+            <b>Set: </b>
+            <i>
+              {card.set.name} - {card.set.series}
+            </i>
           </div>
 
           <div>
-            <b>Type(s):</b>{" "}
+            <b>HP: </b> <i>{card.hp}</i>
+          </div>
+
+          <div>
+            <b>Type(s): </b>
             <span className="mx-1">{getMultipleTypes(card.types)}</span>
           </div>
 
           <div>
             {card.hasOwnProperty("rules") ? (
               <div>
-                <b>Rules:</b>
+                <b>Rules: </b>
                 {card.rules.map((rule, index) => (
                   <div className="list" key={index}>
                     <p>
@@ -339,7 +348,7 @@ function IndividualPage() {
           <div>
             {card.hasOwnProperty("abilities") ? (
               <div>
-                <b>Ability:</b>
+                <b>Ability: </b>
                 {card.abilities.map((ability, index) => (
                   <div className="list" key={index}>
                     <b>{ability.name}: </b>
@@ -353,7 +362,7 @@ function IndividualPage() {
           </div>
 
           <div>
-            <b>Attack(s):</b>
+            <b>Attack(s): </b>
             {card.attacks.map((attack, index) => (
               <Row className="list" key={index}>
                 <Row>
@@ -380,7 +389,7 @@ function IndividualPage() {
             <div>
               {card.hasOwnProperty("weaknesses") ? (
                 <div>
-                  <b>Weakness:</b>
+                  <b>Weakness: </b>
                   {card.weaknesses.map((weakness, index) => (
                     <div className="list" key={index}>
                       <img
@@ -400,7 +409,7 @@ function IndividualPage() {
             <div>
               {card.hasOwnProperty("resistances") ? (
                 <div>
-                  <b>Resistance:</b>
+                  <b>Resistance: </b>
                   {card.resistances.map((resistance, index) => (
                     <div className="list" key={index}>
                       <img
@@ -420,7 +429,7 @@ function IndividualPage() {
             <div>
               {card.hasOwnProperty("retreatCost") ? (
                 <div>
-                  <b>Retreat:</b>
+                  <b>Retreat: </b>
                   <div className="list">
                     {getMultipleTypes(card.retreatCost)}
                   </div>
@@ -431,7 +440,7 @@ function IndividualPage() {
             </div>
 
             <div>
-              <b>Artist:</b> <i>{card.artist}</i>
+              <b>Artist: </b> <i>{card.artist}</i>
             </div>
           </div>
         </Col>

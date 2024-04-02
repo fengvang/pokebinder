@@ -487,7 +487,7 @@ function SearchBySet() {
             </Link>
             <span style={{ marginLeft: "10px", marginRight: "10px" }}></span>
             <Link to="/sets" className="text-decoration-none">
-              Or browse by sets instead.
+              Browse new set.
             </Link>
           </div>
         </>
