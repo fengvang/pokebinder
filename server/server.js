@@ -169,6 +169,55 @@ app.post("/get-set-data", async (req, res) => {
   }
 });
 
+app.post("/filter-set", async (req, res) => {
+  try {
+    const setID = req.body.query.setID;
+    const type = req.body.query.type;
+    const subtype = req.body.query.subtype;
+    const page = req.body.query.page;
+    const pageSize = req.body.query.pageSize;
+
+    function getTypesQuery(type) {
+      let query = "";
+      for (let i = 0; i < type.length; i++) {
+        query += `types:${type[i]}`;
+        if (i < type.length - 1) {
+          query += " or ";
+        }
+      }
+
+      return query;
+    }
+
+    const typesQuery = getTypesQuery(type);
+
+    const data = await pokemon.card.where({
+      q: `set.id:${setID} supertype:Pokémon (${typesQuery})`,
+      orderBy: "number",
+      page: page,
+      pageSize: pageSize,
+    });
+
+    res.json(data);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// https://api.pokemontcg.io/v2/cards?q=set.id:sv3pt5%20supertype:Pokémon%20name:Charizard
+
+// pokemon.card
+//   .where({
+//     q: `set.id:sv3pt5 supertype:Pokémon (types:Colorless)`,
+//     orderBy: "number",
+//     page: 1,
+//     pageSize: 16,
+//   })
+//   .then((result) => {
+//     console.log(result);
+//   });
+
 // pokemon.card
 //   .where({ q: "set.id:sv3pt5", orderBy: "number", page: 1, pageSize: 16 })
 //   .then((result) => {

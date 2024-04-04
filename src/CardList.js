@@ -16,8 +16,11 @@ function CardList({
   const numPages = parseInt(
     pokemonCardList?.totalCount / pokemonCardList?.pageSize + 1
   );
+
+  // get page from url =P fixes problem of when click in individual card
+  // and navigating back which results in pagination to land on incorrect page
   const [currentPage, setCurrentPage] = useState(
-    parseInt(location.search.substring(location.search.indexOf("=") + 1))
+    parseInt(location.search.substring(location.search.lastIndexOf("=") + 1))
   );
 
   const handleCardClick = (clickedCard) => {
@@ -35,7 +38,7 @@ function CardList({
           },
         },
       });
-    } else console.log("RIP beach");
+    } else console.log("Not working");
   };
 
   const handleChange = async (page) => {

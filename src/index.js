@@ -12,7 +12,7 @@ import SearchResults from "./SearchResults";
 import IndividualPage from "./IndividualPage";
 import SearchBySet from "./SearchBySet";
 import BrowseSets from "./BrowseSets";
-import SetsCards from "./SetsCards";
+import BrowseBySetsResults from "./BrowseBySetsResults";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./style.css";
@@ -51,13 +51,13 @@ const router = createBrowserRouter([
       },
       {
         path: "/browse-by-set",
-        element: <SetsCards preventScrollReset={true} />,
+        element: <BrowseBySetsResults preventScrollReset={true} />,
       },
     ],
   },
 ]);
 
-console.log(router.state);
+// console.log(router.state);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<RouterProvider router={router} />);

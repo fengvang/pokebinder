@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
 import Filter from "./Filter";
-import CardList from "./CardList";
+import SetsCards from "./SetsCards";
 
-function SearchResults() {
+function BrowseBySetsResults() {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -58,9 +58,6 @@ function SearchResults() {
 
   const [hpValue, setHpValue] = useState(0);
 
-  const [pokemonName, setPokemonName] = useState("");
-  const [pokemonSubtype, setPokemonSubtype] = useState("");
-
   useEffect(() => {
     const updatedCheckedTypes =
       location.state.filteredTypes || initialCheckedTypes;
@@ -70,20 +67,12 @@ function SearchResults() {
       location.state.filteredSubtypes || initialCheckedSubtypes;
     setCheckedSubtypes(updatedCheckedSubtypes);
 
-    document.getElementById("title-row").style.display = "block";
-    document.getElementById("caption-row").style.display = "block";
-    document.getElementById("search-row").style.display = "block";
-
-    setPokemonName(location.state.query.name);
-    setPokemonSubtype(location.state.query.subtype);
+    // document.getElementById("title-row").style.display = "block";
+    // document.getElementById("caption-row").style.display = "block";
+    // document.getElementById("search-row").style.display = "block";
 
     // eslint-disable-next-line
-  }, [
-    location.state.filteredTypes,
-    location.state.filteredSubtypes,
-    location.state.query.name,
-    location.state.query.subtype,
-  ]);
+  }, [location.state.filteredTypes, location.state.filteredSubtypes]);
 
   const prevURLPath = location.state.path;
   const prevURLSearch = location.state.search;
@@ -95,10 +84,6 @@ function SearchResults() {
         cardData: location.state.cardData,
         filteredTypes: checkedTypes,
         filteredSubtypes: checkedSubtypes,
-        query: {
-          name: location.state.query.name,
-          subtype: location.state.query.subtype,
-        },
       },
     });
   };
@@ -116,12 +101,10 @@ function SearchResults() {
       <Container>
         <Row>
           <Col>
-            <CardList
+            <SetsCards
               checkedTypes={checkedTypes}
               checkedSubtypes={checkedSubtypes}
               hpValue={hpValue}
-              pokemonName={pokemonName}
-              pokemonSubtype={pokemonSubtype}
             />
           </Col>
         </Row>
@@ -130,4 +113,4 @@ function SearchResults() {
   );
 }
 
-export default SearchResults;
+export default BrowseBySetsResults;

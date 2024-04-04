@@ -1,16 +1,26 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
 import Pagination from "@mui/material/Pagination";
 
-function SetsCards() {
+function SetsCards({ checkedTypes, checkedSubtypes, hpValue }) {
   const location = useLocation();
   const navigate = useNavigate();
   const set = location.state.set;
   const setData = location.state.setData || location.state.cardData;
   const numPages = parseInt(setData?.totalCount / setData?.pageSize + 1);
+  const trueTypes = Object.keys(checkedTypes).filter(
+    (key) => checkedTypes[key]
+  );
+  const trueSubtypes = Object.keys(checkedSubtypes).filter(
+    (key) => checkedSubtypes[key]
+  );
+  const [typeLength, setTypeLength] = useState(0);
+
+  // get page from url =P fixes problem of when click in individual card
+  // and navigating back which results in pagination to land on incorrect page
   const [currentPage, setCurrentPage] = useState(
-    parseInt(location.search.substring(location.search.indexOf("=") + 1))
+    parseInt(location.search.substring(location.search.lastIndexOf("=") + 1))
   );
 
   const handleCardClick = (clickedCard) => {
@@ -26,10 +36,10 @@ function SetsCards() {
           },
         },
       });
-    } else console.log("RIP beach");
+    } else console.log("Not working");
   };
 
-  const handleChange = async (page) => {
+  const handlePageChange = async (page) => {
     setCurrentPage(page);
 
     try {
@@ -63,6 +73,57 @@ function SetsCards() {
       console.error("Error fetching data:", error);
     }
   };
+
+  // filtering not working
+  const handleFilterChange = async () => {
+    try {
+      const response = await fetch("/filter-set", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: {
+            setID: set.id,
+            type: trueTypes,
+            subtype: trueSubtypes,
+            page: 1,
+            pageSize: 32,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error();
+      }
+
+      const cardData = await response.json();
+
+      navigate(
+        `/browse-by-set?${set.series}=${set.name}&types=${trueTypes}&page=${1}`,
+        {
+          state: {
+            set: set,
+            setData: cardData,
+          },
+        }
+      );
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    console.log("trueTypes.length", trueTypes.length);
+    console.log("typeLength", typeLength);
+    if (trueTypes.length !== typeLength && trueTypes.length !== 0) {
+      console.log("change detected");
+      setTypeLength(trueTypes.length);
+      handleFilterChange();
+    }
+
+    // eslint-disable-next-line
+  }, [trueTypes, trueSubtypes, typeLength]);
 
   return (
     <Container>
@@ -105,7 +166,7 @@ function SetsCards() {
             boundaryCount={1}
             siblingCount={1}
             page={currentPage}
-            onChange={(event, page) => handleChange(page)}
+            onChange={(event, page) => handlePageChange(page)}
           />
         ) : (
           <Pagination
@@ -118,7 +179,7 @@ function SetsCards() {
             boundaryCount={1}
             siblingCount={4}
             page={currentPage}
-            onChange={(event, page) => handleChange(page)}
+            onChange={(event, page) => handlePageChange(page)}
           />
         )}
       </Row>
