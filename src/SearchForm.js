@@ -17,14 +17,17 @@ function SearchForm() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // set pokemon name
   const handleInputChange = (event) => {
     setpokemonName(event.target.value);
   };
 
+  // set pokemon subtype (optional)
   const handlePokemonSubtypeChange = (event) => {
     setPokemonSubtype(event.target.value);
   };
 
+  // event for enter key on keyboard
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
@@ -32,6 +35,7 @@ function SearchForm() {
     }
   };
 
+  // get card data for provided pokemon name and subtype if provided
   const searchCard = async () => {
     try {
       const response = await fetch("/search-card", {
@@ -53,9 +57,11 @@ function SearchForm() {
         throw new Error("Failed to fetch end point");
       }
 
+      // store response
       const cardData = await response.json();
 
-      navigate(`/results?${pokemonName}&page=1`, {
+      // navigate to next page with results
+      navigate(`/results`, {
         state: {
           cardData: cardData,
           query: {
@@ -76,6 +82,7 @@ function SearchForm() {
       document.body.style.overflow =
         isLoading && location.pathname !== "/" ? "hidden" : "auto";
     };
+
     overflowHiddenWhenIsLoading();
   }, [isLoading, location.pathname]);
 

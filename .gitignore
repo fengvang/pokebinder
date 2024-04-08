@@ -26,3 +26,4 @@ yarn-error.log*
 .env
 
 /src/APIEndpoints.txt
+/src/Filter.js

@@ -67,8 +67,6 @@ function SearchBySet() {
 
       const cardData = await response.json();
 
-      console.log(cardData);
-
       navigate(`/results?${pokemonName}${set}`, {
         state: {
           cardData: cardData,

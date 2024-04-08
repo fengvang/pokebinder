@@ -9,8 +9,6 @@ function IndividualPage() {
   const navigate = useNavigate();
   const card = location.state.cardData;
   const originalCardData = location.state.originalCardData;
-  // const type = location.state.filteredTypes;
-  // const subtype = location.state.filteredSubtypes;
   const prevURLPath = location.state.prevURL.path;
   const prevURLSearch = location.state.prevURL.search;
   const set = location.state.set;
@@ -73,68 +71,28 @@ function IndividualPage() {
     }
   }
 
-  function getTypeTextImgColor(type) {
-    switch (type) {
-      case "Colorless":
-        return TypeIcon.colorless_text_color;
-      case "Darkness":
-        return TypeIcon.darkness_text_color;
-      case "Dragon":
-        return TypeIcon.dragon_text_color;
-      case "Fairy":
-        return TypeIcon.fairy_text_color;
-      case "Fighting":
-        return TypeIcon.fighting_text_color;
-      case "Fire":
-        return TypeIcon.fire_text_color;
-      case "Grass":
-        return TypeIcon.grass_text_color;
-      case "Lightning":
-        return TypeIcon.lightning_text_color;
-      case "Metal":
-        return TypeIcon.metal_text_color;
-      case "Psychic":
-        return TypeIcon.psychic_text_color;
-      case "Water":
-        return TypeIcon.water_text_color;
-      default:
-        return null;
-    }
-  }
-
   function getMultipleTypes(types) {
     return types.map((type, index) => (
       <img
         key={index}
-        src={getTypeTextImgColor(type)}
+        src={getTypeImg(type)}
         alt={type}
         style={{ paddingRight: "8px" }}
       />
     ));
   }
 
-  // when going back, send filtered info to preserve filtering
   const goBackOnePage = () => {
+    console.log("prevURLPath:", prevURLPath);
+    console.log("prevURLSearch:", prevURLSearch);
     navigate(`${prevURLPath}${prevURLSearch}`, {
       state: {
+        prevPath: location.pathname,
         cardData: originalCardData,
         set: set,
         query: {
           name: location.state.query.name,
-          subtype: location.state.query.subtype,
-        },
-      },
-    });
-  };
-
-  // need to fix
-  window.onpopstate = function (event) {
-    navigate(`${prevURLPath}${prevURLSearch}`, {
-      state: {
-        cardData: originalCardData,
-        set: set,
-        query: {
-          name: location.state.query.name,
+          type: location.state.query.type,
           subtype: location.state.query.subtype,
         },
       },
@@ -393,7 +351,7 @@ function IndividualPage() {
                   {card.weaknesses.map((weakness, index) => (
                     <div className="list" key={index}>
                       <img
-                        src={getTypeTextImgColor(weakness.type)}
+                        src={getTypeImg(weakness.type)}
                         alt={weakness.type}
                         style={{ paddingRight: "8px" }}
                       />
@@ -413,7 +371,7 @@ function IndividualPage() {
                   {card.resistances.map((resistance, index) => (
                     <div className="list" key={index}>
                       <img
-                        src={getTypeTextImgColor(resistance.type)}
+                        src={getTypeImg(resistance.type)}
                         alt={resistance.type}
                         style={{ paddingRight: "8px" }}
                       />

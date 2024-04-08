@@ -3,13 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Row, Col, Card } from "react-bootstrap";
 import Pagination from "@mui/material/Pagination";
 
-function CardList({
-  checkedTypes,
-  checkedSubtypes,
-  hpValue,
-  pokemonName,
-  pokemonSubtype,
-}) {
+function CardList({ pokemonName, pokemonSubtype }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [pokemonCardList, setPokemonCardList] = useState(null);
@@ -30,13 +24,12 @@ function CardList({
           prevURL: { path: location.pathname, search: location.search },
           originalCardData: location.state.cardData,
           cardData: clickedCard,
-          filteredTypes: checkedTypes,
-          filteredSubtypes: checkedSubtypes,
           query: {
             name: pokemonName,
             subtype: pokemonSubtype,
           },
         },
+        preventScrollReset: true,
       });
     } else console.log("Not working");
   };

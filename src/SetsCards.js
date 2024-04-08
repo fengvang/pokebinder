@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
 import Pagination from "@mui/material/Pagination";
 
@@ -9,13 +9,6 @@ function SetsCards({ checkedTypes, checkedSubtypes, hpValue }) {
   const set = location.state.set;
   const setData = location.state.setData || location.state.cardData;
   const numPages = parseInt(setData?.totalCount / setData?.pageSize + 1);
-  const trueTypes = Object.keys(checkedTypes).filter(
-    (key) => checkedTypes[key]
-  );
-  const trueSubtypes = Object.keys(checkedSubtypes).filter(
-    (key) => checkedSubtypes[key]
-  );
-  const [typeLength, setTypeLength] = useState(0);
 
   // get page from url =P fixes problem of when click in individual card
   // and navigating back which results in pagination to land on incorrect page
@@ -73,57 +66,6 @@ function SetsCards({ checkedTypes, checkedSubtypes, hpValue }) {
       console.error("Error fetching data:", error);
     }
   };
-
-  // filtering not working
-  const handleFilterChange = async () => {
-    try {
-      const response = await fetch("/filter-set", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: {
-            setID: set.id,
-            type: trueTypes,
-            subtype: trueSubtypes,
-            page: 1,
-            pageSize: 32,
-          },
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error();
-      }
-
-      const cardData = await response.json();
-
-      navigate(
-        `/browse-by-set?${set.series}=${set.name}&types=${trueTypes}&page=${1}`,
-        {
-          state: {
-            set: set,
-            setData: cardData,
-          },
-        }
-      );
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-
-  useEffect(() => {
-    console.log("trueTypes.length", trueTypes.length);
-    console.log("typeLength", typeLength);
-    if (trueTypes.length !== typeLength && trueTypes.length !== 0) {
-      console.log("change detected");
-      setTypeLength(trueTypes.length);
-      handleFilterChange();
-    }
-
-    // eslint-disable-next-line
-  }, [trueTypes, trueSubtypes, typeLength]);
 
   return (
     <Container>

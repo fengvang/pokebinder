@@ -73,6 +73,7 @@ app.post("/search-card", async (req, res) => {
   }
 });
 
+// re-write
 app.post("/search-set", async (req, res) => {
   try {
     const pokemonName = req.body.query.name;
@@ -117,30 +118,11 @@ app.post("/search-set", async (req, res) => {
   }
 });
 
-// may need to rewrite
 app.post("/get-sets", async (req, res) => {
   try {
-    const series = req.body;
-    const promises = [];
-    const data = {};
-
-    Object.entries(series).forEach(([key, value]) => {
-      value.forEach((seriesName) => {
-        data[seriesName] = {};
-        promises.push(
-          pokemon.set.all({ orderBy: "-releaseDate" }).then((sets) => {
-            Object.entries(sets).forEach(([i, set]) => {
-              if (seriesName === set.series) {
-                data[seriesName][set.name] = {};
-                data[seriesName][set.name] = set;
-              }
-            });
-          })
-        );
-      });
+    const data = await pokemon.set.all({
+      orderBy: "-releaseDate",
     });
-
-    await Promise.all(promises);
 
     res.json(data);
   } catch (error) {
@@ -157,42 +139,6 @@ app.post("/get-set-data", async (req, res) => {
 
     const data = await pokemon.card.where({
       q: `set.id:${setID}`,
-      orderBy: "number",
-      page: page,
-      pageSize: pageSize,
-    });
-
-    res.json(data);
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-app.post("/filter-set", async (req, res) => {
-  try {
-    const setID = req.body.query.setID;
-    const type = req.body.query.type;
-    const subtype = req.body.query.subtype;
-    const page = req.body.query.page;
-    const pageSize = req.body.query.pageSize;
-
-    function getTypesQuery(type) {
-      let query = "";
-      for (let i = 0; i < type.length; i++) {
-        query += `types:${type[i]}`;
-        if (i < type.length - 1) {
-          query += " or ";
-        }
-      }
-
-      return query;
-    }
-
-    const typesQuery = getTypesQuery(type);
-
-    const data = await pokemon.card.where({
-      q: `set.id:${setID} supertype:Pokémon (${typesQuery})`,
       orderBy: "number",
       page: page,
       pageSize: pageSize,
@@ -223,6 +169,10 @@ app.post("/filter-set", async (req, res) => {
 //   .then((result) => {
 //     console.log(result);
 //   });
+
+// pokemon.set.all({ orderBy: "-releaseDate" }).then((result) => {
+//   console.log(result[0].name);
+// });
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

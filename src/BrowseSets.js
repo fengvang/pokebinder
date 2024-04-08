@@ -40,9 +40,6 @@ function BrowseSets() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          query: series,
-        }),
       });
 
       const data = await response.json();
@@ -58,10 +55,6 @@ function BrowseSets() {
       setLoading(false);
     }
   };
-
-  function removeNonLetters(str) {
-    return typeof str === "string" ? str.replace(/[^a-zA-Z]/g, "") : null;
-  }
 
   function formatDate(originalDate) {
     const parts = originalDate.split("/");
@@ -182,57 +175,60 @@ function BrowseSets() {
           >
             Click a set to view all cards in set
           </h1>
-
-          {seriesSets !== null &&
-            Object.entries(seriesSets).map(([seriesName, data]) => (
-              <React.Fragment key={seriesName}>
-                <h1 style={{ marginTop: "80px" }}>{seriesName}</h1>
-                <Row
-                  key={seriesName}
-                  className={`series-row ${
-                    dataLoaded ? "series-row-loaded" : ""
-                  }`}
-                >
-                  {Object.entries(data).map(([setName, setData]) => (
-                    <Col
-                      key={setName}
-                      xs={2}
-                      sm={2}
-                      md={4}
-                      className="series-col mx-1 my-1"
-                    >
-                      <Card className="my-3 series-card">
-                        <Card.Img
-                          variant="top"
-                          src={setData.images.logo}
-                          style={{
-                            objectFit: "contain",
-                            height: "125px",
-                          }}
-                          className={`card-series-img ${removeNonLetters(
-                            setName
-                          )}`}
-                          onClick={() => handleSetClicked(setData)}
-                        />
-                        <Card.Body>
-                          <Card.Title>
-                            <img
-                              src={setData.images.symbol}
-                              alt={setName}
-                              style={{ objectFit: "contain", height: "32px" }}
+          {series.map((item, index) => (
+            <React.Fragment key={index}>
+              <Row key={index} style={{ marginTop: "80px" }}>
+                <h1>{item}</h1>
+              </Row>
+              <Row
+                className={`series-row ${
+                  dataLoaded ? "series-row-loaded" : ""
+                }`}
+              >
+                {seriesSets !== null &&
+                  Object.entries(seriesSets).map(
+                    ([id, set]) =>
+                      set.series === item && (
+                        <Col
+                          key={set.id}
+                          xs={2}
+                          sm={2}
+                          md={4}
+                          className="series-col mx-1 my-1"
+                        >
+                          <Card className="my-3 series-card">
+                            <Card.Img
+                              variant="top"
+                              src={set.images.logo}
+                              style={{
+                                objectFit: "contain",
+                                height: "125px",
+                              }}
+                              onClick={() => handleSetClicked(set)}
                             />
-                            <h4>{setName}</h4>
-                          </Card.Title>
-                          <Card.Text style={{ fontSize: "1rem" }}>
-                            Release date: {formatDate(setData.releaseDate)}
-                          </Card.Text>
-                        </Card.Body>
-                      </Card>
-                    </Col>
-                  ))}
-                </Row>
-              </React.Fragment>
-            ))}
+                            <Card.Body>
+                              <Card.Title>
+                                <img
+                                  src={set.images.symbol}
+                                  alt={set.name}
+                                  style={{
+                                    objectFit: "contain",
+                                    height: "32px",
+                                  }}
+                                />
+                                <h4>{set.name}</h4>
+                              </Card.Title>
+                              <Card.Text style={{ fontSize: "1rem" }}>
+                                Release date: {formatDate(set.releaseDate)}
+                              </Card.Text>
+                            </Card.Body>
+                          </Card>
+                        </Col>
+                      )
+                  )}
+              </Row>
+            </React.Fragment>
+          ))}
         </>
       )}
     </Container>
