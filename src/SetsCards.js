@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
 import Pagination from "@mui/material/Pagination";
 
@@ -8,28 +8,33 @@ function SetsCards({ checkedTypes, checkedSubtypes, hpValue }) {
   const navigate = useNavigate();
   const set = location.state.set;
   const setData = location.state.setData || location.state.cardData;
-  const numPages = parseInt(setData?.totalCount / setData?.pageSize + 1);
+  const numPages =
+    setData?.totalCount && setData?.pageSize
+      ? Math.ceil(setData.totalCount / setData.pageSize)
+      : 0;
 
-  // get page from url =P fixes problem of when click in individual card
-  // and navigating back which results in pagination to land on incorrect page
-  const [currentPage, setCurrentPage] = useState(
-    parseInt(location.search.substring(location.search.lastIndexOf("=") + 1))
-  );
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleCardClick = (clickedCard) => {
     if (clickedCard.supertype === "Pokémon") {
-      navigate(`/card?${clickedCard.name}`, {
+      navigate(`/pokémon-card?${clickedCard.name}`, {
         state: {
-          prevURL: { path: location.pathname, search: location.search },
-          originalCardData: setData,
           cardData: clickedCard,
-          set: set,
-          query: {
-            name: clickedCard.name,
-          },
         },
       });
-    } else console.log("Not working");
+    } else if (clickedCard.supertype === "Trainer") {
+      navigate(`/trainer-card?${clickedCard.name}`, {
+        state: {
+          cardData: clickedCard,
+        },
+      });
+    } else if (clickedCard.supertype === "Energy") {
+      navigate(`/energy-card?${clickedCard.name}`, {
+        state: {
+          cardData: clickedCard,
+        },
+      });
+    }
   };
 
   const handlePageChange = async (page) => {
@@ -66,6 +71,10 @@ function SetsCards({ checkedTypes, checkedSubtypes, hpValue }) {
       console.error("Error fetching data:", error);
     }
   };
+
+  useEffect(() => {
+    setCurrentPage(setData?.page);
+  }, [setData]);
 
   return (
     <Container>

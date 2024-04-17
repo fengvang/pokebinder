@@ -20,11 +20,13 @@ function SearchForm() {
   // set pokemon name
   const handleInputChange = (event) => {
     setpokemonName(event.target.value);
+    localStorage.setItem("pokemonName", event.target.value);
   };
 
   // set pokemon subtype (optional)
   const handlePokemonSubtypeChange = (event) => {
     setPokemonSubtype(event.target.value);
+    localStorage.setItem("pokemonSubtype", event.target.value);
   };
 
   // event for enter key on keyboard
@@ -37,6 +39,7 @@ function SearchForm() {
 
   // get card data for provided pokemon name and subtype if provided
   const searchCard = async () => {
+    setLoading(true);
     try {
       const response = await fetch("/search-card", {
         method: "POST",
@@ -60,14 +63,16 @@ function SearchForm() {
       // store response
       const cardData = await response.json();
 
+      const url = pokemonSubtype
+        ? `/results?${pokemonName}&${pokemonSubtype}&page=1`
+        : `/results?${pokemonName}&page=1`;
+
+      if (pokemonSubtype === "") localStorage.setItem("pokemonSubtype", "All");
+
       // navigate to next page with results
-      navigate(`/results`, {
+      navigate(url, {
         state: {
           cardData: cardData,
-          query: {
-            name: pokemonName,
-            subtype: pokemonSubtype,
-          },
         },
       });
     } catch (error) {

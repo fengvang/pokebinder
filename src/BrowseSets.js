@@ -177,7 +177,13 @@ function BrowseSets() {
           </h1>
           {series.map((item, index) => (
             <React.Fragment key={index}>
-              <Row key={index} style={{ marginTop: "80px" }}>
+              <Row
+                key={index}
+                className={`series-row ${
+                  dataLoaded ? "series-row-loaded" : ""
+                }`}
+                style={{ marginTop: "80px" }}
+              >
                 <h1>{item}</h1>
               </Row>
               <Row

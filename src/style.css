@@ -515,6 +515,10 @@ select.subtype-select {
   opacity: 1;
 }
 
+.series-row-loaded:last-child {
+  margin-bottom: 80px;
+}
+
 /* mobile styles */
 @media only screen and (max-width: 576px) {
   h1,

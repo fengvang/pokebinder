@@ -3,35 +3,41 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Row, Col, Card } from "react-bootstrap";
 import Pagination from "@mui/material/Pagination";
 
-function CardList({ pokemonName, pokemonSubtype }) {
+function CardList() {
   const location = useLocation();
   const navigate = useNavigate();
   const [pokemonCardList, setPokemonCardList] = useState(null);
-  const numPages = parseInt(
-    pokemonCardList?.totalCount / pokemonCardList?.pageSize + 1
-  );
+  const [pokemonName, setPokemonName] = useState("");
+  const [pokemonSubtype, setPokemonSubtype] = useState("");
+  const numPages =
+    pokemonCardList?.totalCount && pokemonCardList?.pageSize
+      ? Math.ceil(pokemonCardList.totalCount / pokemonCardList.pageSize)
+      : 0;
 
-  // get page from url =P fixes problem of when click in individual card
-  // and navigating back which results in pagination to land on incorrect page
-  const [currentPage, setCurrentPage] = useState(
-    parseInt(location.search.substring(location.search.lastIndexOf("=") + 1))
-  );
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleCardClick = (clickedCard) => {
     if (clickedCard.supertype === "Pokémon") {
-      navigate(`/card?${clickedCard.name}`, {
+      navigate(`/pokémon-card??${clickedCard.name}`, {
         state: {
-          prevURL: { path: location.pathname, search: location.search },
-          originalCardData: location.state.cardData,
           cardData: clickedCard,
-          query: {
-            name: pokemonName,
-            subtype: pokemonSubtype,
-          },
+          name: pokemonName,
+          subtype: pokemonSubtype,
         },
-        preventScrollReset: true,
       });
-    } else console.log("Not working");
+    } else if (clickedCard.supertype === "Trainer") {
+      navigate(`/trainer-card?${clickedCard.name}`, {
+        state: {
+          cardData: clickedCard,
+        },
+      });
+    } else if (clickedCard.supertype === "Energy") {
+      navigate(`/energy-card?${clickedCard.name}`, {
+        state: {
+          cardData: clickedCard,
+        },
+      });
+    }
   };
 
   const handleChange = async (page) => {
@@ -76,6 +82,9 @@ function CardList({ pokemonName, pokemonSubtype }) {
   useEffect(() => {
     const cardData = location.state.cardData;
     setPokemonCardList(cardData);
+    setPokemonName(localStorage.getItem("pokemonName"));
+    setPokemonSubtype(localStorage.getItem("pokemonSubtype"));
+    setCurrentPage(cardData?.page);
 
     // const cardHPMatch =
     //   hpValue <= 0 || hpValue >= 300 || parseInt(card.hp) <= hpValue;

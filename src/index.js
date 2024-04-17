@@ -9,7 +9,9 @@ import {
 } from "react-router-dom";
 import Home from "./Home";
 import SearchResults from "./SearchResults";
-import IndividualPage from "./IndividualPage";
+import IndividualPagePokémon from "./IndividualPagePokémon";
+import IndividualPageTrainer from "./IndividualPageTrainer";
+import IndividualPageEnergy from "./IndividualPageEnergy";
 import SearchBySet from "./SearchBySet";
 import BrowseSets from "./BrowseSets";
 import BrowseBySetsResults from "./BrowseBySetsResults";
@@ -35,23 +37,25 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/results",
-        element: <SearchResults preventScrollReset={true} />,
+        element: <SearchResults />,
       },
       {
-        path: "/card",
-        element: <IndividualPage preventScrollReset={true} />,
+        path: "/pokémon-card",
+        element: <IndividualPagePokémon />,
       },
+      { path: "/trainer-card", element: <IndividualPageTrainer /> },
+      { path: "/energy-card", element: <IndividualPageEnergy /> },
       {
         path: "/search-by-set",
-        element: <SearchBySet preventScrollReset={true} />,
+        element: <SearchBySet />,
       },
       {
         path: "/sets",
-        element: <BrowseSets preventScrollReset={true} />,
+        element: <BrowseSets />,
       },
       {
         path: "/browse-by-set",
-        element: <BrowseBySetsResults preventScrollReset={true} />,
+        element: <BrowseBySetsResults />,
       },
     ],
   },

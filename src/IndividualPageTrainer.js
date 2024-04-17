@@ -2,16 +2,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import * as MuiIcon from "./MuiIcons";
-import * as TypeIcon from "./Icons";
 
-function IndividualPage() {
+function IndividualPageTrainer() {
   const location = useLocation();
   const navigate = useNavigate();
   const card = location.state.cardData;
-  const originalCardData = location.state.originalCardData;
-  const prevURLPath = location.state.prevURL.path;
-  const prevURLSearch = location.state.prevURL.search;
-  const set = location.state.set;
 
   let formattedDate = null;
   let options;
@@ -30,10 +25,7 @@ function IndividualPage() {
       .replace(/^./, (str) => str.toUpperCase());
   }
 
-  // scroll to top when page loads, for fix on mobile
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-
     if (window.innerWidth < 576) {
       document.getElementById("title-row").style.display = "none";
       document.getElementById("caption-row").style.display = "none";
@@ -42,61 +34,8 @@ function IndividualPage() {
     }
   }, []);
 
-  function getTypeImg(type) {
-    switch (type) {
-      case "Colorless":
-        return TypeIcon.colorless;
-      case "Darkness":
-        return TypeIcon.darkness;
-      case "Dragon":
-        return TypeIcon.dragon;
-      case "Fairy":
-        return TypeIcon.fairy;
-      case "Fighting":
-        return TypeIcon.fighting;
-      case "Fire":
-        return TypeIcon.fire;
-      case "Grass":
-        return TypeIcon.grass;
-      case "Lightning":
-        return TypeIcon.lightning;
-      case "Metal":
-        return TypeIcon.metal;
-      case "Psychic":
-        return TypeIcon.psychic;
-      case "Water":
-        return TypeIcon.water;
-      default:
-        return null;
-    }
-  }
-
-  function getMultipleTypes(types) {
-    return types.map((type, index) => (
-      <img
-        key={index}
-        src={getTypeImg(type)}
-        alt={type}
-        style={{ paddingRight: "8px" }}
-      />
-    ));
-  }
-
   const goBackOnePage = () => {
-    console.log("prevURLPath:", prevURLPath);
-    console.log("prevURLSearch:", prevURLSearch);
-    navigate(`${prevURLPath}${prevURLSearch}`, {
-      state: {
-        prevPath: location.pathname,
-        cardData: originalCardData,
-        set: set,
-        query: {
-          name: location.state.query.name,
-          type: location.state.query.type,
-          subtype: location.state.query.subtype,
-        },
-      },
-    });
+    navigate(-1);
   };
 
   function openTCGPlayerMarket() {
@@ -104,47 +43,6 @@ function IndividualPage() {
       window.open(`${card?.tcgplayer.url}`, "_blank");
     }
   }
-
-  // const searchCard = async () => {
-  //   const pokemonName = card?.evolvesFrom;
-
-  //   try {
-  //     const response = await fetch("/search-card", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         query: {
-  //           name: pokemonName,
-  //           subtype: "",
-  //           page: 1,
-  //           pageSize: 32,
-  //         },
-  //       }),
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error("Failed to fetch end point");
-  //     }
-
-  //     const evolvesFromPokemon = await response.json();
-
-  //     navigate(`/results?${pokemonName}`, {
-  //       state: {
-  //         prevURL: { path: location.pathname, search: location.search },
-  //         cardData: evolvesFromPokemon,
-  //         set: set,
-  //         query: {
-  //           name: pokemonName,
-  //           subtype: "",
-  //         },
-  //       },
-  //     });
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //   }
-  // };
 
   return (
     <Container style={{ marginBottom: "20px" }}>
@@ -155,15 +53,7 @@ function IndividualPage() {
             md={12}
             className="d-flex align-items-center justify-content-start"
           >
-            <h1 className="d-flex align-items-center">
-              {card.name}
-
-              <img
-                src={getTypeImg(card.types[0])}
-                alt={card.types[0]}
-                style={{ paddingLeft: "10px" }}
-              />
-            </h1>
+            <h1 className="d-flex align-items-center">{card.name}</h1>
           </Col>
         </Row>
       ) : (
@@ -173,14 +63,7 @@ function IndividualPage() {
             md={12}
             className="d-flex align-items-center justify-content-start"
           >
-            <h1 className="d-flex align-items-center">
-              {card.name}
-              <img
-                src={getTypeImg(card.types[0])}
-                alt={card.types[0]}
-                style={{ paddingLeft: "10px" }}
-              />
-            </h1>
+            <h1 className="d-flex align-items-center">{card.name}</h1>
           </Col>
         </Row>
       )}
@@ -277,23 +160,13 @@ function IndividualPage() {
           </div>
 
           <div>
-            <b>HP: </b> <i>{card.hp}</i>
-          </div>
-
-          <div>
-            <b>Type(s): </b>
-            <span className="mx-1">{getMultipleTypes(card.types)}</span>
-          </div>
-
-          <div>
             {card.hasOwnProperty("rules") ? (
               <div>
                 <b>Rules: </b>
                 {card.rules.map((rule, index) => (
                   <div className="list" key={index}>
                     <p>
-                      <b>{rule.split(":")[0] + ":"}</b>
-                      <i>{rule.split(":")[1]}</i>
+                      <i>{rule.split(":")[0]}</i>
                     </p>
                   </div>
                 ))}
@@ -320,86 +193,7 @@ function IndividualPage() {
           </div>
 
           <div>
-            <b>Attack(s): </b>
-            {card.attacks.map((attack, index) => (
-              <Row className="list" key={index}>
-                <Row>
-                  <Col
-                    xs={5}
-                    md={5}
-                    style={{ paddingLeft: "0px", paddingRight: "0px" }}
-                  >
-                    {getMultipleTypes(attack.cost)}
-                  </Col>
-                  <Col xs={7} md={5} className="d-flex justify-content-between">
-                    <span>{attack.name}</span>
-                    <span>
-                      {attack.damage !== "" ? `${attack.damage}` : ""}
-                    </span>
-                  </Col>
-                </Row>
-                <Row style={{ paddingLeft: "0px", paddingRight: "0px" }}>
-                  <i>{attack.text}</i>
-                </Row>
-              </Row>
-            ))}
-
-            <div>
-              {card.hasOwnProperty("weaknesses") ? (
-                <div>
-                  <b>Weakness: </b>
-                  {card.weaknesses.map((weakness, index) => (
-                    <div className="list" key={index}>
-                      <img
-                        src={getTypeImg(weakness.type)}
-                        alt={weakness.type}
-                        style={{ paddingRight: "8px" }}
-                      />
-                      <span>{weakness.value}</span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                ""
-              )}
-            </div>
-
-            <div>
-              {card.hasOwnProperty("resistances") ? (
-                <div>
-                  <b>Resistance: </b>
-                  {card.resistances.map((resistance, index) => (
-                    <div className="list" key={index}>
-                      <img
-                        src={getTypeImg(resistance.type)}
-                        alt={resistance.type}
-                        style={{ paddingRight: "8px" }}
-                      />
-                      <i>{resistance.value}</i>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                ""
-              )}
-            </div>
-
-            <div>
-              {card.hasOwnProperty("retreatCost") ? (
-                <div>
-                  <b>Retreat: </b>
-                  <div className="list">
-                    {getMultipleTypes(card.retreatCost)}
-                  </div>
-                </div>
-              ) : (
-                ""
-              )}
-            </div>
-
-            <div>
-              <b>Artist: </b> <i>{card.artist}</i>
-            </div>
+            <b>Artist: </b> <i>{card.artist}</i>
           </div>
         </Col>
       </Row>
@@ -489,4 +283,4 @@ function IndividualPage() {
   );
 }
 
-export default IndividualPage;
+export default IndividualPageTrainer;
