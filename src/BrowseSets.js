@@ -113,6 +113,7 @@ function BrowseSets() {
   useEffect(() => {
     if (seriesSets !== null) {
       setdataLoaded(true);
+      setClicked(false);
     }
   }, [seriesSets]);
 
@@ -151,7 +152,7 @@ function BrowseSets() {
         </div>
       )}
       {isLoading && !isClicked ? (
-        <div className="d-flex align-items-center justify-content-center vh-100">
+        <div className="getting-sets-loading-screen">
           <div
             className="text-center loading-div-mobile"
             style={{ width: "20vw" }}
@@ -169,12 +170,6 @@ function BrowseSets() {
         </div>
       ) : (
         <>
-          <h1
-            className="d-flex justify-content-center align-items-center"
-            style={{ marginTop: "25px" }}
-          >
-            Click a set to view all cards in set
-          </h1>
           {series.map((item, index) => (
             <React.Fragment key={index}>
               <Row
@@ -182,7 +177,7 @@ function BrowseSets() {
                 className={`series-row ${
                   dataLoaded ? "series-row-loaded" : ""
                 }`}
-                style={{ marginTop: "80px" }}
+                style={{ marginTop: "25px" }}
               >
                 <h1>{item}</h1>
               </Row>

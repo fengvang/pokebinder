@@ -3,29 +3,36 @@ import { Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import SearchForm from "./SearchForm";
-import SearchBySet from "./SearchBySet";
+import { useEffect } from "react";
 
 function Home() {
   const location = useLocation();
 
-  const searchBySetPath = location.pathname === "/search-by-set";
-  const setsPath = location.pathname === "/sets";
-  const browseBySetsPath = location.pathname === "/browse-by-set";
+  const rootPath = location.pathname === "/";
+
+  useEffect(() => {
+    if (location.pathname === "/") {
+      console.log("Clearing local storage");
+      localStorage.clear();
+    }
+  });
 
   return (
     <>
-      {searchBySetPath || setsPath || browseBySetsPath ? null : <SearchForm />}
-      {searchBySetPath || setsPath || browseBySetsPath ? null : (
-        <Container
-          className="d-flex justify-content-center align-items-center"
-          style={{ fontSize: ".78em" }}
-        >
-          <Link to="/search-by-set" id="search-by-set-row">
-            Want to search by sets instead?
+      <header>
+        <Container className="header-container">
+          <Link to="/">
+            <span style={{ fontSize: "2rem" }}>PokéBinder</span>
+          </Link>
+          <Link to="/" className="login-header-button">
+            <span>
+              <i className="bi bi-person-circle"></i>{" "}
+              <span style={{ fontSize: "1rem" }}>Login</span>
+            </span>
           </Link>
         </Container>
-      )}
-      {browseBySetsPath ? <SearchBySet /> : null}
+      </header>
+      {rootPath ? <SearchForm /> : null}
     </>
   );
 }

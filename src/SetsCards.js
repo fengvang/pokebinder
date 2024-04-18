@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
 import Pagination from "@mui/material/Pagination";
 
-function SetsCards({ checkedTypes, checkedSubtypes, hpValue }) {
+function SetsCards() {
   const location = useLocation();
   const navigate = useNavigate();
   const set = location.state.set;
@@ -12,7 +12,6 @@ function SetsCards({ checkedTypes, checkedSubtypes, hpValue }) {
     setData?.totalCount && setData?.pageSize
       ? Math.ceil(setData.totalCount / setData.pageSize)
       : 0;
-
   const [currentPage, setCurrentPage] = useState(1);
 
   const handleCardClick = (clickedCard) => {
@@ -78,6 +77,16 @@ function SetsCards({ checkedTypes, checkedSubtypes, hpValue }) {
 
   return (
     <Container>
+      <Row
+        style={{ marginTop: "25px" }}
+        className="d-flex align-items-center justify-content-center"
+      >
+        <img
+          src={set.images.logo}
+          alt={set.name}
+          style={{ height: "180px", width: "auto" }}
+        />
+      </Row>
       <Row id="card-results-count">
         {setData?.length === 0 ? (
           <h5 className="my-3 d-flex align-items-center justify-content-center">

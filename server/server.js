@@ -151,6 +151,51 @@ app.post("/get-set-data", async (req, res) => {
   }
 });
 
+app.post("/filter-data", async (req, res) => {
+  try {
+    console.log("Filtering from server");
+    const setID = req.body.query.setID;
+    const page = req.body.query.page;
+    const pageSize = req.body.query.pageSize;
+    const types =
+      JSON.parse(req.body.query.types) !== null
+        ? JSON.parse(req.body.query.types)
+        : null;
+    const subtypes = req.body.query.subtypes;
+
+    let typesQuery = "";
+    let query = "";
+
+    if (types === null || undefined) {
+      query = `set.id:${setID}`;
+    } else {
+      if (types?.length > 1) {
+        for (let i = 0; i < types?.length; ++i) {
+          typesQuery += `types:${types[i].toLowerCase()}`;
+          if (i < types?.length - 1) {
+            typesQuery += " or ";
+          }
+        }
+      } else typesQuery = `types:${types[0].toLowerCase()}`;
+      query = `set.id:${setID} (${typesQuery})`;
+    }
+
+    console.log(query);
+
+    const data = await pokemon.card.where({
+      q: query,
+      orderBy: "number",
+      page: page,
+      pageSize: pageSize,
+    });
+
+    res.json(data);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 // https://api.pokemontcg.io/v2/cards?q=set.id:sv3pt5%20supertype:Pokémon%20name:Charizard
 
 // pokemon.card

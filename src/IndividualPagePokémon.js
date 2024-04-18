@@ -1,5 +1,4 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import * as MuiIcon from "./MuiIcons";
 import * as TypeIcon from "./Icons";
@@ -25,15 +24,6 @@ function IndividualPagePokémon() {
       .replace(/([A-Z])/g, " $1")
       .replace(/^./, (str) => str.toUpperCase());
   }
-
-  useEffect(() => {
-    if (window.innerWidth < 576) {
-      document.getElementById("title-row").style.display = "none";
-      document.getElementById("caption-row").style.display = "none";
-      document.getElementById("search-row").style.display = "none";
-      document.getElementById("search-by-set-row").style.display = "none";
-    }
-  }, []);
 
   function getTypeImg(type) {
     switch (type) {
@@ -129,7 +119,7 @@ function IndividualPagePokémon() {
   return (
     <Container style={{ marginBottom: "20px" }}>
       {window.innerWidth < 576 ? (
-        <Row style={{ marginTop: "-35px" }}>
+        <Row style={{ marginTop: "25px" }}>
           <Col
             xs="auto"
             md={12}
@@ -147,7 +137,7 @@ function IndividualPagePokémon() {
           </Col>
         </Row>
       ) : (
-        <Row>
+        <Row style={{ marginTop: "25px" }}>
           <Col
             xs="auto"
             md={12}

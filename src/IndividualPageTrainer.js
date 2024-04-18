@@ -1,5 +1,4 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import * as MuiIcon from "./MuiIcons";
 
@@ -25,15 +24,6 @@ function IndividualPageTrainer() {
       .replace(/^./, (str) => str.toUpperCase());
   }
 
-  useEffect(() => {
-    if (window.innerWidth < 576) {
-      document.getElementById("title-row").style.display = "none";
-      document.getElementById("caption-row").style.display = "none";
-      document.getElementById("search-row").style.display = "none";
-      document.getElementById("search-by-set-row").style.display = "none";
-    }
-  }, []);
-
   const goBackOnePage = () => {
     navigate(-1);
   };
@@ -47,7 +37,7 @@ function IndividualPageTrainer() {
   return (
     <Container style={{ marginBottom: "20px" }}>
       {window.innerWidth < 576 ? (
-        <Row style={{ marginTop: "-35px" }}>
+        <Row style={{ marginTop: "25px" }}>
           <Col
             xs="auto"
             md={12}
@@ -57,7 +47,7 @@ function IndividualPageTrainer() {
           </Col>
         </Row>
       ) : (
-        <Row>
+        <Row style={{ marginTop: "25px" }}>
           <Col
             xs="auto"
             md={12}

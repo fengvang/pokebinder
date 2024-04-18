@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Jaldi:wght@400;700&family=Sulphur+Point:wght@300;400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Jaldi:wght@400;700&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap");
 
 :root {
   --textcolor: #eeebe6;
@@ -21,6 +21,10 @@
   --dark: #705746;
   --steel: #b7b7ce;
   --fairy: #d685ad;
+  --pkmnyellow: #ffcb05;
+  --pkmnblue: #2a75bb;
+  --pkmndarkyellow: #c7a008;
+  --pkmndarkblue: #3c5aa6;
 }
 
 body {
@@ -30,6 +34,41 @@ body {
   font-weight: 400;
   font-style: normal;
   font-size: 19px;
+}
+
+header {
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 10px;
+  display: flex;
+  align-items: center;
+}
+
+header > div > a:link > span,
+header > div > a:visited > span {
+  font-family: "Josefin Sans", sans-serif;
+  color: var(--textcolor);
+  margin: 0px;
+  padding: 10px;
+  transition: 0.15s ease-in-out;
+}
+
+header > div > a:hover > span,
+header > div > a:active > span {
+  font-family: "Josefin Sans", sans-serif;
+  color: #ffffff;
+  margin: 0px;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 5px;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.login-header-button {
+  color: var(--textcolor);
 }
 
 .card-title,
@@ -702,6 +741,13 @@ select.subtype-select {
   .card-image:hover {
     transform: scale(1.13);
   }
+}
+
+.getting-sets-loading-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
 }
 
 @media only screen and (max-width: 390px) {

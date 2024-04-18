@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import {
   Container,
@@ -93,45 +93,17 @@ function SearchForm() {
 
   return (
     <Container>
-      {/* if root header should be in middle of page; otherwise, render at top */}
-      {location.pathname === "/" ? (
-        <Row style={{ marginTop: "40vh" }}>
-          <Col className="d-flex justify-content-center align-items-center">
-            <a className="title-link" href="/">
-              {pokemonName === "" ? (
-                <h1>Search for Pokémon Card</h1>
-              ) : (
-                <h1>
-                  Searching for "{pokemonName}
-                  {`${pokemonSubtype}` !== "All" ? ` ${pokemonSubtype}` : ""}"
-                </h1>
-              )}
-            </a>
-          </Col>
-        </Row>
-      ) : (
-        <Row style={{ marginTop: "25px" }} id="title-row">
-          <Col className="d-flex justify-content-center align-items-center">
-            <a className="title-link" href="/">
-              {pokemonName === "" ? (
-                <h1>Search for Pokémon Card</h1>
-              ) : (
-                <h1>
-                  Searching for "{pokemonName}
-                  {`${pokemonSubtype}` !== "All" ? ` ${pokemonSubtype}` : ""}"
-                </h1>
-              )}
-            </a>
-          </Col>
-        </Row>
-      )}
-      {/* for either, always render search bar */}
+      <Row style={{ marginTop: "25px" }}>
+        <Col className="d-flex justify-content-center align-items-center">
+          <h1>Search for Pokémon Card</h1>
+        </Col>
+      </Row>
       <Row>
         <Col
           className="d-flex justify-content-center align-items-center"
           style={{ marginBottom: "20px" }}
         >
-          <span id="caption-row">
+          <span>
             By Feng Vang with&nbsp;
             <a href="http://pokemontcg.io" target="_blank" rel="noreferrer">
               Pokémon TCG API
@@ -144,7 +116,7 @@ function SearchForm() {
           className="d-flex justify-content-center align-items-center"
           style={{ marginBottom: "25px" }}
         >
-          <Form id="search-row">
+          <Form>
             <InputGroup>
               <Form.Control
                 type="text"
@@ -226,6 +198,13 @@ function SearchForm() {
             : null}
         </Row>
       ) : null}
+
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ fontSize: ".78em" }}
+      >
+        <Link to="/search-by-set">Want to search by sets instead?</Link>
+      </div>
     </Container>
   );
 }
