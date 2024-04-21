@@ -1,13 +1,15 @@
 require("dotenv").config();
 
 const express = require("express");
+const axios = require("axios");
+const auth0 = require("@auth0/auth0-react");
 const app = express();
 const pokemon = require("pokemontcgsdk");
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(express.static("public"));
-pokemon.configure({ apiKey: process.env.POKEMON_TCG_API_KEY });
+pokemon.configure({ apiKey: process.env.REACT_APP_POKEMON_TCG_API_KEY });
 
 app.post("/search-card", async (req, res) => {
   try {
@@ -131,15 +133,32 @@ app.post("/get-sets", async (req, res) => {
   }
 });
 
+app.get("/get-newest-set", async (req, res) => {
+  try {
+    const data = await pokemon.set.all({
+      orderBy: "-releaseDate",
+    });
+
+    res.json(data[0]);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 app.post("/get-set-data", async (req, res) => {
   try {
     const setID = req.body.query.setID;
     const page = req.body.query.page;
     const pageSize = req.body.query.pageSize;
+    let orderByParams;
+
+    if (pageSize < 32) orderByParams = "-tcgplayer.prices.holofoil";
+    else orderByParams = "number";
 
     const data = await pokemon.card.where({
       q: `set.id:${setID}`,
-      orderBy: "number",
+      orderBy: orderByParams,
       page: page,
       pageSize: pageSize,
     });
@@ -196,28 +215,50 @@ app.post("/filter-data", async (req, res) => {
   }
 });
 
-// https://api.pokemontcg.io/v2/cards?q=set.id:sv3pt5%20supertype:Pokémon%20name:Charizard
+// Auth0 API
+app.patch("/change-user-image", async (req, res) => {
+  try {
+    const userID = req.body.userID;
+    const imageURL = req.body.image;
+    const url = process.env.REACT_APP_AUTH0_API_URL + `${userID}`;
 
-// pokemon.card
-//   .where({
-//     q: `set.id:sv3pt5 supertype:Pokémon (types:Colorless)`,
-//     orderBy: "number",
-//     page: 1,
-//     pageSize: 16,
-//   })
-//   .then((result) => {
-//     console.log(result);
-//   });
+    // get the current user metadata
+    const getUserMetadata = {
+      method: "GET",
+      url: url,
+      headers: {
+        authorization: "Bearer " + process.env.REACT_APP_AUTH0_MGMT_API_TOKEN,
+        "content-type": "application/json",
+      },
+    };
 
-// pokemon.card
-//   .where({ q: "set.id:sv3pt5", orderBy: "number", page: 1, pageSize: 16 })
-//   .then((result) => {
-//     console.log(result);
-//   });
+    const currentUserData = await axios.request(getUserMetadata);
+    const oldImageURL = currentUserData?.data?.user_metadata?.picture;
 
-// pokemon.set.all({ orderBy: "-releaseDate" }).then((result) => {
-//   console.log(result[0].name);
-// });
+    // update the user metadata with the new picture URL
+    const updateUserMetadata = {
+      method: "PATCH",
+      url: url,
+      headers: {
+        authorization: "Bearer " + process.env.REACT_APP_AUTH0_MGMT_API_TOKEN,
+        "content-type": "application/json",
+      },
+      data: {
+        user_metadata: {
+          picture: imageURL,
+        },
+      },
+    };
+
+    const updatedUserData = await axios.request(updateUserMetadata);
+    const newImageURL = updatedUserData.data.user_metadata.picture;
+
+    res.json({ oldImageURL, newImageURL });
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Container, Row, Col, Button, Image } from "react-bootstrap";
 import * as MuiIcon from "./MuiIcons";
 
 function IndividualPageTrainer() {
@@ -132,7 +132,7 @@ function IndividualPageTrainer() {
 
       <Row>
         <Col xs="auto" md={5} className="individual-image-col">
-          <img
+          <Image
             className="individual-page-image"
             src={card.images.large}
             alt={card.name}

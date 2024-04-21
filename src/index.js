@@ -7,6 +7,7 @@ import {
   Outlet,
   ScrollRestoration,
 } from "react-router-dom";
+import { Auth0Provider } from "@auth0/auth0-react";
 import Home from "./Home";
 import SearchResults from "./SearchResults";
 import IndividualPagePokémon from "./IndividualPagePokémon";
@@ -15,6 +16,7 @@ import IndividualPageEnergy from "./IndividualPageEnergy";
 import SearchBySet from "./SearchBySet";
 import BrowseSets from "./BrowseSets";
 import BrowseBySetsResults from "./BrowseBySetsResults";
+import Profile from "./Profile";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./style.css";
@@ -57,12 +59,23 @@ const router = createBrowserRouter([
         path: "/browse-by-set",
         element: <BrowseBySetsResults />,
       },
+      { path: "/profile", element: <Profile /> },
     ],
   },
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<RouterProvider router={router} />);
+root.render(
+  <Auth0Provider
+    domain="dev-h75glc2appddcikt.us.auth0.com"
+    clientId="qA3h1zcIlYNhm03ItvPFQ7bWhDoFC7XL"
+    authorizationParams={{
+      redirect_uri: window.location.origin,
+    }}
+  >
+    <RouterProvider router={router} />
+  </Auth0Provider>
+);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

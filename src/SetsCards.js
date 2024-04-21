@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Container, Row, Col, Card } from "react-bootstrap";
+import { Container, Row, Col, Card, Image } from "react-bootstrap";
 import Pagination from "@mui/material/Pagination";
 
 function SetsCards() {
@@ -81,7 +81,7 @@ function SetsCards() {
         style={{ marginTop: "25px" }}
         className="d-flex align-items-center justify-content-center"
       >
-        <img
+        <Image
           src={set.images.logo}
           alt={set.name}
           style={{ height: "180px", width: "auto" }}

@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Container, Row, Col, Button, Image } from "react-bootstrap";
 import * as MuiIcon from "./MuiIcons";
 import * as TypeIcon from "./Icons";
 
@@ -56,11 +56,17 @@ function IndividualPagePokémon() {
 
   function getMultipleTypes(types) {
     return types.map((type, index) => (
-      <img
+      <Image
         key={index}
         src={getTypeImg(type)}
         alt={type}
-        style={{ paddingRight: "8px" }}
+        style={{
+          marginRight: "3px",
+          width: "25px",
+          height: "25px",
+          border: "1px solid #fff",
+        }}
+        roundedCircle
       />
     ));
   }
@@ -127,12 +133,8 @@ function IndividualPagePokémon() {
           >
             <h1 className="d-flex align-items-center">
               {card.name}
-
-              <img
-                src={getTypeImg(card.types[0])}
-                alt={card.types[0]}
-                style={{ paddingLeft: "10px" }}
-              />
+              <span className="mx-1"></span>
+              {getMultipleTypes(card.types)}
             </h1>
           </Col>
         </Row>
@@ -145,11 +147,7 @@ function IndividualPagePokémon() {
           >
             <h1 className="d-flex align-items-center">
               {card.name}
-              <img
-                src={getTypeImg(card.types[0])}
-                alt={card.types[0]}
-                style={{ paddingLeft: "10px" }}
-              />
+              {getMultipleTypes(card.types)}
             </h1>
           </Col>
         </Row>
@@ -229,7 +227,7 @@ function IndividualPagePokémon() {
 
       <Row>
         <Col xs="auto" md={5} className="individual-image-col">
-          <img
+          <Image
             className="individual-page-image"
             src={card.images.large}
             alt={card.name}
@@ -320,10 +318,11 @@ function IndividualPagePokémon() {
                   <b>Weakness: </b>
                   {card.weaknesses.map((weakness, index) => (
                     <div className="list" key={index}>
-                      <img
+                      <Image
                         src={getTypeImg(weakness.type)}
                         alt={weakness.type}
-                        style={{ paddingRight: "8px" }}
+                        style={{ marginRight: "8px", border: "1px solid #fff" }}
+                        roundedCircle
                       />
                       <span>{weakness.value}</span>
                     </div>
@@ -340,12 +339,13 @@ function IndividualPagePokémon() {
                   <b>Resistance: </b>
                   {card.resistances.map((resistance, index) => (
                     <div className="list" key={index}>
-                      <img
+                      <Image
                         src={getTypeImg(resistance.type)}
                         alt={resistance.type}
-                        style={{ paddingRight: "8px" }}
+                        style={{ marginRight: "8px", border: "1px solid #fff" }}
+                        roundedCircle
                       />
-                      <i>{resistance.value}</i>
+                      <span>{resistance.value}</span>
                     </div>
                   ))}
                 </div>
