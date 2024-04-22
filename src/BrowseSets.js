@@ -77,7 +77,7 @@ function BrowseSets() {
           query: {
             setID: clickedSet.id,
             page: 1,
-            pageSize: 32,
+            pageSize: 30,
           },
         }),
       });

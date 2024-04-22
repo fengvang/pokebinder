@@ -153,7 +153,7 @@ app.post("/get-set-data", async (req, res) => {
     const pageSize = req.body.query.pageSize;
     let orderByParams;
 
-    if (pageSize < 32) orderByParams = "-tcgplayer.prices.holofoil";
+    if (pageSize < 30) orderByParams = "-tcgplayer.prices.holofoil";
     else orderByParams = "number";
 
     const data = await pokemon.card.where({
@@ -170,50 +170,50 @@ app.post("/get-set-data", async (req, res) => {
   }
 });
 
-app.post("/filter-data", async (req, res) => {
-  try {
-    console.log("Filtering from server");
-    const setID = req.body.query.setID;
-    const page = req.body.query.page;
-    const pageSize = req.body.query.pageSize;
-    const types =
-      JSON.parse(req.body.query.types) !== null
-        ? JSON.parse(req.body.query.types)
-        : null;
-    const subtypes = req.body.query.subtypes;
+// app.post("/filter-data", async (req, res) => {
+//   try {
+//     console.log("Filtering from server");
+//     const setID = req.body.query.setID;
+//     const page = req.body.query.page;
+//     const pageSize = req.body.query.pageSize;
+//     const types =
+//       JSON.parse(req.body.query.types) !== null
+//         ? JSON.parse(req.body.query.types)
+//         : null;
+//     const subtypes = req.body.query.subtypes;
 
-    let typesQuery = "";
-    let query = "";
+//     let typesQuery = "";
+//     let query = "";
 
-    if (types === null || undefined) {
-      query = `set.id:${setID}`;
-    } else {
-      if (types?.length > 1) {
-        for (let i = 0; i < types?.length; ++i) {
-          typesQuery += `types:${types[i].toLowerCase()}`;
-          if (i < types?.length - 1) {
-            typesQuery += " or ";
-          }
-        }
-      } else typesQuery = `types:${types[0].toLowerCase()}`;
-      query = `set.id:${setID} (${typesQuery})`;
-    }
+//     if (types === null || undefined) {
+//       query = `set.id:${setID}`;
+//     } else {
+//       if (types?.length > 1) {
+//         for (let i = 0; i < types?.length; ++i) {
+//           typesQuery += `types:${types[i].toLowerCase()}`;
+//           if (i < types?.length - 1) {
+//             typesQuery += " or ";
+//           }
+//         }
+//       } else typesQuery = `types:${types[0].toLowerCase()}`;
+//       query = `set.id:${setID} (${typesQuery})`;
+//     }
 
-    console.log(query);
+//     console.log(query);
 
-    const data = await pokemon.card.where({
-      q: query,
-      orderBy: "number",
-      page: page,
-      pageSize: pageSize,
-    });
+//     const data = await pokemon.card.where({
+//       q: query,
+//       orderBy: "number",
+//       page: page,
+//       pageSize: pageSize,
+//     });
 
-    res.json(data);
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
+//     res.json(data);
+//   } catch (error) {
+//     console.error("Error fetching data:", error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// });
 
 // Auth0 API
 app.patch("/change-user-image", async (req, res) => {

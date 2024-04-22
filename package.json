@@ -29,7 +29,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "both": "concurrently \"nodemon server/server.js\" \"HTTPS=true npm start\""
+    "both": "concurrently \"nodemon server/server.js\" \"set HTTPS=true&&npm start\""
   },
   "eslintConfig": {
     "extends": [

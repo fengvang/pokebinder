@@ -61,10 +61,10 @@ function IndividualPagePokémon() {
         src={getTypeImg(type)}
         alt={type}
         style={{
-          marginRight: "3px",
+          marginRight: "6px",
           width: "25px",
           height: "25px",
-          border: "1px solid #fff",
+          outline: "2px solid #fff",
         }}
         roundedCircle
       />
@@ -133,8 +133,9 @@ function IndividualPagePokémon() {
           >
             <h1 className="d-flex align-items-center">
               {card.name}
-              <span className="mx-1"></span>
-              {getMultipleTypes(card.types)}
+              <span style={{ marginLeft: "10px" }}>
+                {getMultipleTypes(card.types)}
+              </span>
             </h1>
           </Col>
         </Row>
@@ -147,7 +148,9 @@ function IndividualPagePokémon() {
           >
             <h1 className="d-flex align-items-center">
               {card.name}
-              {getMultipleTypes(card.types)}
+              <span style={{ marginLeft: "10px" }}>
+                {getMultipleTypes(card.types)}
+              </span>
             </h1>
           </Col>
         </Row>
@@ -170,23 +173,23 @@ function IndividualPagePokémon() {
                     >
                       <span className="d-flex align-items-center">
                         <MuiIcon.DownIcon style={{ color: `var(--bs-red)` }} />
-                        <i style={{ paddingLeft: "10px" }}>
+                        <span style={{ paddingLeft: "10px" }}>
                           {prices.low ? `$${prices.low.toFixed(2)}` : "- - -"}
-                        </i>
+                        </span>
                       </span>
                       <span className="d-flex align-items-center">
                         <MuiIcon.MarketIcon />
-                        <i style={{ paddingLeft: "10px" }}>
+                        <span style={{ paddingLeft: "10px" }}>
                           {prices.market
                             ? `$${prices.market.toFixed(2)}`
                             : "- - -"}
-                        </i>
+                        </span>
                       </span>
                       <span className="d-flex align-items-center">
                         <MuiIcon.UpIcon style={{ color: `var(--bs-green)` }} />
-                        <i style={{ paddingLeft: "10px" }}>
+                        <span style={{ paddingLeft: "10px" }}>
                           {prices.high ? `$${prices.high.toFixed(2)}` : "- - -"}
-                        </i>
+                        </span>
                       </span>
                       <span className="d-flex align-items-center launch-tcgplayer">
                         <MuiIcon.LaunchIcon onClick={openTCGPlayerMarket} />
@@ -204,15 +207,15 @@ function IndividualPagePokémon() {
               >
                 <span className="d-flex align-items-center">
                   <MuiIcon.DownIcon style={{ color: `var(--bs-red)` }} />
-                  <i style={{ paddingLeft: "10px" }}>- - -</i>
+                  <span style={{ paddingLeft: "10px" }}>- - -</span>
                 </span>
                 <span className="d-flex align-items-center">
                   <MuiIcon.MarketIcon />
-                  <i style={{ paddingLeft: "10px" }}>- - -</i>
+                  <span style={{ paddingLeft: "10px" }}>- - -</span>
                 </span>
                 <span className="d-flex align-items-center">
                   <MuiIcon.UpIcon style={{ color: `var(--bs-green)` }} />
-                  <i style={{ paddingLeft: "10px" }}>- - -</i>
+                  <span style={{ paddingLeft: "10px" }}>- - -</span>
                 </span>
                 <span className="d-flex align-items-center launch-tcgplayer">
                   <MuiIcon.LaunchIcon onClick={openTCGPlayerMarket} />
@@ -239,13 +242,13 @@ function IndividualPagePokémon() {
 
           <div>
             <b>Set: </b>
-            <i>
+            <span className="card-desc-small-text">
               {card.set.name} - {card.set.series}
-            </i>
+            </span>
           </div>
 
           <div>
-            <b>HP: </b> <i>{card.hp}</i>
+            <b>HP: </b> <span className="card-desc-small-text">{card.hp}</span>
           </div>
 
           <div>
@@ -260,8 +263,10 @@ function IndividualPagePokémon() {
                 {card.rules.map((rule, index) => (
                   <div className="list" key={index}>
                     <p>
-                      <b>{rule.split(":")[0] + ":"}</b>
-                      <i>{rule.split(":")[1]}</i>
+                      <span className="card-desc-small-text">
+                        <b>{rule.split(":")[0] + ":"}</b>
+                        {rule.split(":")[1]}
+                      </span>
                     </p>
                   </div>
                 ))}
@@ -277,8 +282,10 @@ function IndividualPagePokémon() {
                 <b>Ability: </b>
                 {card.abilities.map((ability, index) => (
                   <div className="list" key={index}>
-                    <b>{ability.name}: </b>
-                    <i>{ability.text}</i>
+                    <span className="card-desc-small-text">
+                      <b>{ability.name}: </b>
+                      {ability.text}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -299,15 +306,25 @@ function IndividualPagePokémon() {
                   >
                     {getMultipleTypes(attack.cost)}
                   </Col>
-                  <Col xs={7} md={5} className="d-flex justify-content-between">
+                  <Col
+                    xs={7}
+                    md={5}
+                    className="d-flex justify-content-between my-1"
+                  >
                     <span>{attack.name}</span>
                     <span>
                       {attack.damage !== "" ? `${attack.damage}` : ""}
                     </span>
                   </Col>
                 </Row>
-                <Row style={{ paddingLeft: "0px", paddingRight: "0px" }}>
-                  <i>{attack.text}</i>
+                <Row
+                  style={{
+                    paddingLeft: "0px",
+                    paddingRight: "0px",
+                  }}
+                  className="card-desc-small-text"
+                >
+                  {attack.text}
                 </Row>
               </Row>
             ))}
@@ -321,10 +338,15 @@ function IndividualPagePokémon() {
                       <Image
                         src={getTypeImg(weakness.type)}
                         alt={weakness.type}
-                        style={{ marginRight: "8px", border: "1px solid #fff" }}
+                        style={{
+                          marginRight: "8px",
+                          outline: "2px solid #fff",
+                        }}
                         roundedCircle
                       />
-                      <span>{weakness.value}</span>
+                      <span className="card-desc-small-text">
+                        {weakness.value}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -342,10 +364,15 @@ function IndividualPagePokémon() {
                       <Image
                         src={getTypeImg(resistance.type)}
                         alt={resistance.type}
-                        style={{ marginRight: "8px", border: "1px solid #fff" }}
+                        style={{
+                          marginRight: "8px",
+                          outline: "2px solid #fff",
+                        }}
                         roundedCircle
                       />
-                      <span>{resistance.value}</span>
+                      <span className="card-desc-small-text">
+                        {resistance.value}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -368,7 +395,8 @@ function IndividualPagePokémon() {
             </div>
 
             <div>
-              <b>Artist: </b> <i>{card.artist}</i>
+              <b>Artist: </b>{" "}
+              <span className="card-desc-small-text">{card.artist}</span>
             </div>
           </div>
         </Col>
@@ -381,17 +409,14 @@ function IndividualPagePokémon() {
             <div style={{ marginBottom: "8px" }}>
               {card && card.tcgplayer && card.tcgplayer.updatedAt ? (
                 <span>
-                  <b>Last Updated:</b>{" "}
-                  <i>
-                    {formattedDateString} from{" "}
-                    <a
-                      href="https://www.tcgplayer.com/"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      TCGplayer
-                    </a>
-                  </i>
+                  <b>Last Updated:</b> {formattedDateString} from{" "}
+                  <a
+                    href="https://www.tcgplayer.com/"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    TCGplayer
+                  </a>
                 </span>
               ) : null}
             </div>
@@ -409,27 +434,27 @@ function IndividualPagePokémon() {
                           <MuiIcon.DownIcon
                             style={{ color: `var(--bs-red)` }}
                           />
-                          <i style={{ paddingLeft: "10px" }}>
+                          <span style={{ paddingLeft: "10px" }}>
                             {prices.low ? `$${prices.low.toFixed(2)}` : "- - -"}
-                          </i>
+                          </span>
                         </Col>
                         <Col xs={3} className="d-flex align-items-center">
                           <MuiIcon.MarketIcon />
-                          <i style={{ paddingLeft: "10px" }}>
+                          <span style={{ paddingLeft: "10px" }}>
                             {prices.market
                               ? `$${prices.market.toFixed(2)}`
                               : "- - -"}
-                          </i>
+                          </span>
                         </Col>
                         <Col xs={3} className="d-flex align-items-center">
                           <MuiIcon.UpIcon
                             style={{ color: `var(--bs-green)` }}
                           />
-                          <i style={{ paddingLeft: "10px" }}>
+                          <span style={{ paddingLeft: "10px" }}>
                             {prices.high
                               ? `$${prices.high.toFixed(2)}`
                               : "- - -"}
-                          </i>
+                          </span>
                         </Col>
                         <Col
                           xs={3}
@@ -442,7 +467,7 @@ function IndividualPagePokémon() {
                   )
               )
             ) : (
-              <i>No price data available</i>
+              <>No price data available</>
             )}
           </Col>
           <Col md={7}></Col>

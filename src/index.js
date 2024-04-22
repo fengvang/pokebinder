@@ -13,7 +13,6 @@ import SearchResults from "./SearchResults";
 import IndividualPagePokémon from "./IndividualPagePokémon";
 import IndividualPageTrainer from "./IndividualPageTrainer";
 import IndividualPageEnergy from "./IndividualPageEnergy";
-import SearchBySet from "./SearchBySet";
 import BrowseSets from "./BrowseSets";
 import BrowseBySetsResults from "./BrowseBySetsResults";
 import Profile from "./Profile";
@@ -49,7 +48,6 @@ const router = createBrowserRouter([
       { path: "/energy-card", element: <IndividualPageEnergy /> },
       {
         path: "/search-by-set",
-        element: <SearchBySet />,
       },
       {
         path: "/sets",

@@ -209,11 +209,15 @@ a:active {
   background-color: transparent !important;
 }
 
-.card-text {
-  margin-bottom: 0px;
+.card-image-col {
+  max-width: 216px;
+  margin: 11px 0px 11px 0px;
+  display: flex;
+  justify-content: center;
 }
 
 .card-image {
+  width: 200px;
   opacity: 0;
   transition: transform 0.5s ease, opacity 0.5s ease-in-out !important;
 }
@@ -254,6 +258,10 @@ a:active {
 div > form > div.card {
   border-radius: 0px;
   height: calc(100vh - 200px);
+}
+
+.card-desc-small-text {
+  font-size: 1.1rem;
 }
 
 /* need to fix */
@@ -583,10 +591,35 @@ input::file-selector-button {
   display: none;
 }
 
+.newest-set-img {
+  width: 300px;
+  margin-top: 25px;
+  margin-bottom: 10px;
+  opacity: 0;
+  transition: transform 0.5s ease, opacity 0.5s ease-in-out !important;
+}
+
 .newest-set-cards {
   margin-right: 10px;
-  margin-top: 10px;
   width: 200px;
+  opacity: 0;
+  transition: transform 0.5s ease, opacity 0.5s ease-in-out !important;
+  z-index: 1;
+}
+
+.newest-set-cards-loaded,
+.newest-set-img-loaded {
+  opacity: 1;
+}
+
+.newest-set-img:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+}
+
+.newest-set-cards:hover {
+  cursor: pointer;
+  transform: scale(1.07);
 }
 
 .newest-set-cards:last-child {
@@ -773,6 +806,10 @@ input::file-selector-button {
     width: 70vw !important;
   }
 
+  .card-image {
+    max-width: 185px;
+  }
+
   .card-image:hover {
     transform: scale(1.13);
   }
@@ -807,7 +844,11 @@ input::file-selector-button {
   }
 
   .newest-set-cards {
-    width: 190px;
+    width: 180px;
+  }
+
+  .newest-set-cards:hover {
+    transform: scale(1.08);
   }
 }
 

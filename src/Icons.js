@@ -9,6 +9,9 @@ import lightning from "./images/lightning.png";
 import metal from "./images/metal.png";
 import psychic from "./images/psychic.png";
 import water from "./images/water.png";
+import vmax from "./images/vmax.png";
+import ex from "./images/ex.png";
+import exOld from "./images/exOld.png";
 
 export {
   colorless,
@@ -22,4 +25,7 @@ export {
   metal,
   psychic,
   water,
+  vmax,
+  ex,
+  exOld,
 };

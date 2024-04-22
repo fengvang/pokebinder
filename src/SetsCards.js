@@ -49,7 +49,7 @@ function SetsCards() {
           query: {
             setID: set.id,
             page: page,
-            pageSize: 32,
+            pageSize: 30,
           },
         }),
       });
@@ -84,7 +84,7 @@ function SetsCards() {
         <Image
           src={set.images.logo}
           alt={set.name}
-          style={{ height: "180px", width: "auto" }}
+          style={{ height: "150px", width: "auto" }}
         />
       </Row>
       <Row id="card-results-count">
@@ -94,20 +94,15 @@ function SetsCards() {
           </h5>
         ) : (
           setData?.data.map((card) => (
-            <Col key={card.id} xs={6} sm={6} md={3} lg={3} xl={3}>
-              <Card
-                className="my-3 d-flex justify-content-center align-items-center"
-                style={{ padding: "0px" }}
-              >
-                <Card.Img
-                  className="card-image"
-                  src={card.images.large}
-                  alt={card.name}
-                  style={{ width: "100%" }}
-                  onClick={() => handleCardClick(card)}
-                  onLoad={(e) => e.target.classList.add("card-image-loaded")}
-                />
-              </Card>
+            <Col key={card.id} className="px-0 card-image-col">
+              <Card.Img
+                className="card-image"
+                src={card.images.large}
+                alt={card.name}
+                style={{ width: "200px" }}
+                onClick={() => handleCardClick(card)}
+                onLoad={(e) => e.target.classList.add("card-image-loaded")}
+              />
             </Col>
           ))
         )}

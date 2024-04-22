@@ -18,7 +18,7 @@ function CardList() {
 
   const handleCardClick = (clickedCard) => {
     if (clickedCard.supertype === "Pokémon") {
-      navigate(`/pokémon-card??${clickedCard.name}`, {
+      navigate(`/pokémon-card?${clickedCard.name}`, {
         state: {
           cardData: clickedCard,
           name: pokemonName,
