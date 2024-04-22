@@ -14,6 +14,11 @@ function Home() {
 
   localStorage.removeItem("order");
 
+  if (rootPath) {
+    localStorage.removeItem("pokemonName");
+    localStorage.removeItem("pokemonSubtype");
+  }
+
   return (
     <>
       <Header />

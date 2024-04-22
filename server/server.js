@@ -23,7 +23,7 @@ app.post("/search-card", async (req, res) => {
 
     if (pokemonSubtype === "All") pokemonSubtype = "";
 
-    if (pokemonName !== "" && pokemonSubtype !== "") {
+    if (pokemonName !== "" && pokemonName !== null && pokemonSubtype !== "") {
       promises.push(
         pokemon.card
           .where({
@@ -37,7 +37,10 @@ app.post("/search-card", async (req, res) => {
             });
           })
       );
-    } else if (pokemonName === "" && pokemonSubtype !== "") {
+    } else if (
+      (pokemonName === "" || pokemonName === null) &&
+      pokemonSubtype !== ""
+    ) {
       promises.push(
         pokemon.card
           .where({
@@ -55,7 +58,7 @@ app.post("/search-card", async (req, res) => {
       promises.push(
         pokemon.card
           .where({
-            q: `name:${pokemonName}`,
+            q: `name:"${pokemonName}"`,
             page: page,
             pageSize: pageSize,
           })
@@ -90,7 +93,7 @@ app.post("/search-set", async (req, res) => {
       promises.push(
         pokemon.card
           .where({
-            q: `name:${pokemonName}`,
+            q: `name:"${pokemonName}"`,
           })
           .then((result) => {
             Object.entries(result).forEach(([key, value]) => {

@@ -54,7 +54,7 @@ function CardList() {
             name: pokemonName,
             subtype: pokemonSubtype,
             page: page,
-            pageSize: 30,
+            pageSize: 36,
           },
         }),
       });
@@ -85,10 +85,6 @@ function CardList() {
     setPokemonName(localStorage.getItem("pokemonName"));
     setPokemonSubtype(localStorage.getItem("pokemonSubtype"));
     setCurrentPage(cardData?.page);
-
-    // const cardHPMatch =
-    //   hpValue <= 0 || hpValue >= 300 || parseInt(card.hp) <= hpValue;
-    // return cardHPMatch;
   }, [location.state.cardData]);
 
   return (

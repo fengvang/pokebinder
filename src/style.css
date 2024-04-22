@@ -626,6 +626,16 @@ input::file-selector-button {
   margin-right: 0px;
 }
 
+.evolution {
+  color: var(--ghost);
+  transition: 0.15s ease-in-out;
+}
+
+.evolution:hover {
+  cursor: pointer;
+  color: var(--flying);
+}
+
 /* mobile styles */
 @media only screen and (max-width: 576px) {
   h1,

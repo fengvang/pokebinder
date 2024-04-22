@@ -82,55 +82,52 @@ function IndividualPagePokémon() {
     }
   }
 
-  // const searchCard = async () => {
-  //   const pokemonName = card?.evolvesFrom;
+  const handleEvolveClick = async (pokemonName) => {
+    localStorage.setItem("pokemonName", pokemonName);
+    localStorage.setItem("pokemonSubtype", "All");
+    try {
+      const response = await fetch("/search-card", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: {
+            name: pokemonName,
+            subtype: "",
+            page: 1,
+            pageSize: 36,
+          },
+        }),
+      });
 
-  //   try {
-  //     const response = await fetch("/search-card", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         query: {
-  //           name: pokemonName,
-  //           subtype: "",
-  //           page: 1,
-  //           pageSize: 32,
-  //         },
-  //       }),
-  //     });
+      if (!response.ok) {
+        throw new Error("Failed to fetch end point");
+      }
 
-  //     if (!response.ok) {
-  //       throw new Error("Failed to fetch end point");
-  //     }
+      const evolvesFromPokemon = await response.json();
 
-  //     const evolvesFromPokemon = await response.json();
-
-  //     navigate(`/results?${pokemonName}`, {
-  //       state: {
-  //         prevURL: { path: location.pathname, search: location.search },
-  //         cardData: evolvesFromPokemon,
-  //         set: set,
-  //         query: {
-  //           name: pokemonName,
-  //           subtype: "",
-  //         },
-  //       },
-  //     });
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //   }
-  // };
+      navigate(`/results?${pokemonName}&page=1`, {
+        state: {
+          cardData: evolvesFromPokemon,
+        },
+      });
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   return (
     <Container style={{ marginBottom: "20px" }}>
       {window.innerWidth < 576 ? (
-        <Row style={{ marginTop: "25px" }}>
+        <Row
+          style={{ marginTop: "25px" }}
+          className="d-flex align-items-center justify-content-center"
+        >
           <Col
             xs="auto"
             md={12}
-            className="d-flex align-items-center justify-content-start"
+            className="d-flex align-items-center justify-content-center"
           >
             <h1 className="d-flex align-items-center">
               {textWithImage(card.name)}
@@ -242,52 +239,70 @@ function IndividualPagePokémon() {
           <h4>Card Description</h4>
 
           <div>
-            <b>Set: </b>
+            <b>Set </b>
             <span className="card-desc-small-text">
               {card.set.name} - {card.set.series}
             </span>
           </div>
 
           <div>
-            <b>HP: </b> <span className="card-desc-small-text">{card.hp}</span>
+            <b>HP </b> <span className="card-desc-small-text">{card.hp}</span>
           </div>
 
           <div>
-            <b>Type(s): </b>
-            <span className="mx-1">{getMultipleTypes(card.types)}</span>
+            {card.hasOwnProperty("evolvesFrom") ? (
+              <>
+                <b>Evolves from </b>{" "}
+                <span
+                  className="card-desc-small-text evolution"
+                  onClick={() => handleEvolveClick(card.evolvesFrom)}
+                >
+                  {card.evolvesFrom}
+                </span>
+              </>
+            ) : null}
           </div>
 
           <div>
-            {card.hasOwnProperty("rules") ? (
-              <div>
-                <b>Rules: </b>
-                {card.rules.map((rule, index) => (
-                  <div className="list" key={index}>
-                    <p>
-                      <span className="card-desc-small-text">
-                        <b>{rule.split(":")[0] + ":"}</b>
-                        {rule.split(":")[1]}
-                      </span>
-                    </p>
-                  </div>
+            {card.hasOwnProperty("evolvesTo") && card.evolvesTo.length > 0 ? (
+              <>
+                <b>Evolves to:</b>{" "}
+                {card.evolvesTo.map((evolution, index) => (
+                  <span
+                    key={index}
+                    className="card-desc-small-text"
+                    onClick={() => handleEvolveClick(evolution)}
+                  >
+                    {index > 0 ? ", " : ""}
+                    <span className="evolution">{evolution}</span>
+                  </span>
                 ))}
-              </div>
-            ) : (
-              ""
-            )}
+              </>
+            ) : null}
+          </div>
+
+          <div>
+            <b>Type(s) </b>
+            <span className="mx-1">{getMultipleTypes(card.types)}</span>
           </div>
 
           <div>
             {card.hasOwnProperty("abilities") ? (
               <div>
-                <b>Ability: </b>
+                <Image
+                  src={TypeIcon.ability}
+                  alt="Ability"
+                  style={{ width: "130px", marginRight: "20px" }}
+                />
                 {card.abilities.map((ability, index) => (
-                  <div className="list" key={index}>
-                    <span className="card-desc-small-text">
-                      <b>{ability.name}: </b>
-                      {ability.text}
-                    </span>
-                  </div>
+                  <>
+                    <b>{ability.name}</b>
+                    <div className="list" key={index}>
+                      <span className="card-desc-small-text">
+                        {ability.text}
+                      </span>
+                    </div>
+                  </>
                 ))}
               </div>
             ) : (
@@ -296,7 +311,7 @@ function IndividualPagePokémon() {
           </div>
 
           <div>
-            <b>Attack(s): </b>
+            <b>Attack(s) </b>
             {card.attacks.map((attack, index) => (
               <Row className="list" key={index}>
                 <Row>
@@ -335,7 +350,7 @@ function IndividualPagePokémon() {
             <div>
               {card.hasOwnProperty("weaknesses") ? (
                 <div>
-                  <b>Weakness: </b>
+                  <b>Weakness </b>
                   {card.weaknesses.map((weakness, index) => (
                     <div className="list" key={index}>
                       <Image
@@ -361,7 +376,7 @@ function IndividualPagePokémon() {
             <div>
               {card.hasOwnProperty("resistances") ? (
                 <div>
-                  <b>Resistance: </b>
+                  <b>Resistance </b>
                   {card.resistances.map((resistance, index) => (
                     <div className="list" key={index}>
                       <Image
@@ -387,10 +402,30 @@ function IndividualPagePokémon() {
             <div>
               {card.hasOwnProperty("retreatCost") ? (
                 <div>
-                  <b>Retreat: </b>
+                  <b>Retreat </b>
                   <div className="list">
                     {getMultipleTypes(card.retreatCost)}
                   </div>
+                </div>
+              ) : (
+                ""
+              )}
+            </div>
+
+            <div>
+              {card.hasOwnProperty("rules") ? (
+                <div>
+                  <b>Rules </b>
+                  {card.rules.map((rule, index) => (
+                    <div className="list" key={index}>
+                      <p>
+                        <span className="card-desc-small-text">
+                          <b>{rule.split(":")[0] + ":"}</b>
+                          {rule.split(":")[1]}
+                        </span>
+                      </p>
+                    </div>
+                  ))}
                 </div>
               ) : (
                 ""

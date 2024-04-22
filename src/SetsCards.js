@@ -130,21 +130,28 @@ function SetsCards() {
         />
       </Row>
 
-      <Form.Select
-        aria-label="set-card-list"
-        style={{ width: "200px" }}
-        onChange={handleSelectChange}
-        defaultValue={localStorage.getItem("order")}
-      >
-        <option value="number">Number Ascending</option>
-        <option value="-number">Number Descending</option>
-        <option value="name">Name A-Z</option>
-        <option value="-name">Name Z-A</option>
-        <option value="-tcgplayer.prices.holofoil">
-          Market Price - Highest
-        </option>
-        <option value="tcgplayer.prices.holofoil">Market Price - Lowest</option>
-      </Form.Select>
+      <Form.Group>
+        <Form.Label className="card-desc-small-text">Order by</Form.Label>
+        <Form.Select
+          aria-label="set-card-list"
+          style={{
+            width: window.innerWidth < 576 ? "100%" : "200px",
+          }}
+          onChange={handleSelectChange}
+          defaultValue={localStorage.getItem("order")}
+        >
+          <option value="number">Number Ascending</option>
+          <option value="-number">Number Descending</option>
+          <option value="name">Name A-Z</option>
+          <option value="-name">Name Z-A</option>
+          <option value="-tcgplayer.prices.holofoil">
+            Market Price - Highest
+          </option>
+          <option value="tcgplayer.prices.holofoil">
+            Market Price - Lowest
+          </option>
+        </Form.Select>
+      </Form.Group>
 
       <Row id="card-results-count">
         {setData?.length === 0 ? (
