@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Image } from "react-bootstrap";
+import { Container, Row, Col, Card, Image, Form } from "react-bootstrap";
 import Pagination from "@mui/material/Pagination";
 
 function SetsCards() {
@@ -13,6 +13,7 @@ function SetsCards() {
       ? Math.ceil(setData.totalCount / setData.pageSize)
       : 0;
   const [currentPage, setCurrentPage] = useState(1);
+  const [orderBy, setOrderBy] = useState("");
 
   const handleCardClick = (clickedCard) => {
     if (clickedCard.supertype === "Pokémon") {
@@ -49,7 +50,8 @@ function SetsCards() {
           query: {
             setID: set.id,
             page: page,
-            pageSize: 30,
+            pageSize: 36,
+            orderBy: localStorage.getItem("order") || orderBy,
           },
         }),
       });
@@ -60,7 +62,7 @@ function SetsCards() {
 
       const cardData = await response.json();
 
-      navigate(`/browse-by-set?${set.series}=${set.name}&page=${page}`, {
+      navigate(`/browse-by-set?${set.series}-${set.name}&page=${page}`, {
         state: {
           set: set,
           setData: cardData,
@@ -75,6 +77,46 @@ function SetsCards() {
     setCurrentPage(setData?.page);
   }, [setData]);
 
+  const handleSelectChange = async (event) => {
+    const order = event.target.value;
+    setOrderBy(order);
+
+    if (order !== "number") localStorage.setItem("order", order);
+    else localStorage.removeItem("order");
+
+    try {
+      const response = await fetch("/get-set-data", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: {
+            setID: set.id,
+            page: 1,
+            pageSize: 36,
+            orderBy: order,
+          },
+        }),
+      });
+
+      const data = await response.json();
+
+      navigate(`/browse-by-set?${set.series}-${set.name}&page=1`, {
+        state: {
+          set: set,
+          setData: data,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch end point");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   return (
     <Container>
       <Row
@@ -87,6 +129,23 @@ function SetsCards() {
           style={{ height: "150px", width: "auto" }}
         />
       </Row>
+
+      <Form.Select
+        aria-label="set-card-list"
+        style={{ width: "200px" }}
+        onChange={handleSelectChange}
+        defaultValue={localStorage.getItem("order")}
+      >
+        <option value="number">Number Ascending</option>
+        <option value="-number">Number Descending</option>
+        <option value="name">Name A-Z</option>
+        <option value="-name">Name Z-A</option>
+        <option value="-tcgplayer.prices.holofoil">
+          Market Price - Highest
+        </option>
+        <option value="tcgplayer.prices.holofoil">Market Price - Lowest</option>
+      </Form.Select>
+
       <Row id="card-results-count">
         {setData?.length === 0 ? (
           <h5 className="my-3 d-flex align-items-center justify-content-center">

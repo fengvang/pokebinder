@@ -12,6 +12,8 @@ function Home() {
   const rootPath = location.pathname === "/";
   const searchBySetsPath = location.pathname === "/search-by-set";
 
+  localStorage.removeItem("order");
+
   return (
     <>
       <Header />

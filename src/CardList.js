@@ -54,7 +54,7 @@ function CardList() {
             name: pokemonName,
             subtype: pokemonSubtype,
             page: page,
-            pageSize: 32,
+            pageSize: 30,
           },
         }),
       });
@@ -100,17 +100,15 @@ function CardList() {
           </h5>
         ) : (
           pokemonCardList?.data.map((card) => (
-            <Col key={card.id} xs={6} sm={6} md={3} lg={3} xl={3}>
-              <Card className="my-3 d-flex justify-content-center align-items-center">
-                <Card.Img
-                  className="card-image"
-                  src={card.images.large}
-                  alt={card.name}
-                  style={{ width: "100%" }}
-                  onClick={() => handleCardClick(card)}
-                  onLoad={(e) => e.target.classList.add("card-image-loaded")}
-                />
-              </Card>
+            <Col key={card.id} className="px-0 card-image-col">
+              <Card.Img
+                className="card-image"
+                src={card.images.large}
+                alt={card.name}
+                style={{ width: "200px" }}
+                onClick={() => handleCardClick(card)}
+                onLoad={(e) => e.target.classList.add("card-image-loaded")}
+              />
             </Col>
           ))
         )}

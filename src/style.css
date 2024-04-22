@@ -834,8 +834,8 @@ input::file-selector-button {
   .mobile-profile-dropdown {
     color: #000;
     text-align: center;
-    min-width: 80vw;
-    min-height: 15vh;
+    min-width: 70vw;
+    min-height: 20vh;
     background-color: #ffffff;
     border-radius: 5px;
     box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.4);

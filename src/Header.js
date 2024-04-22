@@ -66,14 +66,11 @@ function Header() {
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu>
-                  <Dropdown.Item>
-                    <Row>
-                      <Link to="/">Collection</Link>
-                    </Row>
-                    <Row>
-                      <Link to="/profile">Account Settings</Link>
-                    </Row>
+                  <Dropdown.Item href="/">Collection</Dropdown.Item>
+                  <Dropdown.Item href="/profile">
+                    Account Settings
                   </Dropdown.Item>
+
                   <Dropdown.Item>
                     <Button
                       onClick={() =>

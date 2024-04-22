@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Carousel, Container, Image, Card, Col } from "react-bootstrap";
+import * as MuiIcon from "./MuiIcons";
 
 function MobileCarouselGallery() {
   const [newestSet, setNewestSet] = useState(
@@ -172,9 +173,12 @@ function MobileCarouselGallery() {
             />
           </span>
           <div
-            className="d-flex align-items-center justify-content-center"
+            className="d-flex align-items-start justify-content-center"
             style={{ fontSize: ".78em" }}
           >
+            <MuiIcon.Calendar
+              style={{ fontSize: "1rem", marginRight: "5px" }}
+            />
             Released {formatDate(newestSet.releaseDate)}
           </div>
           <Carousel

@@ -5,6 +5,7 @@ const axios = require("axios");
 const auth0 = require("@auth0/auth0-react");
 const app = express();
 const pokemon = require("pokemontcgsdk");
+const { orderBy } = require("firebase/firestore");
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
@@ -151,10 +152,11 @@ app.post("/get-set-data", async (req, res) => {
     const setID = req.body.query.setID;
     const page = req.body.query.page;
     const pageSize = req.body.query.pageSize;
-    let orderByParams;
+    let orderByParams = req.body.query.orderBy || null;
 
-    if (pageSize < 30) orderByParams = "-tcgplayer.prices.holofoil";
-    else orderByParams = "number";
+    if (pageSize < 36 && orderByParams === null)
+      orderByParams = "-tcgplayer.prices.holofoil";
+    else if (orderByParams === null) orderByParams = "number";
 
     const data = await pokemon.card.where({
       q: `set.id:${setID}`,

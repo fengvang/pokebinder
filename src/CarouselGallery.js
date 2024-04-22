@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Carousel, Image, Card, Col, Container } from "react-bootstrap";
+import { Carousel, Image, Card, Col, Container, Row } from "react-bootstrap";
 import * as MuiIcon from "./MuiIcons";
 
 function CarouselGallery() {
@@ -112,7 +112,7 @@ function CarouselGallery() {
           query: {
             setID: clickedSet.id,
             page: 1,
-            pageSize: 32,
+            pageSize: 36,
           },
         }),
       });
@@ -164,16 +164,16 @@ function CarouselGallery() {
     <Container>
       {newestSet && newestSetCards && (
         <>
-          <span className="d-flex align-items-center justify-content-center">
+          <Row className="d-flex align-items-center justify-content-center">
             <Image
               src={newestSet.images.logo}
               className="newest-set-img"
               onClick={() => handleSetClicked(newestSet)}
               onLoad={(e) => e.target.classList.add("newest-set-img-loaded")}
             />
-          </span>
+          </Row>
           <div
-            className="d-flex align-items-center justify-content-center"
+            className="d-flex align-items-start justify-content-center"
             style={{ fontSize: ".78em" }}
           >
             <MuiIcon.Calendar
@@ -181,6 +181,7 @@ function CarouselGallery() {
             />
             Released {formatDate(newestSet.releaseDate)}
           </div>
+
           <Carousel
             activeIndex={index}
             onSelect={handleSelect}

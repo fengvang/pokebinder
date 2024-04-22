@@ -77,7 +77,7 @@ function BrowseSets() {
           query: {
             setID: clickedSet.id,
             page: 1,
-            pageSize: 30,
+            pageSize: 36,
           },
         }),
       });
@@ -85,7 +85,7 @@ function BrowseSets() {
       const data = await response.json();
 
       navigate(
-        `/browse-by-set?${clickedSet.series}=${clickedSet.name}&page=1`,
+        `/browse-by-set?${clickedSet.series}-${clickedSet.name}&page=1`,
         {
           state: {
             set: clickedSet,
@@ -116,6 +116,8 @@ function BrowseSets() {
       setClicked(false);
     }
   }, [seriesSets]);
+
+  localStorage.removeItem("order");
 
   return (
     <Container>

@@ -9,9 +9,12 @@ import lightning from "./images/lightning.png";
 import metal from "./images/metal.png";
 import psychic from "./images/psychic.png";
 import water from "./images/water.png";
-import vmax from "./images/vmax.png";
-import ex from "./images/ex.png";
-import exOld from "./images/exOld.png";
+import breaklogo from "./images/subtypes/break.png";
+import gx from "./images/subtypes/gx.png";
+import ex from "./images/subtypes/ex.png";
+import exOld from "./images/subtypes/exOld.png";
+import v from "./images/subtypes/v.png";
+import vmax from "./images/subtypes/vmax.png";
 
 export {
   colorless,
@@ -25,7 +28,10 @@ export {
   metal,
   psychic,
   water,
-  vmax,
+  breaklogo,
+  gx,
   ex,
   exOld,
+  v,
+  vmax,
 };

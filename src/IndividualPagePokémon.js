@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { Container, Row, Col, Button, Image } from "react-bootstrap";
+import { textWithImage } from "./TextWithImages";
 import * as MuiIcon from "./MuiIcons";
 import * as TypeIcon from "./Icons";
 
@@ -132,7 +133,7 @@ function IndividualPagePokémon() {
             className="d-flex align-items-center justify-content-start"
           >
             <h1 className="d-flex align-items-center">
-              {card.name}
+              {textWithImage(card.name)}
               <span style={{ marginLeft: "10px" }}>
                 {getMultipleTypes(card.types)}
               </span>
@@ -147,7 +148,7 @@ function IndividualPagePokémon() {
             className="d-flex align-items-center justify-content-start"
           >
             <h1 className="d-flex align-items-center">
-              {card.name}
+              {textWithImage(card.name)}
               <span style={{ marginLeft: "10px" }}>
                 {getMultipleTypes(card.types)}
               </span>
@@ -311,7 +312,9 @@ function IndividualPagePokémon() {
                     md={5}
                     className="d-flex justify-content-between my-1"
                   >
-                    <span>{attack.name}</span>
+                    <span>
+                      <b>{attack.name}</b>
+                    </span>
                     <span>
                       {attack.damage !== "" ? `${attack.damage}` : ""}
                     </span>
