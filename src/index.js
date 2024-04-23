@@ -16,6 +16,7 @@ import IndividualPageEnergy from "./IndividualPageEnergy";
 import BrowseSets from "./BrowseSets";
 import BrowseBySetsResults from "./BrowseBySetsResults";
 import Profile from "./Profile";
+import Collection from "./Collection";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./style.css";
@@ -59,6 +60,7 @@ const router = createBrowserRouter([
         element: <BrowseBySetsResults />,
       },
       { path: "/profile", element: <Profile /> },
+      { path: "/collection", element: <Collection /> },
     ],
   },
 ]);

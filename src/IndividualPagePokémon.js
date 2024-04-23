@@ -1,6 +1,9 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { Container, Row, Col, Button, Image } from "react-bootstrap";
 import { textWithImage } from "./TextWithImages";
+import { useAuth0 } from "@auth0/auth0-react";
+import { getDatabase, ref, update } from "firebase/database";
+import { useEffect } from "react";
 import * as MuiIcon from "./MuiIcons";
 import * as TypeIcon from "./Icons";
 
@@ -8,6 +11,8 @@ function IndividualPagePokémon() {
   const location = useLocation();
   const navigate = useNavigate();
   const card = location.state.cardData;
+  const { user, isAuthenticated } = useAuth0();
+  const collection = JSON.parse(localStorage.getItem("myCollection"));
 
   let formattedDate = null;
   let options;
@@ -120,8 +125,15 @@ function IndividualPagePokémon() {
   const addToCollection = (card) => {
     console.log("adding card to collection");
 
-    // Retrieve the current collection from localStorage
-    const currentCollectionJSON = localStorage.getItem("myCollection");
+    // Get the user ID from Auth0
+    const userId = user.sub;
+
+    // Use the user ID to create a unique key for the collection
+    const collectionKey = `myCollection_${userId}`;
+
+    // Retrieve the current collection from localStorage using the unique key
+    const currentCollectionJSON = localStorage.getItem(collectionKey);
+
     // Parse the JSON data to convert it into a JavaScript array
     const currentCollection = currentCollectionJSON
       ? JSON.parse(currentCollectionJSON)
@@ -142,13 +154,26 @@ function IndividualPagePokémon() {
       // Stringify the updated array
       const updatedCollectionJSON = JSON.stringify(currentCollection);
 
-      // Set the updated collection back into localStorage
-      localStorage.setItem("myCollection", updatedCollectionJSON);
+      // Set the updated collection back into localStorage using the unique key
+      localStorage.setItem(collectionKey, updatedCollectionJSON);
     } else {
       // Handle the case where the item is a duplicate
       console.log("This item already exists in the collection.");
     }
   };
+
+  function updateCollection(userId, collection) {
+    console.log("writing collection...");
+    const db = getDatabase();
+    update(ref(db, "users/" + userId), {
+      collection: collection,
+    });
+    console.log("done!");
+  }
+
+  useEffect(() => {
+    updateCollection(user.sub, collection);
+  }, [isAuthenticated, user, collection]);
 
   return (
     <Container style={{ marginBottom: "20px" }}>

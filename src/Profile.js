@@ -26,7 +26,6 @@ function Profile() {
   const [profileImage, setProfileImage] = useState(null);
   const [newUsername, setNewUsername] = useState("");
   const [username, setUsername] = useState(user?.displayName || user?.nickname);
-  const collection = JSON.parse(localStorage.getItem("myCollection"));
 
   if (isLoading) {
     return <div>Loading ...</div>;
@@ -136,39 +135,6 @@ function Profile() {
     }
   };
 
-  const collectionWorth = () => {
-    let totalPrice = 0;
-
-    Object.values(collection).forEach((item) => {
-      console.log(item);
-      if (
-        !isNaN(item.tcgplayer?.prices?.holofoil?.market) ||
-        !isNaN(item.tcgplayer?.prices?.["1stEditionHolofoil"]?.market) ||
-        !isNaN(item.tcgplayer?.prices?.reverseHolofoil?.market) ||
-        !isNaN(item.tcgplayer?.prices?.["1stEditionNormal"]?.market) ||
-        !isNaN(item.tcgplayer?.prices?.normal?.market)
-      ) {
-        if (item.tcgplayer?.prices?.normal?.market) {
-          totalPrice += item.tcgplayer.prices.normal.market;
-        } else if (item.tcgplayer?.prices?.reverseHolofoil?.market) {
-          totalPrice += item.tcgplayer.prices.reverseHolofoil.market;
-        } else if (item.tcgplayer?.prices?.["1stEditionHolofoil"]?.market) {
-          totalPrice += item.tcgplayer.prices["1stEditionHolofoil"].market;
-        } else if (item.tcgplayer?.prices?.["1stEditionNormal"]?.market) {
-          totalPrice += item.tcgplayer.prices["1stEditionNormal"].market;
-        }
-        console.log(totalPrice);
-      } else {
-        console.log(NaN);
-        return;
-      }
-    });
-
-    return totalPrice.toFixed(2);
-  };
-
-  const worth = collectionWorth();
-
   return (
     isAuthenticated && (
       <Container>
@@ -224,10 +190,6 @@ function Profile() {
                 Save changes
               </Button>
             </Form.Group>
-          </Row>
-
-          <Row>
-            <span>Collection worth: $ {worth}</span>
           </Row>
         </Col>
       </Container>

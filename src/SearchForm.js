@@ -69,7 +69,7 @@ function SearchForm() {
           : (pokemonName && pokemonSubtype === null) ||
             pokemonSubtype === undefined
           ? `/results?${pokemonName}&page=1`
-          : `/results?${pokemonName}&${pokemonSubtype}&page=1`;
+          : `/results?${pokemonName}${pokemonSubtype}&page=1`;
 
       if (pokemonSubtype === "") localStorage.setItem("pokemonSubtype", "All");
 

@@ -15,7 +15,7 @@ function Header() {
       >
         <div className="mobile-profile-dropdown">
           <Row>
-            <Link to="/">Collection</Link>
+            <Link to="/collection">Collection</Link>
           </Row>
           <Row>
             <Link to="/profile">Account Settings</Link>
@@ -68,7 +68,7 @@ function Header() {
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu>
-                  <Dropdown.Item href="/">Collection</Dropdown.Item>
+                  <Dropdown.Item href="/collection">Collection</Dropdown.Item>
                   <Dropdown.Item href="/profile">
                     Account Settings
                   </Dropdown.Item>

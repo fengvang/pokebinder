@@ -303,6 +303,31 @@ app.patch("/change-username", async (req, res) => {
   }
 });
 
+// firebase token exchange
+app.post("/exchange-firebase-auth", async (req, res) => {
+  try {
+    const accessToken = req.body.accessToken;
+    const url = process.env.REACT_APP_FIREBASE_AUTH_URL;
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        accessToken: accessToken,
+      }),
+    });
+
+    const data = await response.json();
+    const firebaseToken = data.firebaseToken;
+
+    console.log("firebaseToken", data);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
