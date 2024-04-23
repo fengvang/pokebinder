@@ -117,6 +117,39 @@ function IndividualPagePokémon() {
     }
   };
 
+  const addToCollection = (card) => {
+    console.log("adding card to collection");
+
+    // Retrieve the current collection from localStorage
+    const currentCollectionJSON = localStorage.getItem("myCollection");
+    // Parse the JSON data to convert it into a JavaScript array
+    const currentCollection = currentCollectionJSON
+      ? JSON.parse(currentCollectionJSON)
+      : [];
+
+    // Check if the item already exists in the collection
+    const isDuplicate = currentCollection.some((item) => {
+      // Compare the properties of the item to determine if it's a duplicate
+      // Assuming `card` has a unique identifier property like `id`
+      return item.id === card.id; // Change `id` to the appropriate property name
+    });
+
+    // If it's not a duplicate, add the item to the collection
+    if (!isDuplicate) {
+      // Push the new item to the array
+      currentCollection.push(card);
+
+      // Stringify the updated array
+      const updatedCollectionJSON = JSON.stringify(currentCollection);
+
+      // Set the updated collection back into localStorage
+      localStorage.setItem("myCollection", updatedCollectionJSON);
+    } else {
+      // Handle the case where the item is a duplicate
+      console.log("This item already exists in the collection.");
+    }
+  };
+
   return (
     <Container style={{ marginBottom: "20px" }}>
       {window.innerWidth < 576 ? (
@@ -228,11 +261,20 @@ function IndividualPagePokémon() {
 
       <Row>
         <Col xs="auto" md={5} className="individual-image-col">
-          <Image
-            className="individual-page-image"
-            src={card.images.large}
-            alt={card.name}
-          />
+          <div className="image-container">
+            <Image
+              className="individual-page-image"
+              src={card.images.large}
+              alt={card.name}
+            />
+            <div
+              className="image-overlay"
+              onClick={() => addToCollection(card)}
+            >
+              Add to collection
+              <MuiIcon.LibraryAddIcon style={{ marginLeft: "5px" }} />
+            </div>
+          </div>
         </Col>
 
         <Col md={7} className="individual-card-info">

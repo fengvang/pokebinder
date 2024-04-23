@@ -7,6 +7,7 @@ import LaunchIcon from "@mui/icons-material/Launch";
 import { default as Cancel } from "@mui/icons-material/CancelPresentation";
 import { default as Dropdown } from "@mui/icons-material/ArrowDropDown";
 import { default as Calendar } from "@mui/icons-material/CalendarToday";
+import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
 
 export {
   TuneIcon,
@@ -18,4 +19,5 @@ export {
   Cancel,
   Dropdown,
   Calendar,
+  LibraryAddIcon,
 };

@@ -63,9 +63,20 @@ function CardList() {
         throw new Error();
       }
 
+      console.log("pokemonName", pokemonName);
+      console.log("pokemonSubtype", pokemonSubtype);
+
+      const url =
+        (pokemonSubtype && pokemonName === null) || pokemonName === undefined
+          ? `/results?${pokemonSubtype}&page=${page}`
+          : (pokemonName && pokemonSubtype === null) ||
+            pokemonSubtype === undefined
+          ? `/results?${pokemonName}&page=${page}`
+          : `/results?${pokemonName}&${pokemonSubtype}&page=${page}`;
+
       const cardData = await response.json();
 
-      navigate(`/results?${pokemonName}&page=${page}`, {
+      navigate(url, {
         state: {
           cardData: cardData,
           query: {

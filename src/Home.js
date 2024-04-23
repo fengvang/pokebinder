@@ -29,7 +29,7 @@ function Home() {
             <MobileCarouselGallery />
           ) : (
             <CarouselGallery />
-          )}
+          )}{" "}
         </>
       ) : null}
       {searchBySetsPath ? (

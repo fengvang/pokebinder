@@ -63,9 +63,13 @@ function SearchForm() {
       // store response
       const cardData = await response.json();
 
-      const url = pokemonSubtype
-        ? `/results?${pokemonName}&${pokemonSubtype}&page=1`
-        : `/results?${pokemonName}&page=1`;
+      const url =
+        (pokemonSubtype && pokemonName === null) || pokemonName === undefined
+          ? `/results?${pokemonSubtype}&page=1`
+          : (pokemonName && pokemonSubtype === null) ||
+            pokemonSubtype === undefined
+          ? `/results?${pokemonName}&page=1`
+          : `/results?${pokemonName}&${pokemonSubtype}&page=1`;
 
       if (pokemonSubtype === "") localStorage.setItem("pokemonSubtype", "All");
 

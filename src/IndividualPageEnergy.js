@@ -132,11 +132,17 @@ function IndividualPageEnergy() {
 
       <Row>
         <Col xs="auto" md={5} className="individual-image-col">
-          <Image
-            className="individual-page-image"
-            src={card.images.large}
-            alt={card.name}
-          />
+          <div className="image-container">
+            <Image
+              className="individual-page-image"
+              src={card.images.large}
+              alt={card.name}
+            />
+            <div className="image-overlay">
+              Add to collection
+              <MuiIcon.LibraryAddIcon style={{ marginLeft: "5px" }} />
+            </div>
+          </div>
         </Col>
 
         <Col md={7} className="individual-card-info">

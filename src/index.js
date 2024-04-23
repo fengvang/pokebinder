@@ -48,6 +48,7 @@ const router = createBrowserRouter([
       { path: "/energy-card", element: <IndividualPageEnergy /> },
       {
         path: "/search-by-set",
+        element: null,
       },
       {
         path: "/sets",

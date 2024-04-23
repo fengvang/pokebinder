@@ -19,11 +19,12 @@ app.post("/search-card", async (req, res) => {
     const page = req.body.query.page;
     const pageSize = req.body.query.pageSize;
     const promises = [];
-    const pokemonData = {};
+    let pokemonData = {};
 
     if (pokemonSubtype === "All") pokemonSubtype = "";
 
     if (pokemonName !== "" && pokemonName !== null && pokemonSubtype !== "") {
+      console.log("calling first if");
       promises.push(
         pokemon.card
           .where({
@@ -41,6 +42,7 @@ app.post("/search-card", async (req, res) => {
       (pokemonName === "" || pokemonName === null) &&
       pokemonSubtype !== ""
     ) {
+      console.log("calling second if");
       promises.push(
         pokemon.card
           .where({
@@ -55,6 +57,7 @@ app.post("/search-card", async (req, res) => {
           })
       );
     } else {
+      console.log("calling last if");
       promises.push(
         pokemon.card
           .where({
@@ -262,6 +265,41 @@ app.patch("/change-user-image", async (req, res) => {
   } catch (error) {
     console.error("Error fetching data:", error);
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Auth0 API
+app.patch("/change-username", async (req, res) => {
+  try {
+    const userID = req.body.userID;
+    const newDisplayName = req.body.username;
+    const url = process.env.REACT_APP_AUTH0_API_URL + `${userID}`;
+
+    // update the user metadata
+    const options = {
+      method: "PATCH",
+      url: url,
+      headers: {
+        authorization: "Bearer " + process.env.REACT_APP_AUTH0_MGMT_API_TOKEN,
+        "content-type": "application/json",
+      },
+      data: {
+        user_metadata: {
+          displayName: newDisplayName,
+        },
+      },
+    };
+
+    axios
+      .request(options)
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  } catch (error) {
+    console.log(error);
   }
 });
 

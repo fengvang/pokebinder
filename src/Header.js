@@ -52,7 +52,7 @@ function Header() {
                   <span onClick={() => setDropdownClicked(true)}>
                     <Image
                       src={user.picture}
-                      alt={user.nickname}
+                      alt={user.displayName || user.nickname}
                       style={{
                         height: "25px",
                         width: "25px",
@@ -61,7 +61,9 @@ function Header() {
                       id="profile-image"
                       roundedCircle
                     />{" "}
-                    <span style={{ fontSize: "1rem" }}>{user.nickname}</span>
+                    <span style={{ fontSize: "1rem" }} id="header-username">
+                      {user.displayName || user.nickname}
+                    </span>
                   </span>
                 </Dropdown.Toggle>
 

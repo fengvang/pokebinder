@@ -2,7 +2,7 @@
 
 :root {
   --textcolor: #eeebe6;
-  --bgcolor: #24292e;
+  --bgcolor: #16181b;
   --normal: #a8a77a;
   --fire: #ee8130;
   --water: #6390f0;
@@ -32,12 +32,10 @@ body {
   color: var(--textcolor);
   font-family: "Jaldi", sans-serif;
   font-weight: 400;
-  font-style: normal;
-  font-size: 19px;
 }
 
 header {
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(5, 5, 5, 0.4);
   padding: 10px;
   display: flex;
   align-items: center;
@@ -315,7 +313,34 @@ div > form.my-3 {
 }
 
 .individual-page-image {
-  width: 80%;
+  width: 100%;
+  position: relative;
+}
+
+.image-container {
+  position: relative;
+  overflow: hidden;
+  width: 421px;
+  height: 588px;
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 421px;
+  height: 100%;
+  opacity: 0;
+  transition: background-color 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-container:hover .image-overlay {
+  opacity: 1;
+  background-color: rgba(22, 24, 27, 0.9);
+  cursor: pointer;
 }
 
 .list {
