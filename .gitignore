@@ -24,3 +24,8 @@ yarn-debug.log*
 yarn-error.log*
 
 .env
+
+/src/APIEndpoints.txt
+
+myCollection.json
+/server/serviceAccountKey.json
