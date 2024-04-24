@@ -1,11 +1,13 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { Container, Row, Col, Button, Image } from "react-bootstrap";
 import * as MuiIcon from "./MuiIcons";
+import { updateCollection } from "./Functions";
 
 function IndividualPageTrainer() {
   const location = useLocation();
   const navigate = useNavigate();
   const card = location.state.cardData;
+  const currentUser = JSON.parse(localStorage.getItem("user"));
 
   let formattedDate = null;
   let options;
@@ -138,7 +140,10 @@ function IndividualPageTrainer() {
               src={card.images.large}
               alt={card.name}
             />
-            <div className="image-overlay">
+            <div
+              className="image-overlay"
+              onClick={() => updateCollection(currentUser.uid, card)}
+            >
               Add to collection
               <MuiIcon.LibraryAddIcon style={{ marginLeft: "5px" }} />
             </div>

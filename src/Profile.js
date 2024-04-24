@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 // eslint-disable-next-line
 import app from "./firebase";
 import {
@@ -8,7 +8,9 @@ import {
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
-import { getAuth } from "firebase/auth";
+import { getAuth, updateProfile } from "firebase/auth";
+import { getDatabase, ref as dbRef, update } from "firebase/database";
+
 import {
   Container,
   Col,
@@ -21,11 +23,35 @@ import {
 
 function Profile() {
   const auth = getAuth();
-  const user = auth?.currentUser;
   const [image, setImage] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
   const [newUsername, setNewUsername] = useState("");
   const [username, setUsername] = useState("");
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+
+  function updateUsernameInDB(userId, name) {
+    const db = getDatabase();
+    const userRef = dbRef(db, "users/" + userId);
+
+    update(userRef, {
+      username: name,
+    })
+      .then(() => {
+        console.log("Username updated successfully in the database.");
+      })
+      .catch((error) => {
+        console.error("Error updating username:", error);
+      });
+  }
+
+  function extractImageName(url) {
+    if (url) {
+      const startIndex = url.indexOf("%2F") + 3;
+      const endIndex = url.indexOf("?alt");
+
+      return url.substring(startIndex, endIndex);
+    } else return null;
+  }
 
   const handleChange = (event) => {
     if (event.target.files[0]) {
@@ -33,121 +59,125 @@ function Profile() {
     }
   };
 
-  // const handleUpload = () => {
-  //   const storage = getStorage();
-  //   const storageRef = ref(storage, `images/${image.name}`);
+  const handleUpload = () => {
+    if (!image || !image.type.startsWith("image/")) {
+      console.error("Please select an image file.");
+      return;
+    }
 
-  //   uploadBytes(storageRef, image)
-  //     .then((snapshot) => {
-  //       // Get download URL for the uploaded image
-  //       getDownloadURL(storageRef)
-  //         .then((downloadURL) => {
-  //           // Update user image using the obtained download URL
-  //           updateUserImage(downloadURL);
-  //         })
-  //         .catch((error) => {
-  //           console.error("Error getting download URL:", error);
-  //         });
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error uploading file:", error);
-  //     });
-  // };
+    const storage = getStorage();
+    const storageRef = ref(storage, `images/${image.name}`);
 
-  // const updateUserImage = async (imageURL) => {
-  //   try {
-  //     const response = await fetch("/change-user-image", {
-  //       method: "PATCH",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         userID: user.sub,
-  //         image: imageURL,
-  //       }),
-  //     });
+    uploadBytes(storageRef, image)
+      .then((snapshot) => {
+        // Get download URL for the uploaded image
+        getDownloadURL(storageRef)
+          .then((downloadURL) => {
+            setProfileImage(downloadURL);
+            // naive approach to updating header profile image on change
+            document.getElementById(
+              "profile-image"
+            ).style.content = `url(${downloadURL})`;
+            // Update user image using the obtained download URL
+            updateUserImage(downloadURL);
+          })
+          .catch((error) => {
+            console.error("Error getting download URL:", error);
+          });
+      })
+      .catch((error) => {
+        console.error("Error uploading file:", error);
+      });
+  };
 
-  //     const data = await response.json();
+  const updateUserImage = async (imageURL) => {
+    const user = auth.currentUser;
+    const oldImage = extractImageName(user?.photoURL);
+    const oldImageURL = user.photoURL;
+    const newImage = extractImageName(imageURL);
 
-  //     const oldImage = data.oldImageURL;
-  //     const newImage = data.newImageURL;
+    console.log(oldImage);
+    console.log(newImage);
 
-  //     setProfileImage(newImage);
+    if (user) {
+      updateProfile(user, {
+        photoURL: imageURL,
+      })
+        .then(() => {
+          localStorage.setItem("user", JSON.stringify(user));
+          console.log("Image updated.");
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
 
-  //     // naive approach to updating header profile image on change
-  //     document.getElementById(
-  //       "profile-image"
-  //     ).style.content = `url(${newImage})`;
+    // After updating image, delete old profile image from storage
+    const storage = getStorage();
+    console.log(oldImage !== newImage && oldImage);
+    if (oldImage !== newImage && oldImage) {
+      try {
+        console.log(oldImageURL);
+        const desertRef = ref(storage, oldImageURL);
 
-  //     // After updating image, delete old profile image from storage
-  //     const storage = getStorage();
-
-  //     try {
-  //       const desertRef = ref(storage, oldImage);
-
-  //       // delete the file
-  //       deleteObject(desertRef)
-  //         .then(() => {
-  //           // file deleted successfully
-  //           console.log("Successfully deleted old profile pic");
-  //         })
-  //         .catch((error) => {
-  //           console.log(error);
-  //         });
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-
-  //     if (!response.ok) {
-  //       throw new Error("Failed to fetch end point");
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
+        // delete the file
+        deleteObject(desertRef)
+          .then(() => {
+            // file deleted successfully
+            console.log("Successfully deleted old profile pic");
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
 
   const handleNameChange = (event) => {
     setNewUsername(event.target.value);
   };
 
-  // const handleSaveChanges = async (name) => {
-  //   try {
-  //     await fetch("/change-username", {
-  //       method: "PATCH",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         userID: user.sub,
-  //         username: name,
-  //       }),
-  //     });
+  const handleSaveChanges = async (name) => {
+    const user = auth.currentUser;
 
-  //     setUsername(name);
+    try {
+      if (user) {
+        updateProfile(user, {
+          displayName: name,
+        })
+          .then(() => {
+            updateUsernameInDB(currentUser.uid, name);
+            setUsername(name);
+            localStorage.setItem("user", JSON.stringify(user));
+            console.log("Name updated.");
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
 
-  //     document.getElementById("header-username").textContent = name;
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
-  console.log(user);
+      document.getElementById("header-username").textContent = name;
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
-    user && (
-      <Container>
+    <Container>
+      {currentUser && (
         <Col sm={12} md={3} style={{ padding: "25px" }}>
           <Row className="profile-details">
-            <h2>{user.displayName}</h2>
+            <h2>{username || currentUser.displayName}</h2>
           </Row>
 
           <Row className="profile-details">
-            <p>{user.email}</p>
+            <p>{currentUser.email}</p>
           </Row>
-
           <Image
-            src=""
-            alt=""
+            src={profileImage || currentUser.photoURL}
+            alt={currentUser.displayName}
             style={{
               height: "200px",
               width: "200px",
@@ -159,8 +189,12 @@ function Profile() {
           <Row className="profile-details">
             <Form.Group controlId="formFile" className="my-3">
               <InputGroup>
-                <Form.Control type="file" className="image-upload-input" />
-                <Button className="upload-button">
+                <Form.Control
+                  type="file"
+                  className="image-upload-input"
+                  onChange={handleChange}
+                />
+                <Button className="upload-button" onClick={handleUpload}>
                   <i className="bi bi-upload"></i>
                 </Button>
               </InputGroup>
@@ -174,18 +208,20 @@ function Profile() {
                 placeholder="New username"
                 aria-label="new-username"
                 className="change-username-input"
+                onChange={handleNameChange}
               />
               <Button
                 className="button"
                 style={{ width: "110px", marginLeft: "0px", marginTop: "25px" }}
+                onClick={() => handleSaveChanges(newUsername)}
               >
                 Save changes
               </Button>
             </Form.Group>
           </Row>
         </Col>
-      </Container>
-    )
+      )}
+    </Container>
   );
 }
 

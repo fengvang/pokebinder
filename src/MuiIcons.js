@@ -10,6 +10,10 @@ import { default as Calendar } from "@mui/icons-material/CalendarToday";
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
 import { default as Eye } from "@mui/icons-material/Visibility";
 import { default as EyeOff } from "@mui/icons-material/VisibilityOff";
+import GoogleIcon from "@mui/icons-material/Google";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import XIcon from "@mui/icons-material/X";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 export {
   TuneIcon,
@@ -24,4 +28,8 @@ export {
   LibraryAddIcon,
   Eye,
   EyeOff,
+  GoogleIcon,
+  FacebookIcon,
+  XIcon,
+  ArrowBackIcon,
 };

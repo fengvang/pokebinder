@@ -1,16 +1,14 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { getAuth, signOut } from "firebase/auth";
 
-import { Row, Button, Container, Dropdown } from "react-bootstrap";
+import { Row, Button, Container, Dropdown, Image } from "react-bootstrap";
 
 function Header() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [dropdownClicked, setDropdownClicked] = useState(false);
-  const auth = getAuth();
-  const user = auth?.currentUser;
-
-  console.log("user from header", user);
+  const currentUser = JSON.parse(localStorage.getItem("user"));
 
   function showMobileDropdown() {
     return (
@@ -25,7 +23,11 @@ function Header() {
           <Row>
             <Link to="/profile">Account Settings</Link>
           </Row>
-          <Button className="logout-button" style={{ marginTop: "25px" }}>
+          <Button
+            className="logout-button"
+            style={{ marginTop: "25px" }}
+            onClick={logout}
+          >
             Logout
           </Button>
         </div>
@@ -34,53 +36,57 @@ function Header() {
   }
 
   const logout = () => {
+    const auth = getAuth();
+
     signOut(auth)
       .then(() => {
-        // Sign-out successful.
+        localStorage.removeItem("user");
         console.log("Successfully logged out");
 
-        navigate("/");
+        setTimeout(() => {
+          navigate("/");
+        }, 1500);
       })
       .catch((error) => {
-        // An error happened.
         console.error(error);
       });
   };
+
+  const renderLoginButton =
+    !currentUser &&
+    location.pathname !== "/login" &&
+    !currentUser &&
+    location.pathname !== "/create-account";
 
   return (
     <>
       {dropdownClicked ? showMobileDropdown() : null}
 
-      <header>
+      <header id="header">
         <Container className="header-container">
           <Link to="/">
             <span style={{ fontSize: "2rem" }}>PokéBinder</span>
           </Link>
-          {user ? (
+          {currentUser ? (
             <>
               <Dropdown>
                 <Dropdown.Toggle as="div">
                   <span onClick={() => setDropdownClicked(true)}>
-                    {/* <Image
-                      src={user.picture}
-                      alt={user.displayName || user.nickname}
-                      style={{
-                        height: "25px",
-                        width: "25px",
-                        objectFit: "cover",
-                      }}
+                    <Image
+                      src={currentUser.photoURL}
+                      alt={currentUser.displayName}
                       id="profile-image"
                       roundedCircle
-                    />{" "} */}
+                    />{" "}
                     <span style={{ fontSize: "1rem" }} id="header-username">
-                      {user.displayName}
+                      {currentUser.displayName}
                     </span>
                   </span>
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu>
                   <Dropdown.Item href="/collection">Collection</Dropdown.Item>
-                  <Dropdown.Item href="/profile">
+                  <Dropdown.Item href={currentUser ? "/profile" : "/"}>
                     Account Settings
                   </Dropdown.Item>
 
@@ -97,14 +103,16 @@ function Header() {
               </Dropdown>
             </>
           ) : (
-            <>
-              <Link to="/login" className="login-header-button">
-                <span>
-                  <i className="bi bi-person-circle"></i>{" "}
-                  <span style={{ fontSize: "1rem" }}>Login</span>
-                </span>
-              </Link>
-            </>
+            renderLoginButton && (
+              <>
+                <Link to="/login" className="login-header-button">
+                  <span>
+                    <i className="bi bi-person-circle"></i>{" "}
+                    <span style={{ fontSize: "1rem" }}>Login</span>
+                  </span>
+                </Link>
+              </>
+            )
           )}
         </Container>
       </header>

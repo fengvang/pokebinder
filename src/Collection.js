@@ -1,14 +1,63 @@
-import { useAuth0 } from "@auth0/auth0-react";
-import { getDatabase, ref, update } from "firebase/database";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import { Container, Row, Col, Card } from "react-bootstrap";
+import { getDatabase, ref, child, get } from "firebase/database";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useEffect, useState } from "react";
+import { Container, Row, Col, Card, Form } from "react-bootstrap";
+import { sortByAlpha, sortByPrice } from "./Functions";
 
 function Collection() {
-  const { user, isAuthenticated } = useAuth0();
-  const userId = user?.sub;
   const navigate = useNavigate();
-  const collection = JSON.parse(localStorage.getItem(`myCollection_${userId}`));
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+  const dbRef = ref(getDatabase());
+  const [collection, setCollection] = useState([]);
+  const [orderBy, setOrderBy] = useState("");
+
+  function getCollectionFromDB() {
+    const auth = getAuth();
+
+    try {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          get(child(dbRef, `users/${currentUser.uid}/collection`))
+            .then((snapshot) => {
+              if (snapshot.exists()) {
+                const data = snapshot.val();
+
+                switch (localStorage.getItem("order") || orderBy) {
+                  case "newest":
+                    setCollection(data.reverse());
+                    break;
+                  case "oldest":
+                    setCollection(data);
+                    break;
+                  case "name":
+                    setCollection(sortByAlpha(data, "name"));
+                    break;
+                  case "-name":
+                    setCollection(sortByAlpha(data, "-name"));
+                    break;
+                  case "-tcgplayer.prices.holofoil":
+                    setCollection(sortByPrice(data, "high"));
+                    break;
+                  case "tcgplayer.prices.holofoil":
+                    setCollection(sortByPrice(data, "low"));
+                    break;
+                  default:
+                    setCollection(data.reverse());
+                }
+              } else {
+                console.log("No data available");
+              }
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   const collectionWorth = () => {
     let totalPrice = 0;
@@ -40,21 +89,6 @@ function Collection() {
     return totalPrice.toFixed(2);
   };
 
-  function myCollectionExists() {
-    return localStorage.getItem(`myCollection_${userId}`);
-  }
-
-  let data = myCollectionExists
-    ? JSON.parse(localStorage.getItem(`myCollection_${userId}`))
-    : [];
-  let cards = {
-    data: data,
-    page: 1,
-    pageSize: 36,
-    count: data?.length,
-    totalCount: data?.length,
-  };
-
   const handleCardClick = (clickedCard) => {
     if (clickedCard.supertype === "Pokémon") {
       navigate(`/pokémon-card?${clickedCard.name}`, {
@@ -77,26 +111,29 @@ function Collection() {
     }
   };
 
-  function updateCollection(userId, collection) {
-    console.log("writing collection...");
-    const db = getDatabase();
-    update(ref(db, "users/" + userId), {
-      collection: collection,
-    });
-    console.log("done!");
-  }
+  const handleSelectChange = async (event) => {
+    const order = event.target.value;
+    setOrderBy(order);
+
+    if (order !== "default") localStorage.setItem("order", order);
+    else localStorage.removeItem("order");
+  };
 
   useEffect(() => {
-    updateCollection(user?.sub, collection);
-  }, [isAuthenticated, user, collection]);
+    getCollectionFromDB();
+    // eslint-disable-next-line
+  }, [orderBy]);
 
   return (
     <Container>
-      {isAuthenticated ? (
+      {currentUser ? (
         <>
-          <Row className="my-5">
-            {myCollectionExists() ? (
+          <Row className="my-5 d-flex align-items-center justify-content-center">
+            {collection ? (
               <>
+                <h1 style={{ fontFamily: "Josefin Sans" }}>
+                  {currentUser.displayName}'s Binder
+                </h1>
                 <Row>
                   <h5>Collection worth: $ {collectionWorth()}</h5>
                 </Row>
@@ -104,12 +141,37 @@ function Collection() {
             ) : null}
 
             <Row id="card-results-count">
-              {cards?.length === 0 ? (
+              <Form.Group>
+                <Form.Label className="card-desc-small-text">
+                  Order by
+                </Form.Label>
+                <Form.Select
+                  aria-label="collection-card-list"
+                  style={{
+                    width: window.innerWidth < 576 ? "100%" : "200px",
+                  }}
+                  onChange={handleSelectChange}
+                  defaultValue={localStorage.getItem("order")}
+                >
+                  <option value="newest">Newest First</option>
+                  <option value="oldest">Oldest First</option>
+                  <option value="name">Name A-Z</option>
+                  <option value="-name">Name Z-A</option>
+                  <option value="-tcgplayer.prices.holofoil">
+                    Market Price - Highest
+                  </option>
+                  <option value="tcgplayer.prices.holofoil">
+                    Market Price - Lowest
+                  </option>
+                </Form.Select>
+              </Form.Group>
+
+              {collection?.length === 0 ? (
                 <h5 className="my-3 d-flex align-items-center justify-content-center">
                   Collection is empty!
                 </h5>
               ) : (
-                cards?.data?.map((card) => (
+                collection?.map((card) => (
                   <Col key={card.id} className="px-0 card-image-col">
                     <Card.Img
                       className="card-image"

@@ -1,18 +1,15 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { Container, Row, Col, Button, Image } from "react-bootstrap";
 import { textWithImage } from "./TextWithImages";
-import { useAuth0 } from "@auth0/auth0-react";
-import { getDatabase, ref, update } from "firebase/database";
-import { useEffect } from "react";
 import * as MuiIcon from "./MuiIcons";
 import * as TypeIcon from "./Icons";
+import { updateCollection } from "./Functions";
 
 function IndividualPagePokémon() {
   const location = useLocation();
   const navigate = useNavigate();
   const card = location.state.cardData;
-  const { user, isAuthenticated } = useAuth0();
-  const collection = JSON.parse(localStorage.getItem("myCollection"));
+  const currentUser = JSON.parse(localStorage.getItem("user"));
 
   let formattedDate = null;
   let options;
@@ -121,59 +118,6 @@ function IndividualPagePokémon() {
       console.error("Error fetching data:", error);
     }
   };
-
-  const addToCollection = (card) => {
-    console.log("adding card to collection");
-
-    // Get the user ID from Auth0
-    const userId = user.sub;
-
-    // Use the user ID to create a unique key for the collection
-    const collectionKey = `myCollection_${userId}`;
-
-    // Retrieve the current collection from localStorage using the unique key
-    const currentCollectionJSON = localStorage.getItem(collectionKey);
-
-    // Parse the JSON data to convert it into a JavaScript array
-    const currentCollection = currentCollectionJSON
-      ? JSON.parse(currentCollectionJSON)
-      : [];
-
-    // Check if the item already exists in the collection
-    const isDuplicate = currentCollection.some((item) => {
-      // Compare the properties of the item to determine if it's a duplicate
-      // Assuming `card` has a unique identifier property like `id`
-      return item.id === card.id; // Change `id` to the appropriate property name
-    });
-
-    // If it's not a duplicate, add the item to the collection
-    if (!isDuplicate) {
-      // Push the new item to the array
-      currentCollection.push(card);
-
-      // Stringify the updated array
-      const updatedCollectionJSON = JSON.stringify(currentCollection);
-
-      // Set the updated collection back into localStorage using the unique key
-      localStorage.setItem(collectionKey, updatedCollectionJSON);
-    } else {
-      // Handle the case where the item is a duplicate
-      console.log("This item already exists in the collection.");
-    }
-  };
-
-  function updateCollection(userId, collection) {
-    console.log("writing collection...");
-    const db = getDatabase();
-    update(ref(db, "users/" + userId), {
-      collection: collection,
-    });
-    console.log("done!");
-  }
-
-  useEffect(() => {
-    updateCollection(user.sub, collection);
-  }, [isAuthenticated, user, collection]);
 
   return (
     <Container style={{ marginBottom: "20px" }}>
@@ -294,7 +238,7 @@ function IndividualPagePokémon() {
             />
             <div
               className="image-overlay"
-              onClick={() => addToCollection(card)}
+              onClick={() => updateCollection(currentUser.uid, card)}
             >
               Add to collection
               <MuiIcon.LibraryAddIcon style={{ marginLeft: "5px" }} />
