@@ -6,6 +6,7 @@ import SearchForm from "./SearchForm";
 import SearchBySet from "./SearchBySet";
 import CarouselGallery from "./CarouselGallery";
 import MobileCarouselGallery from "./MobileCarouselGallery";
+import { setCookie, getCookie } from "./Functions";
 
 function Home() {
   const location = useLocation();
@@ -28,6 +29,8 @@ function Home() {
     localStorage.removeItem("pokemonName");
     localStorage.removeItem("pokemonSubtype");
   }
+
+  console.log(getCookie("jwt"));
 
   return (
     <>

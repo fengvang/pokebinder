@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
+import React, { useEffect, useState } from "react";
 // eslint-disable-next-line
 import app from "./firebase";
 import {
@@ -9,6 +8,7 @@ import {
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
+import { getAuth } from "firebase/auth";
 import {
   Container,
   Col,
@@ -20,16 +20,12 @@ import {
 } from "react-bootstrap";
 
 function Profile() {
-  const { user, isAuthenticated } = useAuth0();
-  let { isLoading } = useAuth0();
+  const auth = getAuth();
+  const user = auth?.currentUser;
   const [image, setImage] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
   const [newUsername, setNewUsername] = useState("");
-  const [username, setUsername] = useState(user?.displayName || user?.nickname);
-
-  if (isLoading) {
-    return <div>Loading ...</div>;
-  }
+  const [username, setUsername] = useState("");
 
   const handleChange = (event) => {
     if (event.target.files[0]) {
@@ -37,110 +33,112 @@ function Profile() {
     }
   };
 
-  const handleUpload = () => {
-    const storage = getStorage();
-    const storageRef = ref(storage, `images/${image.name}`);
+  // const handleUpload = () => {
+  //   const storage = getStorage();
+  //   const storageRef = ref(storage, `images/${image.name}`);
 
-    uploadBytes(storageRef, image)
-      .then((snapshot) => {
-        // Get download URL for the uploaded image
-        getDownloadURL(storageRef)
-          .then((downloadURL) => {
-            // Update user image using the obtained download URL
-            updateUserImage(downloadURL);
-          })
-          .catch((error) => {
-            console.error("Error getting download URL:", error);
-          });
-      })
-      .catch((error) => {
-        console.error("Error uploading file:", error);
-      });
-  };
+  //   uploadBytes(storageRef, image)
+  //     .then((snapshot) => {
+  //       // Get download URL for the uploaded image
+  //       getDownloadURL(storageRef)
+  //         .then((downloadURL) => {
+  //           // Update user image using the obtained download URL
+  //           updateUserImage(downloadURL);
+  //         })
+  //         .catch((error) => {
+  //           console.error("Error getting download URL:", error);
+  //         });
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error uploading file:", error);
+  //     });
+  // };
 
-  const updateUserImage = async (imageURL) => {
-    try {
-      const response = await fetch("/change-user-image", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userID: user.sub,
-          image: imageURL,
-        }),
-      });
+  // const updateUserImage = async (imageURL) => {
+  //   try {
+  //     const response = await fetch("/change-user-image", {
+  //       method: "PATCH",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         userID: user.sub,
+  //         image: imageURL,
+  //       }),
+  //     });
 
-      const data = await response.json();
+  //     const data = await response.json();
 
-      const oldImage = data.oldImageURL;
-      const newImage = data.newImageURL;
+  //     const oldImage = data.oldImageURL;
+  //     const newImage = data.newImageURL;
 
-      setProfileImage(newImage);
+  //     setProfileImage(newImage);
 
-      // naive approach to updating header profile image on change
-      document.getElementById(
-        "profile-image"
-      ).style.content = `url(${newImage})`;
+  //     // naive approach to updating header profile image on change
+  //     document.getElementById(
+  //       "profile-image"
+  //     ).style.content = `url(${newImage})`;
 
-      // After updating image, delete old profile image from storage
-      const storage = getStorage();
+  //     // After updating image, delete old profile image from storage
+  //     const storage = getStorage();
 
-      try {
-        const desertRef = ref(storage, oldImage);
+  //     try {
+  //       const desertRef = ref(storage, oldImage);
 
-        // delete the file
-        deleteObject(desertRef)
-          .then(() => {
-            // file deleted successfully
-            console.log("Successfully deleted old profile pic");
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      } catch (error) {
-        console.log(error);
-      }
+  //       // delete the file
+  //       deleteObject(desertRef)
+  //         .then(() => {
+  //           // file deleted successfully
+  //           console.log("Successfully deleted old profile pic");
+  //         })
+  //         .catch((error) => {
+  //           console.log(error);
+  //         });
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch end point");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  //     if (!response.ok) {
+  //       throw new Error("Failed to fetch end point");
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const handleNameChange = (event) => {
     setNewUsername(event.target.value);
   };
 
-  const handleSaveChanges = async (name) => {
-    try {
-      await fetch("/change-username", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userID: user.sub,
-          username: name,
-        }),
-      });
+  // const handleSaveChanges = async (name) => {
+  //   try {
+  //     await fetch("/change-username", {
+  //       method: "PATCH",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         userID: user.sub,
+  //         username: name,
+  //       }),
+  //     });
 
-      setUsername(name);
+  //     setUsername(name);
 
-      document.getElementById("header-username").textContent = name;
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  //     document.getElementById("header-username").textContent = name;
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
+  console.log(user);
 
   return (
-    isAuthenticated && (
+    user && (
       <Container>
         <Col sm={12} md={3} style={{ padding: "25px" }}>
           <Row className="profile-details">
-            <h2>{username || user.displayName || user.nickname}</h2>
+            <h2>{user.displayName}</h2>
           </Row>
 
           <Row className="profile-details">
@@ -148,8 +146,8 @@ function Profile() {
           </Row>
 
           <Image
-            src={profileImage || user.picture}
-            alt={user.displayName || user.nickname}
+            src=""
+            alt=""
             style={{
               height: "200px",
               width: "200px",
@@ -161,12 +159,8 @@ function Profile() {
           <Row className="profile-details">
             <Form.Group controlId="formFile" className="my-3">
               <InputGroup>
-                <Form.Control
-                  type="file"
-                  onChange={handleChange}
-                  className="image-upload-input"
-                />
-                <Button onClick={handleUpload} className="upload-button">
+                <Form.Control type="file" className="image-upload-input" />
+                <Button className="upload-button">
                   <i className="bi bi-upload"></i>
                 </Button>
               </InputGroup>
@@ -180,12 +174,10 @@ function Profile() {
                 placeholder="New username"
                 aria-label="new-username"
                 className="change-username-input"
-                onChange={handleNameChange}
               />
               <Button
                 className="button"
                 style={{ width: "110px", marginLeft: "0px", marginTop: "25px" }}
-                onClick={() => handleSaveChanges(newUsername)}
               >
                 Save changes
               </Button>

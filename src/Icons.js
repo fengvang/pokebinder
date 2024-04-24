@@ -16,6 +16,7 @@ import exOld from "./images/subtypes/exOld.png";
 import v from "./images/subtypes/v.png";
 import vmax from "./images/subtypes/vmax.png";
 import ability from "./images/ability.png";
+import masterball from "./images/masterball.png";
 
 export {
   colorless,
@@ -36,4 +37,5 @@ export {
   v,
   vmax,
   ability,
+  masterball,
 };

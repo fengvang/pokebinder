@@ -8,6 +8,8 @@ import { default as Cancel } from "@mui/icons-material/CancelPresentation";
 import { default as Dropdown } from "@mui/icons-material/ArrowDropDown";
 import { default as Calendar } from "@mui/icons-material/CalendarToday";
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
+import { default as Eye } from "@mui/icons-material/Visibility";
+import { default as EyeOff } from "@mui/icons-material/VisibilityOff";
 
 export {
   TuneIcon,
@@ -20,4 +22,6 @@ export {
   Dropdown,
   Calendar,
   LibraryAddIcon,
+  Eye,
+  EyeOff,
 };

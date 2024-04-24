@@ -7,7 +7,7 @@ import {
   Outlet,
   ScrollRestoration,
 } from "react-router-dom";
-import { Auth0Provider } from "@auth0/auth0-react";
+
 import Home from "./Home";
 import SearchResults from "./SearchResults";
 import IndividualPagePokémon from "./IndividualPagePokémon";
@@ -15,12 +15,14 @@ import IndividualPageTrainer from "./IndividualPageTrainer";
 import IndividualPageEnergy from "./IndividualPageEnergy";
 import BrowseSets from "./BrowseSets";
 import BrowseBySetsResults from "./BrowseBySetsResults";
+import CreateAccount from "./CreateAccount";
 import Profile from "./Profile";
 import Collection from "./Collection";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./style.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import Login from "./Login";
 
 function Layout() {
   return (
@@ -59,6 +61,8 @@ const router = createBrowserRouter([
         path: "/browse-by-set",
         element: <BrowseBySetsResults />,
       },
+      { path: "/login", element: <Login /> },
+      { path: "/create-account", element: <CreateAccount /> },
       { path: "/profile", element: <Profile /> },
       { path: "/collection", element: <Collection /> },
     ],

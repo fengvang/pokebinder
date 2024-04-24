@@ -1,7 +1,6 @@
 require("dotenv").config();
 
 const express = require("express");
-const axios = require("axios");
 const app = express();
 const pokemon = require("pokemontcgsdk");
 const PORT = process.env.PORT || 5000;
@@ -221,85 +220,85 @@ app.post("/get-set-data", async (req, res) => {
 //   }
 // });
 
-// Auth0 API
-app.patch("/change-user-image", async (req, res) => {
-  try {
-    const userID = req.body.userID;
-    const imageURL = req.body.image;
-    const url = process.env.REACT_APP_AUTH0_API_URL + `${userID}`;
+// // Auth0 API
+// app.patch("/change-user-image", async (req, res) => {
+//   try {
+//     const userID = req.body.userID;
+//     const imageURL = req.body.image;
+//     const url = process.env.REACT_APP_AUTH0_API_URL + `${userID}`;
 
-    // get the current user metadata
-    const getUserMetadata = {
-      method: "GET",
-      url: url,
-      headers: {
-        authorization: "Bearer " + process.env.REACT_APP_AUTH0_MGMT_API_TOKEN,
-        "content-type": "application/json",
-      },
-    };
+//     // get the current user metadata
+//     const getUserMetadata = {
+//       method: "GET",
+//       url: url,
+//       headers: {
+//         authorization: "Bearer " + process.env.REACT_APP_AUTH0_MGMT_API_TOKEN,
+//         "content-type": "application/json",
+//       },
+//     };
 
-    const currentUserData = await axios.request(getUserMetadata);
-    const oldImageURL = currentUserData?.data?.user_metadata?.picture;
+//     const currentUserData = await axios.request(getUserMetadata);
+//     const oldImageURL = currentUserData?.data?.user_metadata?.picture;
 
-    // update the user metadata with the new picture URL
-    const updateUserMetadata = {
-      method: "PATCH",
-      url: url,
-      headers: {
-        authorization: "Bearer " + process.env.REACT_APP_AUTH0_MGMT_API_TOKEN,
-        "content-type": "application/json",
-      },
-      data: {
-        user_metadata: {
-          picture: imageURL,
-        },
-      },
-    };
+//     // update the user metadata with the new picture URL
+//     const updateUserMetadata = {
+//       method: "PATCH",
+//       url: url,
+//       headers: {
+//         authorization: "Bearer " + process.env.REACT_APP_AUTH0_MGMT_API_TOKEN,
+//         "content-type": "application/json",
+//       },
+//       data: {
+//         user_metadata: {
+//           picture: imageURL,
+//         },
+//       },
+//     };
 
-    const updatedUserData = await axios.request(updateUserMetadata);
-    const newImageURL = updatedUserData.data.user_metadata.picture;
+//     const updatedUserData = await axios.request(updateUserMetadata);
+//     const newImageURL = updatedUserData.data.user_metadata.picture;
 
-    res.json({ oldImageURL, newImageURL });
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
+//     res.json({ oldImageURL, newImageURL });
+//   } catch (error) {
+//     console.error("Error fetching data:", error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// });
 
-// Auth0 API
-app.patch("/change-username", async (req, res) => {
-  try {
-    const userID = req.body.userID;
-    const newDisplayName = req.body.username;
-    const url = process.env.REACT_APP_AUTH0_API_URL + `${userID}`;
+// // Auth0 API
+// app.patch("/change-username", async (req, res) => {
+//   try {
+//     const userID = req.body.userID;
+//     const newDisplayName = req.body.username;
+//     const url = process.env.REACT_APP_AUTH0_API_URL + `${userID}`;
 
-    // update the user metadata
-    const options = {
-      method: "PATCH",
-      url: url,
-      headers: {
-        authorization: "Bearer " + process.env.REACT_APP_AUTH0_MGMT_API_TOKEN,
-        "content-type": "application/json",
-      },
-      data: {
-        user_metadata: {
-          displayName: newDisplayName,
-        },
-      },
-    };
+//     // update the user metadata
+//     const options = {
+//       method: "PATCH",
+//       url: url,
+//       headers: {
+//         authorization: "Bearer " + process.env.REACT_APP_AUTH0_MGMT_API_TOKEN,
+//         "content-type": "application/json",
+//       },
+//       data: {
+//         user_metadata: {
+//           displayName: newDisplayName,
+//         },
+//       },
+//     };
 
-    axios
-      .request(options)
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.error(error);
-      });
-  } catch (error) {
-    console.log(error);
-  }
-});
+//     axios
+//       .request(options)
+//       .then(function (response) {
+//         console.log(response);
+//       })
+//       .catch(function (error) {
+//         console.error(error);
+//       });
+//   } catch (error) {
+//     console.log(error);
+//   }
+// });
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

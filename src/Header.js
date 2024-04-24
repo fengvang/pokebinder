@@ -1,11 +1,16 @@
 import { useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
-import { Link } from "react-router-dom";
-import { Row, Button, Container, Dropdown, Image } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { getAuth, signOut } from "firebase/auth";
+
+import { Row, Button, Container, Dropdown } from "react-bootstrap";
 
 function Header() {
-  const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
+  const navigate = useNavigate();
   const [dropdownClicked, setDropdownClicked] = useState(false);
+  const auth = getAuth();
+  const user = auth?.currentUser;
+
+  console.log("user from header", user);
 
   function showMobileDropdown() {
     return (
@@ -20,21 +25,27 @@ function Header() {
           <Row>
             <Link to="/profile">Account Settings</Link>
           </Row>
-          <Button
-            onClick={() =>
-              logout({
-                logoutParams: { returnTo: window.location.origin },
-              })
-            }
-            className="logout-button"
-            style={{ marginTop: "25px" }}
-          >
+          <Button className="logout-button" style={{ marginTop: "25px" }}>
             Logout
           </Button>
         </div>
       </div>
     );
   }
+
+  const logout = () => {
+    signOut(auth)
+      .then(() => {
+        // Sign-out successful.
+        console.log("Successfully logged out");
+
+        navigate("/");
+      })
+      .catch((error) => {
+        // An error happened.
+        console.error(error);
+      });
+  };
 
   return (
     <>
@@ -45,12 +56,12 @@ function Header() {
           <Link to="/">
             <span style={{ fontSize: "2rem" }}>PokéBinder</span>
           </Link>
-          {isAuthenticated ? (
+          {user ? (
             <>
               <Dropdown>
                 <Dropdown.Toggle as="div">
                   <span onClick={() => setDropdownClicked(true)}>
-                    <Image
+                    {/* <Image
                       src={user.picture}
                       alt={user.displayName || user.nickname}
                       style={{
@@ -60,9 +71,9 @@ function Header() {
                       }}
                       id="profile-image"
                       roundedCircle
-                    />{" "}
+                    />{" "} */}
                     <span style={{ fontSize: "1rem" }} id="header-username">
-                      {user.displayName || user.nickname}
+                      {user.displayName}
                     </span>
                   </span>
                 </Dropdown.Toggle>
@@ -75,13 +86,9 @@ function Header() {
 
                   <Dropdown.Item>
                     <Button
-                      onClick={() =>
-                        logout({
-                          logoutParams: { returnTo: window.location.origin },
-                        })
-                      }
                       className="logout-button"
                       style={{ marginTop: "10px" }}
+                      onClick={logout}
                     >
                       Logout
                     </Button>
@@ -91,10 +98,7 @@ function Header() {
             </>
           ) : (
             <>
-              <Link
-                onClick={() => loginWithRedirect()}
-                className="login-header-button"
-              >
+              <Link to="/login" className="login-header-button">
                 <span>
                   <i className="bi bi-person-circle"></i>{" "}
                   <span style={{ fontSize: "1rem" }}>Login</span>
