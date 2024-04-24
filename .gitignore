@@ -26,4 +26,6 @@ yarn-error.log*
 .env
 
 /src/APIEndpoints.txt
-/src/Filter.js
+
+myCollection.json
+/server/serviceAccountKey.json

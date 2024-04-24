@@ -12,10 +12,11 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "axios": "^1.6.8",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
     "firebase": "^10.11.0",
+    "firebase-admin": "^12.1.0",
+    "jsonwebtoken": "^9.0.2",
     "pokemontcgsdk": "^2.0.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.2",
@@ -29,7 +30,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "both": "concurrently \"nodemon server/server.js\" \"HTTPS=true npm start\""
+    "all": "concurrently \"nodemon server/server.js\" \"set HTTPS=true&&npm start\""
   },
   "eslintConfig": {
     "extends": [

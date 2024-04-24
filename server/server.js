@@ -2,10 +2,8 @@ require("dotenv").config();
 
 const express = require("express");
 const axios = require("axios");
-const auth0 = require("@auth0/auth0-react");
 const app = express();
 const pokemon = require("pokemontcgsdk");
-const { orderBy } = require("firebase/firestore");
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
@@ -298,31 +296,6 @@ app.patch("/change-username", async (req, res) => {
       .catch(function (error) {
         console.error(error);
       });
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-// firebase token exchange
-app.post("/exchange-firebase-auth", async (req, res) => {
-  try {
-    const accessToken = req.body.accessToken;
-    const url = process.env.REACT_APP_FIREBASE_AUTH_URL;
-
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        accessToken: accessToken,
-      }),
-    });
-
-    const data = await response.json();
-    const firebaseToken = data.firebaseToken;
-
-    console.log("firebaseToken", data);
   } catch (error) {
     console.log(error);
   }

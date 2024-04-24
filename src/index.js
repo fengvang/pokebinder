@@ -66,17 +66,7 @@ const router = createBrowserRouter([
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-  <Auth0Provider
-    domain="dev-h75glc2appddcikt.us.auth0.com"
-    clientId="qA3h1zcIlYNhm03ItvPFQ7bWhDoFC7XL"
-    authorizationParams={{
-      redirect_uri: window.location.origin,
-    }}
-  >
-    <RouterProvider router={router} />
-  </Auth0Provider>
-);
+root.render(<RouterProvider router={router} />);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
