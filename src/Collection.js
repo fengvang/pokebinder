@@ -1,25 +1,34 @@
 import { useNavigate } from "react-router-dom";
-import { getDatabase, ref, child, get } from "firebase/database";
+import { getDatabase, ref, onValue } from "firebase/database";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Form } from "react-bootstrap";
-import { sortByAlpha, sortByPrice } from "./Functions";
+
+import {
+  sortByAlpha,
+  sortByPrice,
+  collectionTextWithImage,
+  removeCardFromCollection,
+} from "./Functions";
+import * as MuiIcon from "./MuiIcons";
 
 function Collection() {
   const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem("user"));
-  const dbRef = ref(getDatabase());
   const [collection, setCollection] = useState([]);
   const [orderBy, setOrderBy] = useState("");
 
-  function getCollectionFromDB() {
+  function getCollectionFromDB(setCollection) {
     const auth = getAuth();
 
     try {
       onAuthStateChanged(auth, (user) => {
         if (user) {
-          get(child(dbRef, `users/${currentUser.uid}/collection`))
-            .then((snapshot) => {
+          const db = getDatabase();
+          const collectionRef = ref(db, `users/${user.uid}/collection`);
+          onValue(
+            collectionRef,
+            (snapshot) => {
               if (snapshot.exists()) {
                 const data = snapshot.val();
 
@@ -31,16 +40,16 @@ function Collection() {
                     setCollection(data);
                     break;
                   case "name":
-                    setCollection(sortByAlpha(data, "name"));
+                    setCollection(sortByAlpha(data));
                     break;
                   case "-name":
-                    setCollection(sortByAlpha(data, "-name"));
+                    setCollection(sortByAlpha(data).reverse());
                     break;
                   case "-tcgplayer.prices.holofoil":
-                    setCollection(sortByPrice(data, "high"));
+                    setCollection(sortByPrice(data));
                     break;
                   case "tcgplayer.prices.holofoil":
-                    setCollection(sortByPrice(data, "low"));
+                    setCollection(sortByPrice(data).reverse());
                     break;
                   default:
                     setCollection(data.reverse());
@@ -48,10 +57,11 @@ function Collection() {
               } else {
                 console.log("No data available");
               }
-            })
-            .catch((error) => {
+            },
+            (error) => {
               console.error(error);
-            });
+            }
+          );
         }
       });
     } catch (error) {
@@ -120,69 +130,110 @@ function Collection() {
   };
 
   useEffect(() => {
-    getCollectionFromDB();
+    getCollectionFromDB(setCollection);
     // eslint-disable-next-line
   }, [orderBy]);
 
   return (
-    <Container>
+    <Container id="collection-container">
       {currentUser ? (
         <>
-          <Row className="my-5 d-flex align-items-center justify-content-center">
+          <Row className="mt-5 d-flex align-items-center justify-content-center">
             {collection ? (
               <>
                 <h1 style={{ fontFamily: "Josefin Sans" }}>
                   {currentUser.displayName}'s Binder
                 </h1>
-                <Row>
-                  <h5>Collection worth: $ {collectionWorth()}</h5>
-                </Row>
+                <h5>
+                  Collection worth: ${collectionWorth()} ({collection.length}{" "}
+                  cards)
+                </h5>
               </>
             ) : null}
 
-            <Row id="card-results-count">
-              <Form.Group>
-                <Form.Label className="card-desc-small-text">
-                  Order by
-                </Form.Label>
-                <Form.Select
-                  aria-label="collection-card-list"
-                  style={{
-                    width: window.innerWidth < 576 ? "100%" : "200px",
-                  }}
-                  onChange={handleSelectChange}
-                  defaultValue={localStorage.getItem("order")}
-                >
-                  <option value="newest">Newest First</option>
-                  <option value="oldest">Oldest First</option>
-                  <option value="name">Name A-Z</option>
-                  <option value="-name">Name Z-A</option>
-                  <option value="-tcgplayer.prices.holofoil">
-                    Market Price - Highest
-                  </option>
-                  <option value="tcgplayer.prices.holofoil">
-                    Market Price - Lowest
-                  </option>
-                </Form.Select>
-              </Form.Group>
+            <Form.Group>
+              <Form.Label className="card-desc-small-text">Order by</Form.Label>
+              <Form.Select
+                aria-label="collection-card-list"
+                style={{
+                  width: window.innerWidth < 576 ? "100%" : "200px",
+                }}
+                onChange={handleSelectChange}
+                defaultValue={localStorage.getItem("order")}
+              >
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="name">Name A-Z</option>
+                <option value="-name">Name Z-A</option>
+                <option value="-tcgplayer.prices.holofoil">
+                  Market Price - Highest
+                </option>
+                <option value="tcgplayer.prices.holofoil">
+                  Market Price - Lowest
+                </option>
+              </Form.Select>
+            </Form.Group>
 
+            <Row id="card-results-count" xs={2}>
               {collection?.length === 0 ? (
                 <h5 className="my-3 d-flex align-items-center justify-content-center">
                   Collection is empty!
                 </h5>
               ) : (
-                collection?.map((card) => (
-                  <Col key={card.id} className="px-0 card-image-col">
-                    <Card.Img
-                      className="card-image"
-                      src={card.images.large}
-                      alt={card.name}
-                      style={{ width: "200px" }}
-                      onClick={() => handleCardClick(card)}
-                      onLoad={(e) =>
-                        e.target.classList.add("card-image-loaded")
-                      }
-                    />
+                collection?.map((card, index) => (
+                  <Col key={index} className="px-0 card-image-col">
+                    <Card className="collection-card-container">
+                      <MuiIcon.CloseIcon
+                        className="card-collection-close-button"
+                        onClick={() => removeCardFromCollection(card.id)}
+                      />
+
+                      <Card.Title className="d-flex align-items-center justify-content-center">
+                        {collectionTextWithImage(card.name)}
+                      </Card.Title>
+
+                      <Card.Img
+                        className="card-image-collection"
+                        src={card.images.large}
+                        alt={card.name}
+                        onClick={() => handleCardClick(card)}
+                        onLoad={(e) =>
+                          e.target.classList.add("card-image-loaded")
+                        }
+                      />
+                      <Card.Body style={{ padding: "16px 16px 0px 16px" }}>
+                        <Card.Text className="d-flex align-items-center justify-content-center">
+                          {card.tcgplayer?.prices?.holofoil?.market ||
+                          card.tcgplayer?.prices?.["1stEditionHolofoil"]
+                            ?.market ||
+                          card.tcgplayer?.prices?.reverseHolofoil?.market ||
+                          card.tcgplayer?.prices?.["1stEditionNormal"]
+                            ?.market ||
+                          card.tcgplayer?.prices?.normal?.market ? (
+                            <>
+                              $
+                              {card.tcgplayer?.prices?.holofoil?.market.toFixed(
+                                2
+                              ) ||
+                                card.tcgplayer?.prices?.[
+                                  "1stEditionHolofoil"
+                                ]?.market.toFixed(2) ||
+                                card.tcgplayer?.prices?.reverseHolofoil?.market.toFixed(
+                                  2
+                                ) ||
+                                card.tcgplayer?.prices?.[
+                                  "1stEditionNormal"
+                                ]?.market.toFixed(2) ||
+                                card.tcgplayer?.prices?.normal?.market.toFixed(
+                                  2
+                                )}
+                            </>
+                          ) : (
+                            <span>No data</span>
+                          )}
+                        </Card.Text>
+                      </Card.Body>
+                    </Card>
                   </Col>
                 ))
               )}

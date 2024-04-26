@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 
 import Home from "./Home";
+import Footer from "./Footer";
 import SearchResults from "./SearchResults";
 import IndividualPagePokémon from "./IndividualPagePokémon";
 import IndividualPageTrainer from "./IndividualPageTrainer";
@@ -18,6 +19,7 @@ import BrowseBySetsResults from "./BrowseBySetsResults";
 import CreateAccount from "./CreateAccount";
 import Profile from "./Profile";
 import Collection from "./Collection";
+import VerifyEmail from "./VerifyEmail";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./style.css";
@@ -29,6 +31,7 @@ function Layout() {
     <>
       <Home />
       <Outlet />
+      <Footer />
       <ScrollRestoration />
     </>
   );
@@ -65,6 +68,7 @@ const router = createBrowserRouter([
       { path: "/create-account", element: <CreateAccount /> },
       { path: "/profile", element: <Profile /> },
       { path: "/collection", element: <Collection /> },
+      { path: "/verify-email", element: <VerifyEmail /> },
     ],
   },
 ]);

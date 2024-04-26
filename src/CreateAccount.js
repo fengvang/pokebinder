@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 // eslint-disable-next-line
 import { app } from "./firebase";
@@ -23,6 +23,12 @@ import {
 } from "react-bootstrap";
 import * as Images from "./Icons";
 import * as MuiIcon from "./MuiIcons";
+import {
+  hasEightCharsOrMore,
+  hasSpecialChar,
+  hasCapitalLetter,
+  hasNumber,
+} from "./Functions";
 
 function CreateAccount() {
   const navigate = useNavigate();
@@ -30,8 +36,7 @@ function CreateAccount() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const headerRef = useRef(null);
-  const [headerHeight, setHeaderHeight] = useState(68);
+  const [headerHeight, setHeaderHeight] = useState(0);
   const provider = new GoogleAuthProvider();
 
   function addUserToDB(userId, name, email) {
@@ -79,7 +84,7 @@ function CreateAccount() {
 
         setTimeout(() => {
           navigate("/");
-        }, 3000);
+        }, 1500);
       })
       .catch((error) => {
         // Handle Errors here.
@@ -100,56 +105,63 @@ function CreateAccount() {
 
     event.preventDefault();
 
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
+    if (
+      hasEightCharsOrMore(password) &&
+      hasSpecialChar(password) &&
+      hasCapitalLetter(password) &&
+      hasNumber(password)
+    ) {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
 
-        updateProfile(user, {
-          displayName: username,
-        })
-          .then(() => {
-            addUserToDB(user.uid, username, email);
-
-            if (userIsLoggedIn) {
-              if (!user.emailVerified) {
-                sendEmailVerification(user).then(() => {
-                  console.log("sending email");
-                });
-              } else console.log("email already verified");
-
-              const userInfo = {
-                uid: user.uid,
-                displayName: user.displayName,
-                email: user.email,
-                photoURL: user.photoURL,
-              };
-
-              localStorage.setItem("user", JSON.stringify(userInfo));
-            }
-
-            console.log("Username updated.");
+          updateProfile(user, {
+            displayName: username || email,
           })
-          .catch((error) => {
-            console.error(error);
-          });
+            .then(() => {
+              addUserToDB(user.uid, username, email);
 
-        setTimeout(() => {
-          navigate("/");
-        }, 1500);
-      })
-      .catch((error) => {
-        console.error(error.code);
-        console.error(error.message);
-      });
+              sessionStorage.setItem(
+                "emailNotVerifiedUser",
+                JSON.stringify(user)
+              );
+
+              if (userIsLoggedIn) {
+                if (!user.emailVerified) {
+                  sendEmailVerification(user).then(() => {
+                    console.log("sending email");
+
+                    navigate("/verify-email");
+                  });
+                }
+              }
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+        })
+        .catch((error) => {
+          console.error(error.code);
+          console.error(error.message);
+        });
+    } else {
+      console.log("Password doesn't meet requirements");
+    }
   };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
+  function goBackOne() {
+    navigate(-1);
+  }
+
   useEffect(() => {
-    if (headerRef.current) {
-      const height = headerRef.current.offsetHeight;
+    const header = document.querySelector("header");
+
+    if (header) {
+      const height = header.getBoundingClientRect().height;
       setHeaderHeight(height);
     }
   }, []);
@@ -157,14 +169,14 @@ function CreateAccount() {
   return (
     <Container
       className="d-flex align-items-center justify-content-center"
-      style={{ height: `calc(100vh - 2.5 * ${headerHeight}px)` }}
+      style={{ minHeight: `calc(100vh - ${headerHeight}px)` }}
     >
       <div className="login-container">
         <Row
           className="d-flex justify-content-center"
           style={{ marginTop: "25px" }}
         >
-          <Link to="/" style={{ marginLeft: "25px" }}>
+          <Link to="#" onClick={goBackOne} style={{ marginLeft: "25px" }}>
             <MuiIcon.ArrowBackIcon /> Return
           </Link>
           <Image src={Images.masterball} style={{ width: "80px" }} />
@@ -172,7 +184,7 @@ function CreateAccount() {
         <div className="form-container">
           <Form className="login-form">
             <Form.Group>
-              <Form.Label className="mb-0">Username</Form.Label>
+              <Form.Label className="mb-0">Username (optional)</Form.Label>
               <Form.Control
                 type="input"
                 placeholder="Username"
@@ -211,6 +223,76 @@ function CreateAccount() {
                   />
                 )}
               </InputGroup>
+
+              <span className="mb-0 d-flex-row justify-content-center">
+                {password !== "" && (
+                  <p
+                    className={`my-1 ${
+                      hasEightCharsOrMore(password)
+                        ? "password-credentials-green"
+                        : "password-credentials-red"
+                    }`}
+                  >
+                    {hasEightCharsOrMore(password) ? (
+                      <MuiIcon.CheckIcon className="mx-2" />
+                    ) : (
+                      <MuiIcon.ErrorIcon className="mx-2" />
+                    )}
+                    At least 8 characters or more
+                  </p>
+                )}
+
+                {password !== "" && (
+                  <p
+                    className={`my-1 ${
+                      hasSpecialChar(password)
+                        ? "password-credentials-green"
+                        : "password-credentials-red"
+                    }`}
+                  >
+                    {hasSpecialChar(password) ? (
+                      <MuiIcon.CheckIcon className="mx-2" />
+                    ) : (
+                      <MuiIcon.ErrorIcon className="mx-2" />
+                    )}
+                    At least 1 special character
+                  </p>
+                )}
+
+                {password !== "" && (
+                  <p
+                    className={`my-1 ${
+                      hasCapitalLetter(password)
+                        ? "password-credentials-green"
+                        : "password-credentials-red"
+                    }`}
+                  >
+                    {hasCapitalLetter(password) ? (
+                      <MuiIcon.CheckIcon className="mx-2" />
+                    ) : (
+                      <MuiIcon.ErrorIcon className="mx-2" />
+                    )}
+                    At least 1 capital letter
+                  </p>
+                )}
+
+                {password !== "" && (
+                  <p
+                    className={`my-1 ${
+                      hasNumber(password)
+                        ? "password-credentials-green"
+                        : "password-credentials-red"
+                    }`}
+                  >
+                    {hasNumber(password) ? (
+                      <MuiIcon.CheckIcon className="mx-2" />
+                    ) : (
+                      <MuiIcon.ErrorIcon className="mx-2" />
+                    )}
+                    At least 1 number
+                  </p>
+                )}
+              </span>
 
               <span className="mb-0 d-flex justify-content-center">
                 Already have an account?{" "}

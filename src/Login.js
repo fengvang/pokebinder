@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 // eslint-disable-next-line
 import { app } from "./firebase";
@@ -6,7 +6,6 @@ import {
   getAuth,
   signInWithEmailAndPassword,
   onAuthStateChanged,
-  sendEmailVerification,
   signInWithPopup,
   GoogleAuthProvider,
   sendPasswordResetEmail,
@@ -29,8 +28,7 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const headerRef = useRef(null);
-  const [headerHeight, setHeaderHeight] = useState(68);
+  const [headerHeight, setHeaderHeight] = useState(0);
   const provider = new GoogleAuthProvider();
 
   function addUserToDB(userId, name, email) {
@@ -106,26 +104,30 @@ function Login() {
 
         if (userIsLoggedIn) {
           if (!user.emailVerified) {
-            sendEmailVerification(user).then(() => {
-              console.log("sending email");
-            });
-          } else console.log("email already verified");
+            sessionStorage.setItem(
+              "emailNotVerifiedUser",
+              JSON.stringify(user)
+            );
+            navigate("/verify-email");
+          } else {
+            console.log("email already verified");
 
-          const userInfo = {
-            uid: user.uid,
-            displayName: user.displayName,
-            email: user.email,
-            photoURL: user.photoURL,
-          };
+            const userInfo = {
+              uid: user.uid,
+              displayName: user.displayName,
+              email: user.email,
+              photoURL: user.photoURL,
+            };
 
-          localStorage.setItem("user", JSON.stringify(userInfo));
+            localStorage.setItem("user", JSON.stringify(userInfo));
+
+            console.log("Successful login!");
+
+            setTimeout(() => {
+              navigate("/");
+            }, 1500);
+          }
         }
-
-        console.log("Successful login!");
-
-        setTimeout(() => {
-          navigate("/");
-        }, 2000);
       })
       .catch((error) => {
         console.error(error.code);
@@ -153,9 +155,15 @@ function Login() {
       });
   }
 
+  function goBackOne() {
+    navigate(-1);
+  }
+
   useEffect(() => {
-    if (headerRef.current) {
-      const height = headerRef.current.offsetHeight;
+    const header = document.querySelector("header");
+
+    if (header) {
+      const height = header.getBoundingClientRect().height;
       setHeaderHeight(height);
     }
   }, []);
@@ -164,14 +172,14 @@ function Login() {
     <>
       <Container
         className="d-flex align-items-center justify-content-center"
-        style={{ height: `calc(100vh - 2.5 * ${headerHeight}px)` }}
+        style={{ minHeight: `calc(100vh - ${headerHeight}px)` }}
       >
         <div className="login-container">
           <Row
             className="d-flex justify-content-center"
             style={{ marginTop: "25px" }}
           >
-            <Link to="/" style={{ marginLeft: "25px" }}>
+            <Link to="#" onClick={goBackOne} style={{ marginLeft: "25px" }}>
               <MuiIcon.ArrowBackIcon /> Return
             </Link>
             <Image src={Images.masterball} style={{ width: "80px" }} />
@@ -222,8 +230,7 @@ function Login() {
                 </Button>
                 <Link
                   onClick={handleForgotPassword}
-                  className="d-flex align-items-center justify-content-center"
-                  my-0
+                  className="d-flex align-items-center justify-content-center my-0"
                 >
                   Forgot password?
                 </Link>

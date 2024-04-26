@@ -27,5 +27,4 @@ yarn-error.log*
 
 /src/APIEndpoints.txt
 
-myCollection.json
 /server/serviceAccountKey.json

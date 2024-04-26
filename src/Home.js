@@ -12,8 +12,6 @@ function Home() {
   const rootPath = location.pathname === "/";
   const searchBySetsPath = location.pathname === "/search-by-set";
 
-  // localStorage.removeItem("order");
-
   if (rootPath) {
     localStorage.removeItem("pokemonName");
     localStorage.removeItem("pokemonSubtype");
@@ -25,7 +23,7 @@ function Home() {
       {rootPath ? (
         <>
           <SearchForm />
-          {window.innerWidth < 576 ? (
+          {window.innerWidth < 567 || window.innerWidth < 768 ? (
             <MobileCarouselGallery />
           ) : (
             <CarouselGallery />
@@ -35,7 +33,7 @@ function Home() {
       {searchBySetsPath ? (
         <>
           <SearchBySet />
-          {window.innerWidth < 576 ? (
+          {window.innerWidth < 567 || window.innerWidth < 768 ? (
             <MobileCarouselGallery />
           ) : (
             <CarouselGallery />

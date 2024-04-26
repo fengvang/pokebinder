@@ -1,9 +1,8 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { Container, Row, Col, Button, Image } from "react-bootstrap";
-import { textWithImage } from "./TextWithImages";
 import * as MuiIcon from "./MuiIcons";
 import * as TypeIcon from "./Icons";
-import { updateCollection } from "./Functions";
+import { textWithImage, updateCollection } from "./Functions";
 
 function IndividualPagePokémon() {
   const location = useLocation();
@@ -121,7 +120,7 @@ function IndividualPagePokémon() {
 
   return (
     <Container style={{ marginBottom: "20px" }}>
-      {window.innerWidth < 576 ? (
+      {window.innerWidth < 576 || window.innerWidth < 768 ? (
         <Row
           style={{ marginTop: "25px" }}
           className="d-flex align-items-center justify-content-center"
@@ -156,7 +155,7 @@ function IndividualPagePokémon() {
         </Row>
       )}
 
-      {window.innerWidth < 576 ? (
+      {window.innerWidth < 576 || window.innerWidth < 768 ? (
         <Row xs={12}>
           {card && card.tcgplayer && card.tcgplayer.prices ? (
             Object.entries(card.tcgplayer.prices).map(
@@ -229,20 +228,28 @@ function IndividualPagePokémon() {
       )}
 
       <Row>
-        <Col xs="auto" md={5} className="individual-image-col">
+        <Col xs="auto" sm={12} md={5} className="individual-image-col">
           <div className="image-container">
             <Image
               className="individual-page-image"
               src={card.images.large}
               alt={card.name}
             />
-            <div
-              className="image-overlay"
-              onClick={() => updateCollection(currentUser.uid, card)}
-            >
-              Add to collection
-              <MuiIcon.LibraryAddIcon style={{ marginLeft: "5px" }} />
-            </div>
+            {currentUser ? (
+              <div
+                className="image-overlay"
+                onClick={() => updateCollection(currentUser.uid, card)}
+              >
+                Add to collection
+                <MuiIcon.LibraryAddIcon style={{ marginLeft: "5px" }} />
+              </div>
+            ) : (
+              <Link to="/login">
+                <div className="image-overlay" style={{ color: "#ffffff" }}>
+                  Log in to track collection
+                </div>
+              </Link>
+            )}
           </div>
         </Col>
 
@@ -451,7 +458,7 @@ function IndividualPagePokémon() {
         </Col>
       </Row>
 
-      {window.innerWidth > 576 ? (
+      {window.innerWidth > 768 ? (
         <Row className="second-row" style={{ padding: "12px" }}>
           <Col xs="auto" md={5} className="individual-price-container">
             <h4>Current Prices</h4>
@@ -524,11 +531,6 @@ function IndividualPagePokémon() {
       ) : (
         ""
       )}
-
-      {/* when clicked and if filtered, return to filtered state */}
-      <Button className="button results-individual" onClick={goBackOnePage}>
-        Go back
-      </Button>
     </Container>
   );
 }

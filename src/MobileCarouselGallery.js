@@ -161,132 +161,210 @@ function MobileCarouselGallery() {
   };
 
   return (
-    <Container>
-      {newestSet && newestSetCards && (
-        <>
-          <span className="d-flex align-items-center justify-content-center">
-            <Image
-              src={newestSet.images.logo}
-              className="newest-set-img"
-              onClick={() => handleSetClicked(newestSet)}
-              onLoad={(e) => e.target.classList.add("newest-set-img-loaded")}
-            />
-          </span>
-          <div
-            className="d-flex align-items-start justify-content-center"
-            style={{ fontSize: ".78em" }}
-          >
-            <MuiIcon.Calendar
-              style={{ fontSize: "1rem", marginRight: "5px" }}
-            />
-            Released {formatDate(newestSet.releaseDate)}
-          </div>
-          <Carousel
-            activeIndex={index}
-            onSelect={handleSelect}
-            indicators={false}
-            prevIcon={false}
-            nextIcon={false}
-          >
-            <Carousel.Item interval={5000}>
-              <Col
-                className="d-flex align-items-center justify-content-evenly"
-                style={{ height: "300px" }}
+    <>
+      {window.innerWidth < 576 ? (
+        <Container>
+          {newestSet && newestSetCards && (
+            <>
+              <span className="d-flex align-items-center justify-content-center">
+                <Image
+                  src={newestSet.images.logo}
+                  className="newest-set-img"
+                  onClick={() => handleSetClicked(newestSet)}
+                  onLoad={(e) =>
+                    e.target.classList.add("newest-set-img-loaded")
+                  }
+                />
+              </span>
+              <div
+                className="d-flex align-items-start justify-content-center"
+                style={{ fontSize: ".78em" }}
               >
-                {newestSetCards?.data.slice(0, 2).map((card, index) => (
-                  <Card.Img
-                    key={index}
-                    src={card.images.small}
-                    alt={card.name}
-                    className="newest-set-cards"
-                    onClick={() => handleCardClick(card)}
-                    onLoad={(e) =>
-                      e.target.classList.add("newest-set-cards-loaded")
-                    }
-                  />
-                ))}
-              </Col>
-            </Carousel.Item>
-            <Carousel.Item interval={5000}>
-              <Col
-                className="d-flex align-items-center justify-content-evenly"
-                style={{ height: "300px" }}
+                <MuiIcon.Calendar
+                  style={{ fontSize: "1rem", marginRight: "5px" }}
+                />
+                Released {formatDate(newestSet.releaseDate)}
+              </div>
+              <Carousel
+                activeIndex={index}
+                onSelect={handleSelect}
+                indicators={false}
+                prevIcon={false}
+                nextIcon={false}
               >
-                {newestSetCards?.data.slice(2, 4).map((card, index) => (
-                  <Card.Img
-                    key={index}
-                    src={card.images.small}
-                    alt={card.name}
-                    className="newest-set-cards"
-                    onClick={() => handleCardClick(card)}
-                    onLoad={(e) =>
-                      e.target.classList.add("newest-set-cards-loaded")
-                    }
-                  />
-                ))}
-              </Col>
-            </Carousel.Item>
-            <Carousel.Item interval={5000}>
-              <Col
-                className="d-flex align-items-center justify-content-evenly"
-                style={{ height: "300px" }}
+                <Carousel.Item interval={5000}>
+                  <Col
+                    className="d-flex align-items-center justify-content-evenly"
+                    style={{ height: "300px" }}
+                  >
+                    {newestSetCards?.data.slice(0, 2).map((card, index) => (
+                      <Card.Img
+                        key={index}
+                        src={card.images.small}
+                        alt={card.name}
+                        className="newest-set-cards"
+                        onClick={() => handleCardClick(card)}
+                        onLoad={(e) =>
+                          e.target.classList.add("newest-set-cards-loaded")
+                        }
+                      />
+                    ))}
+                  </Col>
+                </Carousel.Item>
+                <Carousel.Item interval={5000}>
+                  <Col
+                    className="d-flex align-items-center justify-content-evenly"
+                    style={{ height: "300px" }}
+                  >
+                    {newestSetCards?.data.slice(2, 4).map((card, index) => (
+                      <Card.Img
+                        key={index}
+                        src={card.images.small}
+                        alt={card.name}
+                        className="newest-set-cards"
+                        onClick={() => handleCardClick(card)}
+                        onLoad={(e) =>
+                          e.target.classList.add("newest-set-cards-loaded")
+                        }
+                      />
+                    ))}
+                  </Col>
+                </Carousel.Item>
+                <Carousel.Item interval={5000}>
+                  <Col
+                    className="d-flex align-items-center justify-content-evenly"
+                    style={{ height: "300px" }}
+                  >
+                    {newestSetCards?.data.slice(4, 6).map((card, index) => (
+                      <Card.Img
+                        key={index}
+                        src={card.images.small}
+                        alt={card.name}
+                        className="newest-set-cards"
+                        onClick={() => handleCardClick(card)}
+                        onLoad={(e) =>
+                          e.target.classList.add("newest-set-cards-loaded")
+                        }
+                      />
+                    ))}
+                  </Col>
+                </Carousel.Item>
+                <Carousel.Item interval={5000}>
+                  <Col
+                    className="d-flex align-items-center justify-content-evenly"
+                    style={{ height: "300px" }}
+                  >
+                    {newestSetCards?.data.slice(6, 8).map((card, index) => (
+                      <Card.Img
+                        key={index}
+                        src={card.images.small}
+                        alt={card.name}
+                        className="newest-set-cards"
+                        onClick={() => handleCardClick(card)}
+                        onLoad={(e) =>
+                          e.target.classList.add("newest-set-cards-loaded")
+                        }
+                      />
+                    ))}
+                  </Col>
+                </Carousel.Item>
+                <Carousel.Item interval={5000}>
+                  <Col
+                    className="d-flex align-items-center justify-content-evenly"
+                    style={{ height: "300px" }}
+                  >
+                    {newestSetCards?.data.slice(8, 10).map((card, index) => (
+                      <Card.Img
+                        key={index}
+                        src={card.images.small}
+                        alt={card.name}
+                        className="newest-set-cards"
+                        onClick={() => handleCardClick(card)}
+                        onLoad={(e) =>
+                          e.target.classList.add("newest-set-cards-loaded")
+                        }
+                      />
+                    ))}
+                  </Col>
+                </Carousel.Item>
+              </Carousel>
+            </>
+          )}
+        </Container>
+      ) : (
+        <Container style={{ paddingLeft: "calc(100vw * 0.02)" }}>
+          {newestSet && newestSetCards && (
+            <>
+              <span className="d-flex align-items-center justify-content-center">
+                <Image
+                  src={newestSet.images.logo}
+                  className="newest-set-img"
+                  onClick={() => handleSetClicked(newestSet)}
+                  onLoad={(e) =>
+                    e.target.classList.add("newest-set-img-loaded")
+                  }
+                />
+              </span>
+              <div
+                className="d-flex align-items-start justify-content-center"
+                style={{ fontSize: ".78em" }}
               >
-                {newestSetCards?.data.slice(4, 6).map((card, index) => (
-                  <Card.Img
-                    key={index}
-                    src={card.images.small}
-                    alt={card.name}
-                    className="newest-set-cards"
-                    onClick={() => handleCardClick(card)}
-                    onLoad={(e) =>
-                      e.target.classList.add("newest-set-cards-loaded")
-                    }
-                  />
-                ))}
-              </Col>
-            </Carousel.Item>
-            <Carousel.Item interval={5000}>
-              <Col
-                className="d-flex align-items-center justify-content-evenly"
-                style={{ height: "300px" }}
+                <MuiIcon.Calendar
+                  style={{ fontSize: "1rem", marginRight: "5px" }}
+                />
+                Released {formatDate(newestSet.releaseDate)}
+              </div>
+              <Carousel
+                activeIndex={index}
+                onSelect={handleSelect}
+                indicators={false}
+                prevIcon={false}
+                nextIcon={false}
               >
-                {newestSetCards?.data.slice(6, 8).map((card, index) => (
-                  <Card.Img
-                    key={index}
-                    src={card.images.small}
-                    alt={card.name}
-                    className="newest-set-cards"
-                    onClick={() => handleCardClick(card)}
-                    onLoad={(e) =>
-                      e.target.classList.add("newest-set-cards-loaded")
-                    }
-                  />
-                ))}
-              </Col>
-            </Carousel.Item>
-            <Carousel.Item interval={5000}>
-              <Col
-                className="d-flex align-items-center justify-content-evenly"
-                style={{ height: "300px" }}
-              >
-                {newestSetCards?.data.slice(8, 10).map((card, index) => (
-                  <Card.Img
-                    key={index}
-                    src={card.images.small}
-                    alt={card.name}
-                    className="newest-set-cards"
-                    onClick={() => handleCardClick(card)}
-                    onLoad={(e) =>
-                      e.target.classList.add("newest-set-cards-loaded")
-                    }
-                  />
-                ))}
-              </Col>
-            </Carousel.Item>
-          </Carousel>
-        </>
+                <Carousel.Item interval={5000}>
+                  <Col
+                    className="d-flex align-items-center justify-content-evenly"
+                    style={{ height: "300px" }}
+                  >
+                    {newestSetCards?.data.slice(0, 5).map((card, index) => (
+                      <Card.Img
+                        key={index}
+                        src={card.images.small}
+                        alt={card.name}
+                        className="newest-set-cards"
+                        onClick={() => handleCardClick(card)}
+                        onLoad={(e) =>
+                          e.target.classList.add("newest-set-cards-loaded")
+                        }
+                      />
+                    ))}
+                  </Col>
+                </Carousel.Item>
+                <Carousel.Item interval={5000}>
+                  <Col
+                    className="d-flex align-items-center justify-content-evenly"
+                    style={{ height: "300px" }}
+                  >
+                    {newestSetCards?.data.slice(5, 10).map((card, index) => (
+                      <Card.Img
+                        key={index}
+                        src={card.images.small}
+                        alt={card.name}
+                        className="newest-set-cards"
+                        onClick={() => handleCardClick(card)}
+                        onLoad={(e) =>
+                          e.target.classList.add("newest-set-cards-loaded")
+                        }
+                      />
+                    ))}
+                  </Col>
+                </Carousel.Item>
+              </Carousel>
+            </>
+          )}
+        </Container>
       )}
-    </Container>
+    </>
   );
 }
 

@@ -183,7 +183,6 @@ function Profile() {
               width: "200px",
               objectFit: "cover",
             }}
-            roundedCircle
           />
 
           <Row className="profile-details">

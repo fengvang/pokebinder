@@ -24,7 +24,8 @@ const series = [
 
 function BrowseSets() {
   const navigate = useNavigate();
-  const [seriesSets, setSeriesSets] = useState(null);
+  const sessionSeriesSets = JSON.parse(sessionStorage.getItem("seriesSets"));
+  const [seriesSets, setSeriesSets] = useState(sessionSeriesSets || null);
   const [isLoading, setLoading] = useState(false);
   const [isClicked, setClicked] = useState(false);
   const [clickedSeries, setClickedSeries] = useState("");
@@ -46,6 +47,8 @@ function BrowseSets() {
 
       setSeriesSets(data);
 
+      sessionStorage.setItem("seriesSets", JSON.stringify(data));
+
       if (!response.ok) {
         throw new Error("Failed to fetch end point");
       }
@@ -56,6 +59,8 @@ function BrowseSets() {
     }
   };
 
+  console.log(sessionStorage.length);
+
   function formatDate(originalDate) {
     const parts = originalDate.split("/");
     const formattedDate = `${parts[1]}/${parts[2]}/${parts[0]}`;
@@ -63,51 +68,68 @@ function BrowseSets() {
   }
 
   const handleSetClicked = async (clickedSet) => {
-    setClicked(true);
-    setClickedSeries(clickedSet.series);
-    setClickedSet(clickedSet.name);
+    const set = sessionStorage.getItem(`${clickedSet.id}`);
 
-    try {
-      const response = await fetch("/get-set-data", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: {
-            setID: clickedSet.id,
-            page: 1,
-            pageSize: 36,
+    if (!set) {
+      setClicked(true);
+      setClickedSeries(clickedSet.series);
+      setClickedSet(clickedSet.name);
+
+      try {
+        const response = await fetch("/get-set-data", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-        }),
-      });
+          body: JSON.stringify({
+            query: {
+              setID: clickedSet.id,
+              page: 1,
+              pageSize: 36,
+            },
+          }),
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
+        sessionStorage.setItem(`${clickedSet.id}`, JSON.stringify(data));
+
+        navigate(
+          `/browse-by-set?${clickedSet.series}-${clickedSet.name}&page=1`,
+          {
+            state: {
+              set: clickedSet,
+              setData: data,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch end point");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setClicked(false);
+      }
+    } else {
       navigate(
         `/browse-by-set?${clickedSet.series}-${clickedSet.name}&page=1`,
         {
           state: {
             set: clickedSet,
-            setData: data,
+            setData: JSON.parse(set),
           },
         }
       );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch end point");
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setClicked(false);
     }
   };
 
   useEffect(() => {
-    getSets();
+    if (!seriesSets) getSets();
 
     document.body.style.overflow = isClicked ? "hidden" : "auto";
+    // eslint-disable-next-line
   }, [isClicked]);
 
   useEffect(() => {

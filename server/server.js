@@ -3,11 +3,21 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const pokemon = require("pokemontcgsdk");
+const { getAuth } = require("firebase-admin/auth");
+const { initializeApp, credential } = require("firebase-admin");
+const admin = require("firebase-admin");
+const serviceAccount = require("./serviceAccountKey.json");
+
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(express.static("public"));
 pokemon.configure({ apiKey: process.env.REACT_APP_POKEMON_TCG_API_KEY });
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
+});
 
 app.post("/search-card", async (req, res) => {
   try {
@@ -219,6 +229,25 @@ app.post("/get-set-data", async (req, res) => {
 //     res.status(500).json({ error: "Internal server error" });
 //   }
 // });
+
+app.post("/get-custom-token", async (req, res) => {
+  try {
+    const uid = req.body.uid;
+
+    getAuth()
+      .createCustomToken(uid)
+      .then((customToken) => {
+        // Send token back to client
+        res.json(customToken);
+      })
+      .catch((error) => {
+        console.log("Error creating custom token:", error);
+      });
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

@@ -117,8 +117,6 @@ function SetsCards() {
     }
   };
 
-  console.log(setData);
-
   return (
     <Container>
       <Row

@@ -76,7 +76,6 @@ function Header() {
                       src={currentUser.photoURL}
                       alt={currentUser.displayName}
                       id="profile-image"
-                      roundedCircle
                     />{" "}
                     <span style={{ fontSize: "1rem" }} id="header-username">
                       {currentUser.displayName}

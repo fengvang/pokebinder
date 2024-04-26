@@ -32,6 +32,9 @@ body {
   color: var(--textcolor);
   font-family: "Jaldi", sans-serif;
   font-weight: 400;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 header {
@@ -39,6 +42,11 @@ header {
   padding: 10px;
   display: flex;
   align-items: center;
+}
+
+footer {
+  background-color: rgba(5, 5, 5, 0.4);
+  padding: 10px;
 }
 
 header > div > a:link > span,
@@ -82,6 +90,7 @@ header > div > div > div > a.dropdown-item:active {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0px;
 }
 
 .login-header-button {
@@ -91,6 +100,9 @@ header > div > div > div > a.dropdown-item:active {
 .card-title,
 .card-text {
   color: var(--textcolor);
+  font-size: 1rem;
+  padding: 5px 12px 12px 12px;
+  margin-bottom: 0px;
 }
 
 h1,
@@ -229,6 +241,17 @@ a:active {
   opacity: 1;
 }
 
+.card-image-collection {
+  width: 200px;
+  padding: 0px 16px 0px 16px;
+  transition: transform 0.5s ease, opacity 0.5s ease-in-out !important;
+}
+
+.card-image-collection:hover {
+  cursor: pointer;
+  transform: scale(1.08);
+}
+
 .btn.filter,
 .btn.filter:visited {
   background-color: var(--ghost) !important;
@@ -260,12 +283,6 @@ div > form > div.card {
 
 .card-desc-small-text {
   font-size: 1.1rem;
-}
-
-/* need to fix */
-.results-button {
-  position: fixed;
-  top: 730px;
 }
 
 .results-individual {
@@ -340,6 +357,25 @@ div > form.my-3 {
 .image-container:hover .image-overlay {
   opacity: 1;
   background-color: rgba(22, 24, 27, 0.9);
+  cursor: pointer;
+}
+
+.collection-card-container {
+  background-color: rgba(5, 5, 5, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-collection-close-button {
+  position: relative;
+  left: 70px;
+  top: 7px;
+  transition: 0.15s ease-in-out !important;
+}
+
+.card-collection-close-button:hover {
+  color: #ffffff;
   cursor: pointer;
 }
 
@@ -663,9 +699,8 @@ input::file-selector-button {
 
 .login-container {
   width: 300px;
-  min-height: 500px;
-  max-height: auto;
   background-color: rgba(5, 5, 5, 0.4);
+  border-radius: 15px;
 }
 
 .form-container {
@@ -673,6 +708,18 @@ input::file-selector-button {
   align-items: center;
   justify-content: center;
   margin-top: 25px;
+}
+
+.password-credentials-red {
+  background-color: rgba(255, 0, 0, 0.3) !important;
+  width: 100%;
+  height: 25px;
+}
+
+.password-credentials-green {
+  background-color: rgba(0, 128, 0, 0.3) !important;
+  width: 100%;
+  height: 25px;
 }
 
 form.login-form {
@@ -755,6 +802,10 @@ form.login-form {
 
   a > h1 {
     color: var(--textcolor);
+  }
+
+  header {
+    padding: 5px 0px 5px 0px;
   }
 
   .button {
@@ -966,6 +1017,37 @@ form.login-form {
   .newest-set-cards:hover {
     transform: scale(1.08);
   }
+
+  .individual-page-image {
+    width: 100%;
+    position: relative;
+  }
+
+  .image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 406px;
+    height: 100%;
+    opacity: 0;
+    transition: background-color 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card-image-collection {
+    width: calc(100vw / 2.2);
+    padding: 0px 10px 0px 10px;
+    transition: transform 0.5s ease, opacity 0.5s ease-in-out !important;
+  }
+
+  .card-title,
+  .card-text {
+    color: var(--textcolor);
+    font-size: 1rem;
+    margin-bottom: 0px;
+  }
 }
 
 .getting-sets-loading-screen {
@@ -973,6 +1055,33 @@ form.login-form {
   justify-content: center;
   align-items: center;
   height: 90vh;
+}
+
+@media screen and (min-width: 576px) and (max-width: 768px) {
+  .container {
+    padding-left: calc(100vw * 0.04);
+    min-width: 100%;
+  }
+
+  .header-container {
+    display: flex;
+    justify-content: space-between !important;
+    padding: 0px;
+  }
+
+  .card-image-col {
+    max-width: calc(100vw / 4.5);
+    margin: 5px 2px 5px 2px;
+  }
+
+  .card-image-collection {
+    width: calc(100vw / 4.5);
+  }
+
+  .newest-set-cards {
+    width: 127px;
+    z-index: 1000;
+  }
 }
 
 @media only screen and (max-width: 390px) {
