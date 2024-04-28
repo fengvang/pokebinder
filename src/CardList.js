@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Row, Col, Card } from "react-bootstrap";
+import { Image } from "react-bootstrap";
 import Pagination from "@mui/material/Pagination";
 
 function CardList() {
@@ -100,57 +100,57 @@ function CardList() {
 
   return (
     <>
-      <Row id="card-results-count">
+      <div className="mt-5">
         {pokemonCardList?.data.length === 0 ? (
-          <h5 className="my-3 d-flex align-items-center justify-content-center">
+          <h5 className="d-flex align-items-center justify-content-center">
             No data found
           </h5>
         ) : (
           pokemonCardList?.data.map((card) => (
-            <Col key={card.id} className="px-0 card-image-col">
-              <Card.Img
+            <span key={card.id} className="card-image-col">
+              <Image
                 className="card-image"
                 src={card.images.large}
                 alt={card.name}
-                style={{ width: "200px" }}
                 onClick={() => handleCardClick(card)}
                 onLoad={(e) => e.target.classList.add("card-image-loaded")}
               />
-            </Col>
+            </span>
           ))
         )}
-      </Row>
-      <Row>
-        {window.innerWidth < 576 ? (
-          <Pagination
-            count={numPages}
-            color="primary"
-            shape="rounded"
-            variant="outlined"
-            showFirstButton={true}
-            showLastButton={true}
-            hideNextButton={true}
-            hidePrevButton={true}
-            boundaryCount={1}
-            siblingCount={1}
-            page={currentPage}
-            onChange={(event, page) => handleChange(page)}
-          />
-        ) : (
-          <Pagination
-            count={numPages}
-            color="primary"
-            shape="rounded"
-            variant="outlined"
-            showFirstButton={true}
-            showLastButton={true}
-            boundaryCount={1}
-            siblingCount={4}
-            page={currentPage}
-            onChange={(event, page) => handleChange(page)}
-          />
-        )}
-      </Row>
+
+        <div>
+          {window.innerWidth < 768 ? (
+            <Pagination
+              count={numPages}
+              color="primary"
+              shape="rounded"
+              variant="outlined"
+              showFirstButton={true}
+              showLastButton={true}
+              hideNextButton={true}
+              hidePrevButton={true}
+              boundaryCount={1}
+              siblingCount={1}
+              page={currentPage}
+              onChange={(event, page) => handleChange(page)}
+            />
+          ) : (
+            <Pagination
+              count={numPages}
+              color="primary"
+              shape="rounded"
+              variant="outlined"
+              showFirstButton={true}
+              showLastButton={true}
+              boundaryCount={1}
+              siblingCount={4}
+              page={currentPage}
+              onChange={(event, page) => handleChange(page)}
+            />
+          )}
+        </div>
+      </div>
     </>
   );
 }

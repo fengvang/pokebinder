@@ -40,7 +40,9 @@ function Header() {
 
     signOut(auth)
       .then(() => {
-        localStorage.removeItem("user");
+        localStorage.clear();
+        sessionStorage.removeItem("sessionCollectionOriginal");
+        sessionStorage.removeItem("sessionCollection");
         console.log("Successfully logged out");
 
         setTimeout(() => {

@@ -11,15 +11,7 @@ import {
 import { getAuth, updateProfile } from "firebase/auth";
 import { getDatabase, ref as dbRef, update } from "firebase/database";
 
-import {
-  Container,
-  Col,
-  Row,
-  Button,
-  Form,
-  Image,
-  InputGroup,
-} from "react-bootstrap";
+import { Col, Row, Button, Form, Image, InputGroup } from "react-bootstrap";
 
 function Profile() {
   const auth = getAuth();
@@ -165,7 +157,7 @@ function Profile() {
   };
 
   return (
-    <Container>
+    <>
       {currentUser && (
         <Col sm={12} md={3} style={{ padding: "25px" }}>
           <Row className="profile-details">
@@ -220,7 +212,7 @@ function Profile() {
           </Row>
         </Col>
       )}
-    </Container>
+    </>
   );
 }
 

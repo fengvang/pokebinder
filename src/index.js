@@ -16,6 +16,7 @@ import IndividualPageTrainer from "./IndividualPageTrainer";
 import IndividualPageEnergy from "./IndividualPageEnergy";
 import BrowseSets from "./BrowseSets";
 import BrowseBySetsResults from "./BrowseBySetsResults";
+import Login from "./Login";
 import CreateAccount from "./CreateAccount";
 import Profile from "./Profile";
 import Collection from "./Collection";
@@ -24,13 +25,15 @@ import VerifyEmail from "./VerifyEmail";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./style.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import Login from "./Login";
+import { Container } from "react-bootstrap";
 
 function Layout() {
   return (
     <>
       <Home />
-      <Outlet />
+      <Container className="mb-5">
+        <Outlet />
+      </Container>
       <Footer />
       <ScrollRestoration />
     </>

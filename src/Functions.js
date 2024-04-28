@@ -1,5 +1,6 @@
 import { getDatabase, ref, get, set } from "firebase/database";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+
 import * as Icon from "./Icons";
 import { Image } from "react-bootstrap";
 
@@ -376,16 +377,65 @@ export function hasNumber(password) {
   return numberRegex.test(password);
 }
 
-// Truncate item name if more than 15 characters
+// Truncate item name if more than 12 characters
 export function truncate(name) {
   let truncatedName;
 
-  if (name?.length > 15) {
-    // truncate to 15 characters and "..." at the end
-    truncatedName = name.slice(0, 15) + "...";
+  if (name?.length > 12) {
+    // truncate to 12 characters and "..." at the end
+    truncatedName = name.slice(0, 12) + "...";
 
     return truncatedName;
   }
 
   return name;
 }
+
+export const fetchAllCards = async () => {
+  try {
+    const allCards = [];
+    const pageSize = 250; // Number of cards per page
+
+    let totalCount = 0;
+    let currentPage = 1;
+    let totalPages = 1; // Initial value
+
+    console.log("fetching page", currentPage);
+
+    do {
+      const response = await fetch(
+        `https://api.pokemontcg.io/v2/cards?page=${currentPage}&pageSize=${pageSize}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch data from page ${currentPage}`);
+      }
+
+      const data = await response.json();
+
+      // Update total count and calculate total pages on the first iteration
+      if (currentPage === 1) {
+        totalCount = data.totalCount;
+        totalPages = Math.ceil(totalCount / pageSize);
+      }
+
+      allCards.push(...data.data);
+
+      currentPage++;
+      console.log("fetching page", currentPage);
+    } while (currentPage <= totalPages);
+
+    sessionStorage.setItem("allCards", JSON.stringify(allCards));
+
+    return allCards;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    throw error;
+  }
+};

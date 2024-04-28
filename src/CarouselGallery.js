@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Carousel, Image, Card, Col, Container, Row } from "react-bootstrap";
+import { Carousel, Image, Card, Col } from "react-bootstrap";
 import * as MuiIcon from "./MuiIcons";
 
 function CarouselGallery() {
@@ -161,17 +161,17 @@ function CarouselGallery() {
   };
 
   return (
-    <Container>
+    <>
       {newestSet && newestSetCards && (
         <>
-          <Row className="d-flex align-items-center justify-content-center">
+          <div className="d-flex align-items-center justify-content-center">
             <Image
               src={newestSet.images.logo}
               className="newest-set-img"
               onClick={() => handleSetClicked(newestSet)}
               onLoad={(e) => e.target.classList.add("newest-set-img-loaded")}
             />
-          </Row>
+          </div>
           <div
             className="d-flex align-items-start justify-content-center"
             style={{ fontSize: ".78em" }}
@@ -229,7 +229,7 @@ function CarouselGallery() {
           </Carousel>
         </>
       )}
-    </Container>
+    </>
   );
 }
 

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card } from "react-bootstrap";
+import { Row, Col, Card } from "react-bootstrap";
 import LinearProgress from "@mui/material/LinearProgress";
 
 const series = [
@@ -58,8 +58,6 @@ function BrowseSets() {
       setLoading(false);
     }
   };
-
-  console.log(sessionStorage.length);
 
   function formatDate(originalDate) {
     const parts = originalDate.split("/");
@@ -142,7 +140,7 @@ function BrowseSets() {
   localStorage.removeItem("order");
 
   return (
-    <Container>
+    <>
       {isClicked && (
         <div
           style={{
@@ -196,31 +194,27 @@ function BrowseSets() {
         <>
           {series.map((item, index) => (
             <React.Fragment key={index}>
-              <Row
+              <div
                 key={index}
-                className={`series-row ${
+                className={`mt-5 series-row ${
                   dataLoaded ? "series-row-loaded" : ""
                 }`}
-                style={{ marginTop: "25px" }}
               >
                 <h1>{item}</h1>
-              </Row>
+              </div>
               <Row
                 className={`series-row ${
                   dataLoaded ? "series-row-loaded" : ""
                 }`}
+                xs={2}
+                sm={2}
+                md={4}
               >
                 {seriesSets !== null &&
                   Object.entries(seriesSets).map(
                     ([id, set]) =>
                       set.series === item && (
-                        <Col
-                          key={set.id}
-                          xs={2}
-                          sm={2}
-                          md={4}
-                          className="series-col mx-1 my-1"
-                        >
+                        <Col key={set.id} className="series-col mx-1 my-1">
                           <Card className="my-3 series-card">
                             <Card.Img
                               variant="top"
@@ -256,7 +250,7 @@ function BrowseSets() {
           ))}
         </>
       )}
-    </Container>
+    </>
   );
 }
 

@@ -1,4 +1,4 @@
-import { Container, Row, Col } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import SetsCards from "./SetsCards";
 import { useEffect } from "react";
 
@@ -9,13 +9,11 @@ function BrowseBySetsResults() {
 
   return (
     <>
-      <Container>
-        <Row>
-          <Col>
-            <SetsCards />
-          </Col>
-        </Row>
-      </Container>
+      <Row>
+        <Col>
+          <SetsCards />
+        </Col>
+      </Row>
     </>
   );
 }

@@ -1,5 +1,5 @@
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import { Container, Row, Col, Button, Image } from "react-bootstrap";
+import { Container, Row, Col, Image } from "react-bootstrap";
 import * as MuiIcon from "./MuiIcons";
 import * as TypeIcon from "./Icons";
 import { textWithImage, updateCollection } from "./Functions";
@@ -72,10 +72,6 @@ function IndividualPagePokémon() {
       />
     ));
   }
-
-  const goBackOnePage = () => {
-    navigate(-1);
-  };
 
   function openTCGPlayerMarket() {
     if (`${card?.tcgplayer.url}`) {

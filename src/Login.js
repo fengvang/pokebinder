@@ -172,7 +172,9 @@ function Login() {
     <>
       <Container
         className="d-flex align-items-center justify-content-center"
-        style={{ minHeight: `calc(100vh - ${headerHeight}px)` }}
+        style={{
+          minHeight: `calc(100vh - ${headerHeight}px)`,
+        }}
       >
         <div className="login-container">
           <Row
