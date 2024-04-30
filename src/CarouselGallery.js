@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Carousel, Image, Card, Col } from "react-bootstrap";
+import { Carousel, Image, Card, Col, Container } from "react-bootstrap";
 import * as MuiIcon from "./MuiIcons";
 
 function CarouselGallery() {
@@ -21,6 +21,19 @@ function CarouselGallery() {
     localStorage.setItem("index", selectedIndex);
     setIndex(selectedIndex);
   };
+
+  // Quick fix for server error when fetching newest set
+  const localSet = localStorage.getItem("newestSet");
+  const localSetCards = localStorage.getItem("newestSetCards");
+
+  if (
+    localSet === `{"error":"Internal server error"}` ||
+    localSetCards === `{"error":"Internal server error"}`
+  ) {
+    localStorage.removeItem("newestSet");
+    localStorage.removeItem("newestSetCards");
+  }
+  // End quick fix
 
   function formatDate(originalDate) {
     const parts = originalDate.split("/");
@@ -161,7 +174,7 @@ function CarouselGallery() {
   };
 
   return (
-    <>
+    <Container>
       {newestSet && newestSetCards && (
         <>
           <div className="d-flex align-items-center justify-content-center">
@@ -229,7 +242,7 @@ function CarouselGallery() {
           </Carousel>
         </>
       )}
-    </>
+    </Container>
   );
 }
 

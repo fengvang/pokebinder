@@ -126,9 +126,9 @@ function BrowseSets() {
   useEffect(() => {
     if (!seriesSets) getSets();
 
-    document.body.style.overflow = isClicked ? "hidden" : "auto";
+    document.body.style.overflow = isClicked || isLoading ? "hidden" : "auto";
     // eslint-disable-next-line
-  }, [isClicked]);
+  }, [isClicked, isLoading]);
 
   useEffect(() => {
     if (seriesSets !== null) {

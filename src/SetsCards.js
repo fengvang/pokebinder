@@ -159,7 +159,7 @@ function SetsCards() {
           <span key={card.id} className="card-image-col">
             <Image
               className="card-image"
-              src={card.images.large}
+              src={card.images.small}
               alt={card.name}
               onClick={() => handleCardClick(card)}
               onLoad={(e) => e.target.classList.add("card-image-loaded")}

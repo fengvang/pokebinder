@@ -1,7 +1,8 @@
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { Col, Button, InputGroup, Spinner } from "react-bootstrap";
+import { useState } from "react";
+import { Col, Button, InputGroup } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
+import SyncLoader from "react-spinners/SyncLoader";
 
 function SearchForm() {
   const [pokemonName, setpokemonName] = useState("");
@@ -79,31 +80,10 @@ function SearchForm() {
     }
   };
 
-  useEffect(() => {
-    const overflowHiddenWhenIsLoading = () => {
-      document.body.style.overflow =
-        isLoading && location.pathname !== "/" ? "hidden" : "auto";
-    };
-
-    overflowHiddenWhenIsLoading();
-  }, [isLoading, location.pathname]);
-
   return (
     <div className="mt-5">
       <Col className="d-flex justify-content-center align-items-center">
         <h1>Search for Pokémon Card</h1>
-      </Col>
-
-      <Col
-        className="d-flex justify-content-center align-items-center"
-        style={{ marginBottom: "20px" }}
-      >
-        <span>
-          By Feng Vang with&nbsp;
-          <a href="http://pokemontcg.io" target="_blank" rel="noreferrer">
-            Pokémon TCG API
-          </a>
-        </span>
       </Col>
 
       <Col
@@ -170,25 +150,19 @@ function SearchForm() {
 
       {isLoading && location.pathname === "/" ? (
         <Col className="d-flex flex-column justify-content-center align-items-center">
-          <Spinner
-            animation="border"
-            role="status"
-            style={{ marginTop: "0px" }}
+          <SyncLoader
+            size={8}
+            color="#ffffff"
+            style={{ marginBottom: "25px" }}
           />
-          {pokemonName
-            ? `Loading results for "${pokemonName} ${
-                pokemonSubtype !== "All" ? ` ${pokemonSubtype}` : ""
-              }"`
-            : null}
         </Col>
       ) : isLoading && location.pathname !== "/" ? (
         <Col className="d-flex flex-column justify-content-center align-items-center loading-div">
-          <Spinner animation="border" role="status" />
-          {pokemonName
-            ? `Loading results for "${pokemonName} ${
-                pokemonSubtype !== "All" ? ` ${pokemonSubtype}` : ""
-              }"`
-            : null}
+          <SyncLoader
+            size={8}
+            color="#ffffff"
+            style={{ marginBottom: "25px" }}
+          />
         </Col>
       ) : null}
 

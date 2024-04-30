@@ -3,6 +3,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 import * as Icon from "./Icons";
 import { Image } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 export const setCookie = (name, value, days) => {
   const expires = new Date(
@@ -215,7 +216,6 @@ export function textWithImage(name) {
   }
 }
 
-// Need to fetch updates from API to update prices (daily?)
 export const updateCollection = (userId, card) => {
   const auth = getAuth();
 
@@ -237,6 +237,10 @@ export const updateCollection = (userId, card) => {
 
               set(collectionRef, updatedCollection)
                 .then(() => {
+                  sessionStorage.setItem(
+                    "sessionCollection",
+                    JSON.stringify(updatedCollection)
+                  );
                   console.log("Card added to collection successfully!");
                 })
                 .catch((error) => {
@@ -265,8 +269,11 @@ export const updateCollection = (userId, card) => {
   console.log("done!");
 };
 
+export const cardAdded = () =>
+  toast("Card successfully added to collection", {});
+
 export const sortByAlpha = (collection) => {
-  return collection.slice().sort((a, b) => {
+  return collection?.slice().sort((a, b) => {
     const firstVal = a.name.toUpperCase();
     const secondVal = b.name.toUpperCase();
 
@@ -282,7 +289,7 @@ export const sortByAlpha = (collection) => {
 };
 
 export const sortByPrice = (collection) => {
-  return collection.slice().sort((a, b) => {
+  return collection?.slice().sort((a, b) => {
     const firstVal =
       a.tcgplayer?.prices?.holofoil?.market ||
       a.tcgplayer?.prices?.["1stEditionHolofoil"]?.market ||
@@ -305,52 +312,6 @@ export const sortByPrice = (collection) => {
 
     return 0;
   });
-};
-
-export const removeCardFromCollection = (id) => {
-  const auth = getAuth();
-
-  try {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const db = getDatabase();
-        const collectionRef = ref(db, "users/" + user.uid + "/collection");
-
-        get(collectionRef)
-          .then((snapshot) => {
-            if (snapshot.exists()) {
-              const collectionOnDB = snapshot.val();
-              let removed = false;
-
-              const updatedCollection = Object.values(collectionOnDB).filter(
-                (card) => {
-                  if (card.id === id && !removed) {
-                    removed = true;
-                    return false;
-                  }
-                  return true;
-                }
-              );
-
-              set(collectionRef, updatedCollection)
-                .then(() => {
-                  console.log("Collection updated on DB.");
-                })
-                .catch((error) => {
-                  console.error(error);
-                });
-            }
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      } else {
-        console.log("Permission denied");
-      }
-    });
-  } catch (error) {
-    console.error(error);
-  }
 };
 
 export function hasEightCharsOrMore(password) {
@@ -377,13 +338,13 @@ export function hasNumber(password) {
   return numberRegex.test(password);
 }
 
-// Truncate item name if more than 12 characters
+// Truncate item name if more than 13 characters
 export function truncate(name) {
   let truncatedName;
 
-  if (name?.length > 12) {
-    // truncate to 12 characters and "..." at the end
-    truncatedName = name.slice(0, 12) + "...";
+  if (name?.length > 13) {
+    // truncate to 13 characters and "..." at the end
+    truncatedName = name.slice(0, 13) + "...";
 
     return truncatedName;
   }

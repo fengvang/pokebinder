@@ -1,18 +1,21 @@
+import { Link } from "react-router-dom";
+
+import { Col } from "react-bootstrap";
+
 function Footer() {
   return (
     <>
-      <footer id="footer" style={{ marginTop: "" }}>
-        <>
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the industry's standard dummy text ever
-          since the 1500s, when an unknown printer took a galley of type and
-          scrambled it to make a type specimen book. It has survived not only
-          five centuries, but also the leap into electronic typesetting,
-          remaining essentially unchanged. It was popularised in the 1960s with
-          the release of Letraset sheets containing Lorem Ipsum passages, and
-          more recently with desktop publishing software like Aldus PageMaker
-          including versions of Lorem Ipsum.
-        </>
+      <footer id="footer">
+        <Col className="d-flex justify-content-center align-items-center">
+          Pokémon card data available via&nbsp;
+          <Link to="https://pokemontcg.io/" target="_blank">
+            Pokémon TCG API
+          </Link>
+        </Col>
+
+        <Col className="d-flex justify-content-center align-items-center mt-3">
+          This site is not affiliated with or endorsed by the Pokémon Company.
+        </Col>
       </footer>
     </>
   );

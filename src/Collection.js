@@ -1,26 +1,21 @@
 import { useNavigate } from "react-router-dom";
-import { getDatabase, ref, onValue } from "firebase/database";
+import { getDatabase, ref, onValue, get, set } from "firebase/database";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { Image, Form } from "react-bootstrap";
 
-import {
-  sortByAlpha,
-  sortByPrice,
-  collectionTextWithImage,
-  removeCardFromCollection,
-} from "./Functions";
+import { sortByAlpha, sortByPrice, collectionTextWithImage } from "./Functions";
 import * as MuiIcon from "./MuiIcons";
 
 function Collection() {
   const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem("user"));
-  const [collection, setCollection] = useState([]);
-  const [orderBy, setOrderBy] = useState("");
+  const [collection, setCollection] = useState(null);
 
   function getCollectionFromDB(setCollection) {
     const auth = getAuth();
 
+    console.log("loading from DB");
     try {
       onAuthStateChanged(auth, (user) => {
         if (user) {
@@ -32,28 +27,12 @@ function Collection() {
               if (snapshot.exists()) {
                 const data = snapshot.val();
 
-                switch (localStorage.getItem("order") || orderBy) {
-                  case "newest":
-                    setCollection(data.reverse());
-                    break;
-                  case "oldest":
-                    setCollection(data);
-                    break;
-                  case "name":
-                    setCollection(sortByAlpha(data));
-                    break;
-                  case "-name":
-                    setCollection(sortByAlpha(data).reverse());
-                    break;
-                  case "-tcgplayer.prices.holofoil":
-                    setCollection(sortByPrice(data));
-                    break;
-                  case "tcgplayer.prices.holofoil":
-                    setCollection(sortByPrice(data).reverse());
-                    break;
-                  default:
-                    setCollection(data.reverse());
-                }
+                sessionStorage.setItem(
+                  "sessionCollection",
+                  JSON.stringify(data)
+                );
+
+                setCollection([...data].reverse());
               } else {
                 console.log("No data available");
               }
@@ -66,6 +45,51 @@ function Collection() {
       });
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  function sortCollection() {
+    let sortedCollection;
+
+    switch (localStorage.getItem("order")) {
+      case "newest":
+        sortedCollection = JSON.parse(
+          sessionStorage.getItem("sessionCollection")
+        );
+        setCollection(sortedCollection.reverse());
+        break;
+      case "oldest":
+        setCollection(JSON.parse(sessionStorage.getItem("sessionCollection")));
+        break;
+      case "name":
+        sortedCollection = sortByAlpha(
+          JSON.parse(sessionStorage.getItem("sessionCollection")).slice()
+        );
+        setCollection(sortedCollection);
+        break;
+      case "-name":
+        sortedCollection = sortByAlpha(
+          JSON.parse(sessionStorage.getItem("sessionCollection"))?.slice()
+        ).reverse();
+        setCollection(sortedCollection);
+        break;
+      case "-tcgplayer.prices.holofoil":
+        sortedCollection = sortByPrice(
+          JSON.parse(sessionStorage.getItem("sessionCollection"))?.slice()
+        );
+        setCollection(sortedCollection);
+        break;
+      case "tcgplayer.prices.holofoil":
+        sortedCollection = sortByPrice(
+          JSON.parse(sessionStorage.getItem("sessionCollection"))?.slice()
+        ).reverse();
+        setCollection(sortedCollection);
+        break;
+      default:
+        sortedCollection = JSON.parse(
+          sessionStorage.getItem("sessionCollection")
+        );
+        setCollection(sortedCollection.reverse());
     }
   }
 
@@ -123,17 +147,104 @@ function Collection() {
 
   const handleSelectChange = async (event) => {
     const order = event.target.value;
-    setOrderBy(order);
 
-    if (order !== "default") localStorage.setItem("order", order);
-    else localStorage.removeItem("order");
+    localStorage.setItem("order", order);
+
+    sortCollection();
+  };
+
+  const removeCardFromCollection = (id, setCollection) => {
+    const auth = getAuth();
+
+    try {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          const db = getDatabase();
+          const collectionRef = ref(db, "users/" + user.uid + "/collection");
+
+          get(collectionRef)
+            .then((snapshot) => {
+              if (snapshot.exists()) {
+                const collectionOnDB = snapshot.val();
+
+                const updatedCollection = Object.values(collectionOnDB).filter(
+                  (item) => item.id !== id
+                );
+                let sortedUpdatedCollection;
+
+                switch (localStorage.getItem("order")) {
+                  case "newest":
+                    sortedUpdatedCollection = updatedCollection.slice();
+                    setCollection(sortedUpdatedCollection.reverse());
+                    break;
+                  case "oldest":
+                    setCollection(updatedCollection.slice());
+                    break;
+                  case "name":
+                    sortedUpdatedCollection = sortByAlpha(
+                      updatedCollection.slice()
+                    );
+                    setCollection(sortedUpdatedCollection);
+                    break;
+                  case "-name":
+                    sortedUpdatedCollection = sortByAlpha(
+                      updatedCollection.slice()
+                    );
+                    setCollection(sortedUpdatedCollection.reverse());
+                    break;
+                  case "-tcgplayer.prices.holofoil":
+                    sortedUpdatedCollection = sortByPrice(
+                      updatedCollection.slice()
+                    );
+                    setCollection(sortedUpdatedCollection);
+                    break;
+                  case "tcgplayer.prices.holofoil":
+                    sortedUpdatedCollection = sortByPrice(
+                      updatedCollection.slice()
+                    );
+                    setCollection(sortedUpdatedCollection.reverse());
+                    break;
+                  default:
+                    sortedUpdatedCollection = updatedCollection.slice();
+                    setCollection(sortedUpdatedCollection.reverse());
+                }
+
+                // Update the collection in the database
+                set(collectionRef, updatedCollection)
+                  .then(() => {
+                    // Set the updated collection to the state
+                    setCollection(sortedUpdatedCollection);
+
+                    sessionStorage.setItem(
+                      "sessionCollection",
+                      JSON.stringify(Object.values(updatedCollection))
+                    );
+                    console.log("Collection updated on DB.");
+                  })
+                  .catch((error) => {
+                    console.error(error);
+                  });
+              }
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+        } else {
+          console.log("Permission denied");
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
-    getCollectionFromDB(setCollection);
+    if (!sessionStorage.getItem("sessionCollection"))
+      getCollectionFromDB(setCollection);
+    else sortCollection();
 
     // eslint-disable-next-line
-  }, [orderBy]);
+  }, []);
 
   return (
     <>
@@ -181,12 +292,14 @@ function Collection() {
               Loading...
             </h5>
           ) : (
-            collection?.map((card) => (
-              <div key={card.id} className="collection-card-container">
+            collection?.map((card, index) => (
+              <div key={index} className="collection-card-container">
                 <MuiIcon.CloseIcon
                   className="card-collection-close-button"
                   style={{ color: "rgba(255,255,255,0.1)" }}
-                  onClick={() => removeCardFromCollection(card.id)}
+                  onClick={() =>
+                    removeCardFromCollection(card.id, setCollection)
+                  }
                 />
 
                 <span style={{ position: "relative", top: "-24px" }}>
@@ -195,7 +308,7 @@ function Collection() {
 
                 <Image
                   className="collection-card-image"
-                  src={card.images.large}
+                  src={card.images.small}
                   alt={card.name}
                   onClick={() => handleCardClick(card)}
                   onLoad={(e) => e.target.classList.add("card-image-loaded")}

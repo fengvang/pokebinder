@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import reportWebVitals from "./reportWebVitals";
 import {
@@ -6,6 +6,7 @@ import {
   RouterProvider,
   Outlet,
   ScrollRestoration,
+  useLocation,
 } from "react-router-dom";
 
 import Home from "./Home";
@@ -28,6 +29,22 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { Container } from "react-bootstrap";
 
 function Layout() {
+  const location = useLocation();
+  const loginPath = location.pathname === "/login";
+  const createAccountPath = location.pathname === "/create-account";
+
+  useEffect(() => {
+    if (loginPath || createAccountPath) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [loginPath, createAccountPath]);
+
   return (
     <>
       <Home />

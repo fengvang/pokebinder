@@ -4,11 +4,11 @@ import {
   Col,
   Button,
   InputGroup,
-  Spinner,
   ToastContainer,
   Toast,
 } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
+import SyncLoader from "react-spinners/SyncLoader";
 
 function SearchBySet() {
   const [pokemonName, setpokemonName] = useState("");
@@ -83,12 +83,6 @@ function SearchBySet() {
   };
 
   useEffect(() => {
-    const overflowHiddenWhenIsLoading = () => {
-      document.body.style.overflow =
-        isLoading && location.pathname !== "/" ? "hidden" : "auto";
-    };
-    overflowHiddenWhenIsLoading();
-
     if (toastCountdown > 0) {
       const countdownInterval = setInterval(() => {
         setToastCountdown((prevCountdown) => prevCountdown - 1);
@@ -97,24 +91,12 @@ function SearchBySet() {
       // Clear the interval when toastCountdown reaches 0
       return () => clearInterval(countdownInterval);
     }
-  }, [isLoading, location.pathname, toastCountdown]);
+  }, [toastCountdown]);
 
   return (
     <div className="mt-5">
       <Col className="d-flex justify-content-center align-items-center">
         <h1>Search for Pokémon Card By Set</h1>
-      </Col>
-
-      <Col
-        className="d-flex justify-content-center align-items-center"
-        style={{ marginBottom: "20px" }}
-      >
-        <span>
-          By Feng Vang with&nbsp;
-          <a href="http://pokemontcg.io" target="_blank" rel="noreferrer">
-            Pokémon TCG API
-          </a>
-        </span>
       </Col>
 
       <Col
@@ -413,7 +395,7 @@ function SearchBySet() {
         </Form>
       </Col>
 
-      <ToastContainer position="middle-center">
+      <ToastContainer position="top-center">
         <Toast
           show={showToast}
           onClose={() => setShowToast(false)}
@@ -434,14 +416,11 @@ function SearchBySet() {
 
       {isLoading && location.pathname === "/search-by-set" ? (
         <Col className="d-flex flex-column justify-content-center align-items-center">
-          <Spinner
-            animation="border"
-            role="status"
-            style={{ marginTop: "0px" }}
+          <SyncLoader
+            size={8}
+            color="#ffffff"
+            style={{ marginBottom: "25px" }}
           />
-          {pokemonName
-            ? `Loading results for "${pokemonName} in ${setSeries} - ${set}"`
-            : null}
         </Col>
       ) : null}
 

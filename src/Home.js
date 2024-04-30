@@ -1,12 +1,11 @@
 import { useLocation } from "react-router-dom";
-import React from "react";
+import React, { useEffect } from "react";
 
 import Header from "./Header";
 import SearchForm from "./SearchForm";
 import SearchBySet from "./SearchBySet";
 import CarouselGallery from "./CarouselGallery";
 import MobileCarouselGallery from "./MobileCarouselGallery";
-// import { fetchAllCards } from "./Functions";
 
 function Home() {
   const location = useLocation();
@@ -14,21 +13,23 @@ function Home() {
   const searchBySetsPath = location.pathname === "/search-by-set";
   const loginPath = location.pathname === "/login";
   const createAccountPath = location.pathname === "/create-account";
-  // const allCards = sessionStorage.getItem("allCards");
 
   if (rootPath) {
     localStorage.removeItem("pokemonName");
     localStorage.removeItem("pokemonSubtype");
   }
 
-  if (loginPath || createAccountPath)
-    document.querySelector("body").style.overflow = "hidden";
+  useEffect(() => {
+    if (loginPath || createAccountPath) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
 
-  // useEffect(() => {
-  //   if (!allCards) {
-  //     fetchAllCards();
-  //   }
-  // }, []);
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [loginPath, createAccountPath]);
 
   return (
     <>

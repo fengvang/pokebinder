@@ -10,6 +10,7 @@ import {
   sendEmailVerification,
   GoogleAuthProvider,
   signInWithPopup,
+  TwitterAuthProvider,
 } from "firebase/auth";
 import { getDatabase, ref, set } from "firebase/database";
 
@@ -37,7 +38,8 @@ function CreateAccount() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [headerHeight, setHeaderHeight] = useState(0);
-  const provider = new GoogleAuthProvider();
+  const googleProvider = new GoogleAuthProvider();
+  const twitterProvider = new TwitterAuthProvider();
 
   function addUserToDB(userId, name, email) {
     const db = getDatabase();
@@ -59,7 +61,8 @@ function CreateAccount() {
 
   const googleLogin = () => {
     const auth = getAuth();
-    signInWithPopup(auth, provider)
+
+    signInWithPopup(auth, googleProvider)
       .then((result) => {
         // This gives you a Google Access Token. You can use it to access the Google API.
         // const credential = GoogleAuthProvider.credentialFromResult(result);
@@ -97,6 +100,49 @@ function CreateAccount() {
 
         console.error(errorCode, errorMessage, email, credential);
         // ...
+      });
+  };
+
+  const twitterLogin = () => {
+    const auth = getAuth();
+
+    signInWithPopup(auth, twitterProvider)
+      .then((result) => {
+        const credential = TwitterAuthProvider.credentialFromResult(result);
+        // eslint-disable-next-line
+        const token = credential.accessToken;
+        // eslint-disable-next-line
+        const secret = credential.secret;
+
+        const user = result.user;
+
+        addUserToDB(user.uid, user.displayName, user.email);
+
+        if (userIsLoggedIn) {
+          const userInfo = {
+            uid: user.uid,
+            displayName: user.displayName,
+            email: user.email,
+            photoURL: user.photoURL,
+          };
+
+          localStorage.setItem("user", JSON.stringify(userInfo));
+        }
+
+        setTimeout(() => {
+          navigate("/");
+        }, 1500);
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = TwitterAuthProvider.credentialFromError(error);
+
+        console.error(errorCode, errorMessage, email, credential);
       });
   };
 
@@ -174,9 +220,14 @@ function CreateAccount() {
       <div className="login-container">
         <Row
           className="d-flex justify-content-center"
-          style={{ marginTop: "25px" }}
+          style={{ marginTop: "0px" }}
         >
-          <Link to="#" onClick={goBackOne} style={{ marginLeft: "25px" }}>
+          <Link
+            to="#"
+            onClick={goBackOne}
+            style={{ marginLeft: "25px" }}
+            className="return-link"
+          >
             <MuiIcon.ArrowBackIcon /> Return
           </Link>
           <Image src={Images.masterball} style={{ width: "80px" }} />
@@ -318,7 +369,7 @@ function CreateAccount() {
 
                 <MuiIcon.FacebookIcon className="facebook-icon" />
 
-                <MuiIcon.XIcon className="x-icon" />
+                <MuiIcon.XIcon className="x-icon" onClick={twitterLogin} />
               </div>
             </Form.Group>
           </Form>
