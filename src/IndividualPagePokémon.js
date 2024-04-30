@@ -1,9 +1,10 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import { Container, Row, Col, Button, Image } from "react-bootstrap";
-import { textWithImage } from "./TextWithImages";
+import { useLocation, useNavigate, Link } from "react-router-dom";
+import { Container, Row, Col, Image } from "react-bootstrap";
 import * as MuiIcon from "./MuiIcons";
 import * as TypeIcon from "./Icons";
-import { updateCollection } from "./Functions";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { textWithImage, updateCollection, cardAdded } from "./Functions";
 
 function IndividualPagePokémon() {
   const location = useLocation();
@@ -67,21 +68,10 @@ function IndividualPagePokémon() {
           marginRight: "6px",
           width: "25px",
           height: "25px",
-          outline: "2px solid #fff",
         }}
         roundedCircle
       />
     ));
-  }
-
-  const goBackOnePage = () => {
-    navigate(-1);
-  };
-
-  function openTCGPlayerMarket() {
-    if (`${card?.tcgplayer.url}`) {
-      window.open(`${card?.tcgplayer.url}`, "_blank");
-    }
   }
 
   const handleEvolveClick = async (pokemonName) => {
@@ -119,9 +109,18 @@ function IndividualPagePokémon() {
     }
   };
 
+  const handleUpdateCollection = () => {
+    updateCollection(currentUser.uid, card);
+    cardAdded();
+  };
+
   return (
     <Container style={{ marginBottom: "20px" }}>
-      {window.innerWidth < 576 ? (
+      <ToastContainer
+        position={window.innerWidth < 768 ? "bottom-center" : "top-center"}
+        theme="dark"
+      />
+      {window.innerWidth < 768 ? (
         <Row
           style={{ marginTop: "25px" }}
           className="d-flex align-items-center justify-content-center"
@@ -144,7 +143,7 @@ function IndividualPagePokémon() {
           <Col
             xs="auto"
             md={12}
-            className="d-flex align-items-center justify-content-start"
+            className="d-flex align-items-center justify-content-center mb-5"
           >
             <h1 className="d-flex align-items-center">
               {textWithImage(card.name)}
@@ -156,7 +155,7 @@ function IndividualPagePokémon() {
         </Row>
       )}
 
-      {window.innerWidth < 576 ? (
+      {window.innerWidth < 576 || window.innerWidth < 768 ? (
         <Row xs={12}>
           {card && card.tcgplayer && card.tcgplayer.prices ? (
             Object.entries(card.tcgplayer.prices).map(
@@ -191,9 +190,15 @@ function IndividualPagePokémon() {
                           {prices.high ? `$${prices.high.toFixed(2)}` : "- - -"}
                         </span>
                       </span>
-                      <span className="d-flex align-items-center launch-tcgplayer">
-                        <MuiIcon.LaunchIcon onClick={openTCGPlayerMarket} />
-                      </span>
+                      <Link
+                        to={card?.tcgplayer.url}
+                        target="_blank"
+                        className="launch-tcgplayer"
+                      >
+                        <span className="d-flex align-items-center">
+                          <MuiIcon.LaunchIcon />
+                        </span>
+                      </Link>
                     </Col>
                   </div>
                 )
@@ -217,9 +222,15 @@ function IndividualPagePokémon() {
                   <MuiIcon.UpIcon style={{ color: `var(--bs-green)` }} />
                   <span style={{ paddingLeft: "10px" }}>- - -</span>
                 </span>
-                <span className="d-flex align-items-center launch-tcgplayer">
-                  <MuiIcon.LaunchIcon onClick={openTCGPlayerMarket} />
-                </span>
+                <Link
+                  to={card?.tcgplayer.url}
+                  target="_blank"
+                  className="launch-tcgplayer"
+                >
+                  <span className="d-flex align-items-center">
+                    <MuiIcon.LaunchIcon />
+                  </span>
+                </Link>
               </Col>
             </div>
           )}
@@ -229,20 +240,25 @@ function IndividualPagePokémon() {
       )}
 
       <Row>
-        <Col xs="auto" md={5} className="individual-image-col">
+        <Col xs="auto" sm={12} md={5} className="individual-image-col">
           <div className="image-container">
             <Image
               className="individual-page-image"
               src={card.images.large}
               alt={card.name}
             />
-            <div
-              className="image-overlay"
-              onClick={() => updateCollection(currentUser.uid, card)}
-            >
-              Add to collection
-              <MuiIcon.LibraryAddIcon style={{ marginLeft: "5px" }} />
-            </div>
+            {currentUser ? (
+              <div className="image-overlay" onClick={handleUpdateCollection}>
+                Add to collection
+                <MuiIcon.LibraryAddIcon style={{ marginLeft: "5px" }} />
+              </div>
+            ) : (
+              <Link to="/login">
+                <div className="image-overlay" style={{ color: "#ffffff" }}>
+                  Log in to track collection
+                </div>
+              </Link>
+            )}
           </div>
         </Col>
 
@@ -369,7 +385,6 @@ function IndividualPagePokémon() {
                         alt={weakness.type}
                         style={{
                           marginRight: "8px",
-                          outline: "2px solid #fff",
                         }}
                         roundedCircle
                       />
@@ -395,7 +410,6 @@ function IndividualPagePokémon() {
                         alt={resistance.type}
                         style={{
                           marginRight: "8px",
-                          outline: "2px solid #fff",
                         }}
                         roundedCircle
                       />
@@ -451,7 +465,7 @@ function IndividualPagePokémon() {
         </Col>
       </Row>
 
-      {window.innerWidth > 576 ? (
+      {window.innerWidth > 768 ? (
         <Row className="second-row" style={{ padding: "12px" }}>
           <Col xs="auto" md={5} className="individual-price-container">
             <h4>Current Prices</h4>
@@ -459,13 +473,9 @@ function IndividualPagePokémon() {
               {card && card.tcgplayer && card.tcgplayer.updatedAt ? (
                 <span>
                   <b>Last Updated:</b> {formattedDateString} from{" "}
-                  <a
-                    href="https://www.tcgplayer.com/"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
+                  <Link to="https://www.tcgplayer.com/" target="_blank">
                     TCGplayer
-                  </a>
+                  </Link>
                 </span>
               ) : null}
             </div>
@@ -505,11 +515,14 @@ function IndividualPagePokémon() {
                               : "- - -"}
                           </span>
                         </Col>
-                        <Col
-                          xs={3}
-                          className="d-flex align-items-center launch-tcgplayer"
-                        >
-                          <MuiIcon.LaunchIcon onClick={openTCGPlayerMarket} />
+                        <Col xs={3} className="d-flex align-items-center">
+                          <Link
+                            to={card?.tcgplayer.url}
+                            target="_blank"
+                            className="launch-tcgplayer"
+                          >
+                            <MuiIcon.LaunchIcon />
+                          </Link>
                         </Col>
                       </Row>
                     </div>
@@ -524,11 +537,6 @@ function IndividualPagePokémon() {
       ) : (
         ""
       )}
-
-      {/* when clicked and if filtered, return to filtered state */}
-      <Button className="button results-individual" onClick={goBackOnePage}>
-        Go back
-      </Button>
     </Container>
   );
 }

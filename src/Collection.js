@@ -1,61 +1,95 @@
 import { useNavigate } from "react-router-dom";
-import { getDatabase, ref, child, get } from "firebase/database";
+import { getDatabase, ref, onValue, get, set } from "firebase/database";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Form } from "react-bootstrap";
-import { sortByAlpha, sortByPrice } from "./Functions";
+import { Image, Form } from "react-bootstrap";
+
+import { sortByAlpha, sortByPrice, collectionTextWithImage } from "./Functions";
+import * as MuiIcon from "./MuiIcons";
 
 function Collection() {
   const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem("user"));
-  const dbRef = ref(getDatabase());
-  const [collection, setCollection] = useState([]);
-  const [orderBy, setOrderBy] = useState("");
+  const [collection, setCollection] = useState(null);
 
-  function getCollectionFromDB() {
+  function getCollectionFromDB(setCollection) {
     const auth = getAuth();
 
+    console.log("loading from DB");
     try {
       onAuthStateChanged(auth, (user) => {
         if (user) {
-          get(child(dbRef, `users/${currentUser.uid}/collection`))
-            .then((snapshot) => {
+          const db = getDatabase();
+          const collectionRef = ref(db, `users/${user.uid}/collection`);
+          onValue(
+            collectionRef,
+            (snapshot) => {
               if (snapshot.exists()) {
                 const data = snapshot.val();
 
-                switch (localStorage.getItem("order") || orderBy) {
-                  case "newest":
-                    setCollection(data.reverse());
-                    break;
-                  case "oldest":
-                    setCollection(data);
-                    break;
-                  case "name":
-                    setCollection(sortByAlpha(data, "name"));
-                    break;
-                  case "-name":
-                    setCollection(sortByAlpha(data, "-name"));
-                    break;
-                  case "-tcgplayer.prices.holofoil":
-                    setCollection(sortByPrice(data, "high"));
-                    break;
-                  case "tcgplayer.prices.holofoil":
-                    setCollection(sortByPrice(data, "low"));
-                    break;
-                  default:
-                    setCollection(data.reverse());
-                }
+                sessionStorage.setItem(
+                  "sessionCollection",
+                  JSON.stringify(data)
+                );
+
+                setCollection([...data].reverse());
               } else {
                 console.log("No data available");
               }
-            })
-            .catch((error) => {
+            },
+            (error) => {
               console.error(error);
-            });
+            }
+          );
         }
       });
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  function sortCollection() {
+    let sortedCollection;
+
+    switch (localStorage.getItem("order")) {
+      case "newest":
+        sortedCollection = JSON.parse(
+          sessionStorage.getItem("sessionCollection")
+        );
+        setCollection(sortedCollection.reverse());
+        break;
+      case "oldest":
+        setCollection(JSON.parse(sessionStorage.getItem("sessionCollection")));
+        break;
+      case "name":
+        sortedCollection = sortByAlpha(
+          JSON.parse(sessionStorage.getItem("sessionCollection")).slice()
+        );
+        setCollection(sortedCollection);
+        break;
+      case "-name":
+        sortedCollection = sortByAlpha(
+          JSON.parse(sessionStorage.getItem("sessionCollection"))?.slice()
+        ).reverse();
+        setCollection(sortedCollection);
+        break;
+      case "-tcgplayer.prices.holofoil":
+        sortedCollection = sortByPrice(
+          JSON.parse(sessionStorage.getItem("sessionCollection"))?.slice()
+        );
+        setCollection(sortedCollection);
+        break;
+      case "tcgplayer.prices.holofoil":
+        sortedCollection = sortByPrice(
+          JSON.parse(sessionStorage.getItem("sessionCollection"))?.slice()
+        ).reverse();
+        setCollection(sortedCollection);
+        break;
+      default:
+        sortedCollection = JSON.parse(
+          sessionStorage.getItem("sessionCollection")
+        );
+        setCollection(sortedCollection.reverse());
     }
   }
 
@@ -113,86 +147,204 @@ function Collection() {
 
   const handleSelectChange = async (event) => {
     const order = event.target.value;
-    setOrderBy(order);
 
-    if (order !== "default") localStorage.setItem("order", order);
-    else localStorage.removeItem("order");
+    localStorage.setItem("order", order);
+
+    sortCollection();
+  };
+
+  const removeCardFromCollection = (id, setCollection) => {
+    const auth = getAuth();
+
+    try {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          const db = getDatabase();
+          const collectionRef = ref(db, "users/" + user.uid + "/collection");
+
+          get(collectionRef)
+            .then((snapshot) => {
+              if (snapshot.exists()) {
+                const collectionOnDB = snapshot.val();
+
+                const updatedCollection = Object.values(collectionOnDB).filter(
+                  (item) => item.id !== id
+                );
+                let sortedUpdatedCollection;
+
+                switch (localStorage.getItem("order")) {
+                  case "newest":
+                    sortedUpdatedCollection = updatedCollection.slice();
+                    setCollection(sortedUpdatedCollection.reverse());
+                    break;
+                  case "oldest":
+                    setCollection(updatedCollection.slice());
+                    break;
+                  case "name":
+                    sortedUpdatedCollection = sortByAlpha(
+                      updatedCollection.slice()
+                    );
+                    setCollection(sortedUpdatedCollection);
+                    break;
+                  case "-name":
+                    sortedUpdatedCollection = sortByAlpha(
+                      updatedCollection.slice()
+                    );
+                    setCollection(sortedUpdatedCollection.reverse());
+                    break;
+                  case "-tcgplayer.prices.holofoil":
+                    sortedUpdatedCollection = sortByPrice(
+                      updatedCollection.slice()
+                    );
+                    setCollection(sortedUpdatedCollection);
+                    break;
+                  case "tcgplayer.prices.holofoil":
+                    sortedUpdatedCollection = sortByPrice(
+                      updatedCollection.slice()
+                    );
+                    setCollection(sortedUpdatedCollection.reverse());
+                    break;
+                  default:
+                    sortedUpdatedCollection = updatedCollection.slice();
+                    setCollection(sortedUpdatedCollection.reverse());
+                }
+
+                // Update the collection in the database
+                set(collectionRef, updatedCollection)
+                  .then(() => {
+                    // Set the updated collection to the state
+                    setCollection(sortedUpdatedCollection);
+
+                    sessionStorage.setItem(
+                      "sessionCollection",
+                      JSON.stringify(Object.values(updatedCollection))
+                    );
+                    console.log("Collection updated on DB.");
+                  })
+                  .catch((error) => {
+                    console.error(error);
+                  });
+              }
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+        } else {
+          console.log("Permission denied");
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
-    getCollectionFromDB();
+    if (!sessionStorage.getItem("sessionCollection"))
+      getCollectionFromDB(setCollection);
+    else sortCollection();
+
     // eslint-disable-next-line
-  }, [orderBy]);
+  }, []);
 
   return (
-    <Container>
+    <>
       {currentUser ? (
         <>
-          <Row className="my-5 d-flex align-items-center justify-content-center">
+          <div className="mt-5">
             {collection ? (
               <>
                 <h1 style={{ fontFamily: "Josefin Sans" }}>
                   {currentUser.displayName}'s Binder
                 </h1>
-                <Row>
-                  <h5>Collection worth: $ {collectionWorth()}</h5>
-                </Row>
+                <h5>
+                  Collection worth: ${collectionWorth()} ({collection.length}{" "}
+                  cards)
+                </h5>
               </>
             ) : null}
+          </div>
 
-            <Row id="card-results-count">
-              <Form.Group>
-                <Form.Label className="card-desc-small-text">
-                  Order by
-                </Form.Label>
-                <Form.Select
-                  aria-label="collection-card-list"
-                  style={{
-                    width: window.innerWidth < 576 ? "100%" : "200px",
-                  }}
-                  onChange={handleSelectChange}
-                  defaultValue={localStorage.getItem("order")}
-                >
-                  <option value="newest">Newest First</option>
-                  <option value="oldest">Oldest First</option>
-                  <option value="name">Name A-Z</option>
-                  <option value="-name">Name Z-A</option>
-                  <option value="-tcgplayer.prices.holofoil">
-                    Market Price - Highest
-                  </option>
-                  <option value="tcgplayer.prices.holofoil">
-                    Market Price - Lowest
-                  </option>
-                </Form.Select>
-              </Form.Group>
+          <Form.Group className="mb-5">
+            <Form.Label className="card-desc-small-text">Order by</Form.Label>
+            <Form.Select
+              aria-label="collection-card-list"
+              style={{
+                width: window.innerWidth < 576 ? "100%" : "200px",
+              }}
+              onChange={handleSelectChange}
+              defaultValue={localStorage.getItem("order")}
+            >
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="name">Name A-Z</option>
+              <option value="-name">Name Z-A</option>
+              <option value="-tcgplayer.prices.holofoil">
+                Market Price - Highest
+              </option>
+              <option value="tcgplayer.prices.holofoil">
+                Market Price - Lowest
+              </option>
+            </Form.Select>
+          </Form.Group>
 
-              {collection?.length === 0 ? (
-                <h5 className="my-3 d-flex align-items-center justify-content-center">
-                  Collection is empty!
-                </h5>
-              ) : (
-                collection?.map((card) => (
-                  <Col key={card.id} className="px-0 card-image-col">
-                    <Card.Img
-                      className="card-image"
-                      src={card.images.large}
-                      alt={card.name}
-                      style={{ width: "200px" }}
-                      onClick={() => handleCardClick(card)}
-                      onLoad={(e) =>
-                        e.target.classList.add("card-image-loaded")
-                      }
-                    />
-                  </Col>
-                ))
-              )}
-            </Row>
-          </Row>
+          {collection?.length === 0 ? (
+            <h5 className="d-flex align-items-center justify-content-center">
+              Loading...
+            </h5>
+          ) : (
+            collection?.map((card, index) => (
+              <div key={index} className="collection-card-container">
+                <MuiIcon.CloseIcon
+                  className="card-collection-close-button"
+                  style={{ color: "rgba(255,255,255,0.1)" }}
+                  onClick={() =>
+                    removeCardFromCollection(card.id, setCollection)
+                  }
+                />
+
+                <span style={{ position: "relative", top: "-24px" }}>
+                  {collectionTextWithImage(card.name)}
+                </span>
+
+                <Image
+                  className="collection-card-image"
+                  src={card.images.small}
+                  alt={card.name}
+                  onClick={() => handleCardClick(card)}
+                  onLoad={(e) => e.target.classList.add("card-image-loaded")}
+                />
+                <div>
+                  {card.tcgplayer?.prices?.holofoil?.market ||
+                  card.tcgplayer?.prices?.["1stEditionHolofoil"]?.market ||
+                  card.tcgplayer?.prices?.reverseHolofoil?.market ||
+                  card.tcgplayer?.prices?.["1stEditionNormal"]?.market ||
+                  card.tcgplayer?.prices?.normal?.market ? (
+                    <>
+                      $
+                      {card.tcgplayer?.prices?.holofoil?.market.toFixed(2) ||
+                        card.tcgplayer?.prices?.[
+                          "1stEditionHolofoil"
+                        ]?.market.toFixed(2) ||
+                        card.tcgplayer?.prices?.reverseHolofoil?.market.toFixed(
+                          2
+                        ) ||
+                        card.tcgplayer?.prices?.[
+                          "1stEditionNormal"
+                        ]?.market.toFixed(2) ||
+                        card.tcgplayer?.prices?.normal?.market.toFixed(2)}
+                    </>
+                  ) : (
+                    <span>No data</span>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
         </>
       ) : (
-        <span>Sorry please log in</span>
+        <span>No cards in collection</span>
       )}
-    </Container>
+    </>
   );
 }
 

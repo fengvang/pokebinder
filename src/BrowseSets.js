@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card } from "react-bootstrap";
+import { Row, Col, Card } from "react-bootstrap";
 import LinearProgress from "@mui/material/LinearProgress";
 
 const series = [
@@ -24,7 +24,8 @@ const series = [
 
 function BrowseSets() {
   const navigate = useNavigate();
-  const [seriesSets, setSeriesSets] = useState(null);
+  const sessionSeriesSets = JSON.parse(sessionStorage.getItem("seriesSets"));
+  const [seriesSets, setSeriesSets] = useState(sessionSeriesSets || null);
   const [isLoading, setLoading] = useState(false);
   const [isClicked, setClicked] = useState(false);
   const [clickedSeries, setClickedSeries] = useState("");
@@ -46,6 +47,8 @@ function BrowseSets() {
 
       setSeriesSets(data);
 
+      sessionStorage.setItem("seriesSets", JSON.stringify(data));
+
       if (!response.ok) {
         throw new Error("Failed to fetch end point");
       }
@@ -63,52 +66,69 @@ function BrowseSets() {
   }
 
   const handleSetClicked = async (clickedSet) => {
-    setClicked(true);
-    setClickedSeries(clickedSet.series);
-    setClickedSet(clickedSet.name);
+    const set = sessionStorage.getItem(`${clickedSet.id}`);
 
-    try {
-      const response = await fetch("/get-set-data", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: {
-            setID: clickedSet.id,
-            page: 1,
-            pageSize: 36,
+    if (!set) {
+      setClicked(true);
+      setClickedSeries(clickedSet.series);
+      setClickedSet(clickedSet.name);
+
+      try {
+        const response = await fetch("/get-set-data", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-        }),
-      });
+          body: JSON.stringify({
+            query: {
+              setID: clickedSet.id,
+              page: 1,
+              pageSize: 36,
+            },
+          }),
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
+        sessionStorage.setItem(`${clickedSet.id}`, JSON.stringify(data));
+
+        navigate(
+          `/browse-by-set?${clickedSet.series}-${clickedSet.name}&page=1`,
+          {
+            state: {
+              set: clickedSet,
+              setData: data,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch end point");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setClicked(false);
+      }
+    } else {
       navigate(
         `/browse-by-set?${clickedSet.series}-${clickedSet.name}&page=1`,
         {
           state: {
             set: clickedSet,
-            setData: data,
+            setData: JSON.parse(set),
           },
         }
       );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch end point");
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setClicked(false);
     }
   };
 
   useEffect(() => {
-    getSets();
+    if (!seriesSets) getSets();
 
-    document.body.style.overflow = isClicked ? "hidden" : "auto";
-  }, [isClicked]);
+    document.body.style.overflow = isClicked || isLoading ? "hidden" : "auto";
+    // eslint-disable-next-line
+  }, [isClicked, isLoading]);
 
   useEffect(() => {
     if (seriesSets !== null) {
@@ -120,7 +140,7 @@ function BrowseSets() {
   localStorage.removeItem("order");
 
   return (
-    <Container>
+    <>
       {isClicked && (
         <div
           style={{
@@ -174,31 +194,27 @@ function BrowseSets() {
         <>
           {series.map((item, index) => (
             <React.Fragment key={index}>
-              <Row
+              <div
                 key={index}
-                className={`series-row ${
+                className={`mt-5 series-row ${
                   dataLoaded ? "series-row-loaded" : ""
                 }`}
-                style={{ marginTop: "25px" }}
               >
                 <h1>{item}</h1>
-              </Row>
+              </div>
               <Row
                 className={`series-row ${
                   dataLoaded ? "series-row-loaded" : ""
                 }`}
+                xs={2}
+                sm={2}
+                md={4}
               >
                 {seriesSets !== null &&
                   Object.entries(seriesSets).map(
                     ([id, set]) =>
                       set.series === item && (
-                        <Col
-                          key={set.id}
-                          xs={2}
-                          sm={2}
-                          md={4}
-                          className="series-col mx-1 my-1"
-                        >
+                        <Col key={set.id} className="series-col mx-1 my-1">
                           <Card className="my-3 series-card">
                             <Card.Img
                               variant="top"
@@ -234,7 +250,7 @@ function BrowseSets() {
           ))}
         </>
       )}
-    </Container>
+    </>
   );
 }
 

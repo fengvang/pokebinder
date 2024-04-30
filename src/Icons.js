@@ -15,6 +15,7 @@ import ex from "./images/subtypes/ex.png";
 import exOld from "./images/subtypes/exOld.png";
 import v from "./images/subtypes/v.png";
 import vmax from "./images/subtypes/vmax.png";
+import vstar from "./images/subtypes/vstar.png";
 import ability from "./images/ability.png";
 import masterball from "./images/masterball.png";
 
@@ -36,6 +37,7 @@ export {
   exOld,
   v,
   vmax,
+  vstar,
   ability,
   masterball,
 };

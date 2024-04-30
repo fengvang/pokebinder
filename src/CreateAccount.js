@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 // eslint-disable-next-line
 import { app } from "./firebase";
@@ -10,6 +10,7 @@ import {
   sendEmailVerification,
   GoogleAuthProvider,
   signInWithPopup,
+  TwitterAuthProvider,
 } from "firebase/auth";
 import { getDatabase, ref, set } from "firebase/database";
 
@@ -23,6 +24,12 @@ import {
 } from "react-bootstrap";
 import * as Images from "./Icons";
 import * as MuiIcon from "./MuiIcons";
+import {
+  hasEightCharsOrMore,
+  hasSpecialChar,
+  hasCapitalLetter,
+  hasNumber,
+} from "./Functions";
 
 function CreateAccount() {
   const navigate = useNavigate();
@@ -30,9 +37,9 @@ function CreateAccount() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const headerRef = useRef(null);
-  const [headerHeight, setHeaderHeight] = useState(68);
-  const provider = new GoogleAuthProvider();
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const googleProvider = new GoogleAuthProvider();
+  const twitterProvider = new TwitterAuthProvider();
 
   function addUserToDB(userId, name, email) {
     const db = getDatabase();
@@ -54,7 +61,8 @@ function CreateAccount() {
 
   const googleLogin = () => {
     const auth = getAuth();
-    signInWithPopup(auth, provider)
+
+    signInWithPopup(auth, googleProvider)
       .then((result) => {
         // This gives you a Google Access Token. You can use it to access the Google API.
         // const credential = GoogleAuthProvider.credentialFromResult(result);
@@ -79,7 +87,7 @@ function CreateAccount() {
 
         setTimeout(() => {
           navigate("/");
-        }, 3000);
+        }, 1500);
       })
       .catch((error) => {
         // Handle Errors here.
@@ -95,61 +103,111 @@ function CreateAccount() {
       });
   };
 
-  const createAccount = (event) => {
+  const twitterLogin = () => {
     const auth = getAuth();
 
-    event.preventDefault();
+    signInWithPopup(auth, twitterProvider)
+      .then((result) => {
+        const credential = TwitterAuthProvider.credentialFromResult(result);
+        // eslint-disable-next-line
+        const token = credential.accessToken;
+        // eslint-disable-next-line
+        const secret = credential.secret;
 
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
+        const user = result.user;
 
-        updateProfile(user, {
-          displayName: username,
-        })
-          .then(() => {
-            addUserToDB(user.uid, username, email);
+        addUserToDB(user.uid, user.displayName, user.email);
 
-            if (userIsLoggedIn) {
-              if (!user.emailVerified) {
-                sendEmailVerification(user).then(() => {
-                  console.log("sending email");
-                });
-              } else console.log("email already verified");
+        if (userIsLoggedIn) {
+          const userInfo = {
+            uid: user.uid,
+            displayName: user.displayName,
+            email: user.email,
+            photoURL: user.photoURL,
+          };
 
-              const userInfo = {
-                uid: user.uid,
-                displayName: user.displayName,
-                email: user.email,
-                photoURL: user.photoURL,
-              };
-
-              localStorage.setItem("user", JSON.stringify(userInfo));
-            }
-
-            console.log("Username updated.");
-          })
-          .catch((error) => {
-            console.error(error);
-          });
+          localStorage.setItem("user", JSON.stringify(userInfo));
+        }
 
         setTimeout(() => {
           navigate("/");
         }, 1500);
       })
       .catch((error) => {
-        console.error(error.code);
-        console.error(error.message);
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = TwitterAuthProvider.credentialFromError(error);
+
+        console.error(errorCode, errorMessage, email, credential);
       });
+  };
+
+  const createAccount = (event) => {
+    const auth = getAuth();
+
+    event.preventDefault();
+
+    if (
+      hasEightCharsOrMore(password) &&
+      hasSpecialChar(password) &&
+      hasCapitalLetter(password) &&
+      hasNumber(password)
+    ) {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+
+          updateProfile(user, {
+            displayName: username || email,
+          })
+            .then(() => {
+              addUserToDB(user.uid, username, email);
+
+              sessionStorage.setItem(
+                "emailNotVerifiedUser",
+                JSON.stringify(user)
+              );
+
+              if (userIsLoggedIn) {
+                if (!user.emailVerified) {
+                  sendEmailVerification(user).then(() => {
+                    console.log("sending email");
+
+                    navigate("/verify-email");
+                  });
+                }
+              }
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+        })
+        .catch((error) => {
+          console.error(error.code);
+          console.error(error.message);
+        });
+    } else {
+      console.log("Password doesn't meet requirements");
+    }
   };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
+  function goBackOne() {
+    navigate(-1);
+  }
+
   useEffect(() => {
-    if (headerRef.current) {
-      const height = headerRef.current.offsetHeight;
+    const header = document.querySelector("header");
+
+    if (header) {
+      const height = header.getBoundingClientRect().height;
       setHeaderHeight(height);
     }
   }, []);
@@ -157,14 +215,19 @@ function CreateAccount() {
   return (
     <Container
       className="d-flex align-items-center justify-content-center"
-      style={{ height: `calc(100vh - 2.5 * ${headerHeight}px)` }}
+      style={{ minHeight: `calc(100vh - ${headerHeight}px)` }}
     >
       <div className="login-container">
         <Row
           className="d-flex justify-content-center"
-          style={{ marginTop: "25px" }}
+          style={{ marginTop: "0px" }}
         >
-          <Link to="/" style={{ marginLeft: "25px" }}>
+          <Link
+            to="#"
+            onClick={goBackOne}
+            style={{ marginLeft: "25px" }}
+            className="return-link"
+          >
             <MuiIcon.ArrowBackIcon /> Return
           </Link>
           <Image src={Images.masterball} style={{ width: "80px" }} />
@@ -172,7 +235,7 @@ function CreateAccount() {
         <div className="form-container">
           <Form className="login-form">
             <Form.Group>
-              <Form.Label className="mb-0">Username</Form.Label>
+              <Form.Label className="mb-0">Username (optional)</Form.Label>
               <Form.Control
                 type="input"
                 placeholder="Username"
@@ -212,6 +275,76 @@ function CreateAccount() {
                 )}
               </InputGroup>
 
+              <span className="mb-0 d-flex-row justify-content-center">
+                {password !== "" && (
+                  <p
+                    className={`my-1 ${
+                      hasEightCharsOrMore(password)
+                        ? "password-credentials-green"
+                        : "password-credentials-red"
+                    }`}
+                  >
+                    {hasEightCharsOrMore(password) ? (
+                      <MuiIcon.CheckIcon className="mx-2" />
+                    ) : (
+                      <MuiIcon.ErrorIcon className="mx-2" />
+                    )}
+                    At least 8 characters or more
+                  </p>
+                )}
+
+                {password !== "" && (
+                  <p
+                    className={`my-1 ${
+                      hasSpecialChar(password)
+                        ? "password-credentials-green"
+                        : "password-credentials-red"
+                    }`}
+                  >
+                    {hasSpecialChar(password) ? (
+                      <MuiIcon.CheckIcon className="mx-2" />
+                    ) : (
+                      <MuiIcon.ErrorIcon className="mx-2" />
+                    )}
+                    At least 1 special character
+                  </p>
+                )}
+
+                {password !== "" && (
+                  <p
+                    className={`my-1 ${
+                      hasCapitalLetter(password)
+                        ? "password-credentials-green"
+                        : "password-credentials-red"
+                    }`}
+                  >
+                    {hasCapitalLetter(password) ? (
+                      <MuiIcon.CheckIcon className="mx-2" />
+                    ) : (
+                      <MuiIcon.ErrorIcon className="mx-2" />
+                    )}
+                    At least 1 capital letter
+                  </p>
+                )}
+
+                {password !== "" && (
+                  <p
+                    className={`my-1 ${
+                      hasNumber(password)
+                        ? "password-credentials-green"
+                        : "password-credentials-red"
+                    }`}
+                  >
+                    {hasNumber(password) ? (
+                      <MuiIcon.CheckIcon className="mx-2" />
+                    ) : (
+                      <MuiIcon.ErrorIcon className="mx-2" />
+                    )}
+                    At least 1 number
+                  </p>
+                )}
+              </span>
+
               <span className="mb-0 d-flex justify-content-center">
                 Already have an account?{" "}
                 <Link to="/login" className="mx-2">
@@ -236,7 +369,7 @@ function CreateAccount() {
 
                 <MuiIcon.FacebookIcon className="facebook-icon" />
 
-                <MuiIcon.XIcon className="x-icon" />
+                <MuiIcon.XIcon className="x-icon" onClick={twitterLogin} />
               </div>
             </Form.Group>
           </Form>

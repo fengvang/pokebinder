@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import reportWebVitals from "./reportWebVitals";
 import {
@@ -6,29 +6,52 @@ import {
   RouterProvider,
   Outlet,
   ScrollRestoration,
+  useLocation,
 } from "react-router-dom";
 
 import Home from "./Home";
+import Footer from "./Footer";
 import SearchResults from "./SearchResults";
 import IndividualPagePokémon from "./IndividualPagePokémon";
 import IndividualPageTrainer from "./IndividualPageTrainer";
 import IndividualPageEnergy from "./IndividualPageEnergy";
 import BrowseSets from "./BrowseSets";
 import BrowseBySetsResults from "./BrowseBySetsResults";
+import Login from "./Login";
 import CreateAccount from "./CreateAccount";
 import Profile from "./Profile";
 import Collection from "./Collection";
+import VerifyEmail from "./VerifyEmail";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./style.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import Login from "./Login";
+import { Container } from "react-bootstrap";
 
 function Layout() {
+  const location = useLocation();
+  const loginPath = location.pathname === "/login";
+  const createAccountPath = location.pathname === "/create-account";
+
+  useEffect(() => {
+    if (loginPath || createAccountPath) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [loginPath, createAccountPath]);
+
   return (
     <>
       <Home />
-      <Outlet />
+      <Container className="mb-5">
+        <Outlet />
+      </Container>
+      <Footer />
       <ScrollRestoration />
     </>
   );
@@ -65,6 +88,7 @@ const router = createBrowserRouter([
       { path: "/create-account", element: <CreateAccount /> },
       { path: "/profile", element: <Profile /> },
       { path: "/collection", element: <Collection /> },
+      { path: "/verify-email", element: <VerifyEmail /> },
     ],
   },
 ]);

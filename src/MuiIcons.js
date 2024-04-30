@@ -14,6 +14,8 @@ import GoogleIcon from "@mui/icons-material/Google";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import XIcon from "@mui/icons-material/X";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import CheckIcon from "@mui/icons-material/Check";
+import ErrorIcon from "@mui/icons-material/Error";
 
 export {
   TuneIcon,
@@ -32,4 +34,6 @@ export {
   FacebookIcon,
   XIcon,
   ArrowBackIcon,
+  CheckIcon,
+  ErrorIcon,
 };

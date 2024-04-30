@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Image, Form } from "react-bootstrap";
+import { Image, Form } from "react-bootstrap";
 import Pagination from "@mui/material/Pagination";
 
 function SetsCards() {
@@ -117,27 +117,22 @@ function SetsCards() {
     }
   };
 
-  console.log(setData);
-
   return (
-    <Container>
-      <Row
-        style={{ marginTop: "25px" }}
-        className="d-flex align-items-center justify-content-center"
-      >
+    <>
+      <div className="d-flex align-items-center justify-content-center mt-5">
         <Image
           src={set.images.logo}
           alt={set.name}
           style={{ height: "150px", width: "auto" }}
         />
-      </Row>
+      </div>
 
-      <Form.Group>
+      <Form.Group style={{ margin: "0px 8px 11px 8px" }}>
         <Form.Label className="card-desc-small-text">Order by</Form.Label>
         <Form.Select
           aria-label="set-card-list"
           style={{
-            width: window.innerWidth < 576 ? "100%" : "200px",
+            width: window.innerWidth < 768 ? "100%" : "200px",
           }}
           onChange={handleSelectChange}
           defaultValue={localStorage.getItem("order")}
@@ -155,28 +150,26 @@ function SetsCards() {
         </Form.Select>
       </Form.Group>
 
-      <Row id="card-results-count">
-        {setData?.length === 0 ? (
-          <h5 className="my-3 d-flex align-items-center justify-content-center">
-            No data found
-          </h5>
-        ) : (
-          setData?.data.map((card) => (
-            <Col key={card.id} className="px-0 card-image-col">
-              <Card.Img
-                className="card-image"
-                src={card.images.large}
-                alt={card.name}
-                style={{ width: "200px" }}
-                onClick={() => handleCardClick(card)}
-                onLoad={(e) => e.target.classList.add("card-image-loaded")}
-              />
-            </Col>
-          ))
-        )}
-      </Row>
-      <Row>
-        {window.innerWidth < 576 ? (
+      {setData?.length === 0 ? (
+        <h5 className="d-flex align-items-center justify-content-center">
+          No data found
+        </h5>
+      ) : (
+        setData?.data.map((card) => (
+          <span key={card.id} className="card-image-col">
+            <Image
+              className="card-image"
+              src={card.images.small}
+              alt={card.name}
+              onClick={() => handleCardClick(card)}
+              onLoad={(e) => e.target.classList.add("card-image-loaded")}
+            />
+          </span>
+        ))
+      )}
+
+      <div>
+        {window.innerWidth < 768 ? (
           <Pagination
             count={numPages}
             color="primary"
@@ -205,8 +198,8 @@ function SetsCards() {
             onChange={(event, page) => handlePageChange(page)}
           />
         )}
-      </Row>
-    </Container>
+      </div>
+    </>
   );
 }
 

@@ -27,18 +27,58 @@
   --pkmndarkblue: #3c5aa6;
 }
 
+/* html,
+body {
+  height: 100%;
+} */
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container {
+  flex: 1;
+}
+
+.Toastify__toast-body {
+  font-family: "Jaldi", sans-serif !important;
+  font-size: 1rem !important;
+}
+
+.Toastify__progress-bar--bg {
+  background: var(--ghost) !important;
+}
+
+.Toastify__progress-bar {
+  background: var(--ghost) !important;
+}
+
 body {
   background-color: var(--bgcolor);
   color: var(--textcolor);
   font-family: "Jaldi", sans-serif;
   font-weight: 400;
+  display: flex;
+  flex-direction: column;
 }
 
-header {
+header,
+div.mobile-header-search {
   background-color: rgba(5, 5, 5, 0.4);
   padding: 10px;
   display: flex;
   align-items: center;
+  box-shadow: 0px 11px 10px 1px rgba(0, 0, 0, 0.3);
+}
+
+footer {
+  background-color: rgba(5, 5, 5, 0.4);
+  padding: 50px;
+  margin-top: 50px;
+  min-height: 100px;
+  text-align: center;
 }
 
 header > div > a:link > span,
@@ -82,6 +122,7 @@ header > div > div > div > a.dropdown-item:active {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0px;
 }
 
 .login-header-button {
@@ -91,6 +132,9 @@ header > div > div > div > a.dropdown-item:active {
 .card-title,
 .card-text {
   color: var(--textcolor);
+  font-size: 1rem;
+  padding: 5px 12px 12px 12px;
+  margin-bottom: 0px;
 }
 
 h1,
@@ -210,12 +254,12 @@ a:active {
 .card-image-col {
   max-width: 216px;
   margin: 11px 0px 11px 0px;
-  display: flex;
   justify-content: center;
 }
 
 .card-image {
   width: 200px;
+  margin: 11px 8px 11px 8px;
   opacity: 0;
   transition: transform 0.5s ease, opacity 0.5s ease-in-out !important;
 }
@@ -227,6 +271,17 @@ a:active {
 
 .card-image-loaded {
   opacity: 1;
+}
+
+.card-image-collection {
+  width: 200px;
+  padding: 0px 16px 0px 16px;
+  transition: transform 0.5s ease, opacity 0.5s ease-in-out !important;
+}
+
+.card-image-collection:hover {
+  cursor: pointer;
+  transform: scale(1.08);
 }
 
 .btn.filter,
@@ -260,12 +315,6 @@ div > form > div.card {
 
 .card-desc-small-text {
   font-size: 1.1rem;
-}
-
-/* need to fix */
-.results-button {
-  position: fixed;
-  top: 730px;
 }
 
 .results-individual {
@@ -340,6 +389,46 @@ div > form.my-3 {
 .image-container:hover .image-overlay {
   opacity: 1;
   background-color: rgba(22, 24, 27, 0.9);
+  cursor: pointer;
+}
+
+.collection-card-container {
+  width: 200px;
+  background-color: rgba(0, 0, 0, 0.5);
+  align-items: center;
+  justify-content: center;
+  display: inline-flex;
+  flex-direction: column;
+  margin: 5px;
+  padding: 10px;
+  border-radius: 8px;
+  transition: 0.15s ease-in-out !important;
+}
+
+.collection-card-container:hover {
+  background-color: rgba(115, 87, 151, 0.2);
+}
+
+.collection-card-image {
+  width: 170px;
+  margin: 0px 0px 15px 0px;
+  transition: transform 0.5s ease, opacity 0.5s ease-in-out !important;
+}
+
+.collection-card-image:hover {
+  cursor: pointer;
+  transform: scale(1.08);
+}
+
+.card-collection-close-button {
+  position: relative;
+  left: 76px;
+  top: 0px;
+  transition: 0.15s ease-in-out !important;
+}
+
+.card-collection-close-button:hover {
+  color: #ffffff !important;
   cursor: pointer;
 }
 
@@ -437,13 +526,13 @@ div.card-body {
 }
 
 .launch-tcgplayer {
-  color: var(--bs-gray);
+  color: var(--bs-gray) !important;
+  transition: 0.15s ease-in-out;
 }
 
 .launch-tcgplayer:hover {
-  color: #fff;
+  color: #fff !important;
   cursor: pointer;
-  transition: 0.15s ease-in-out;
 }
 
 .launch-evolves-from {
@@ -465,8 +554,13 @@ input[type="text"] {
   -webkit-transition: width 0.35s ease-in-out;
   transition: width 0.35s ease-in-out;
 }
+
 input[type="text"]:focus {
   width: 260px !important;
+}
+
+input[type="text"].header-search-bar:focus {
+  width: auto !important;
 }
 
 .form-control:focus {
@@ -538,10 +632,6 @@ select.subtype-select {
 
 .bi.bi.bi-search:hover {
   color: var(--textcolor);
-}
-
-#card-results-count {
-  margin-top: 25px;
 }
 
 .series-row {
@@ -663,9 +753,8 @@ input::file-selector-button {
 
 .login-container {
   width: 300px;
-  min-height: 500px;
-  max-height: auto;
   background-color: rgba(5, 5, 5, 0.4);
+  border-radius: 15px;
 }
 
 .form-container {
@@ -673,6 +762,18 @@ input::file-selector-button {
   align-items: center;
   justify-content: center;
   margin-top: 25px;
+}
+
+.password-credentials-red {
+  background-color: rgba(255, 0, 0, 0.3) !important;
+  width: 100%;
+  height: 25px;
+}
+
+.password-credentials-green {
+  background-color: rgba(0, 128, 0, 0.3) !important;
+  width: 100%;
+  height: 25px;
 }
 
 form.login-form {
@@ -755,6 +856,10 @@ form.login-form {
 
   a > h1 {
     color: var(--textcolor);
+  }
+
+  header {
+    padding: 5px 0px 5px 0px;
   }
 
   .button {
@@ -966,6 +1071,64 @@ form.login-form {
   .newest-set-cards:hover {
     transform: scale(1.08);
   }
+
+  .individual-page-image {
+    width: 100%;
+    position: relative;
+  }
+
+  .image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 406px;
+    height: 100%;
+    opacity: 0;
+    transition: background-color 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card-title,
+  .card-text {
+    color: var(--textcolor);
+    font-size: 1rem;
+    margin-bottom: 0px;
+  }
+
+  .collection-card-container {
+    width: calc(100vw / 2.23);
+  }
+
+  .image-container {
+    width: 382px;
+    height: 533px;
+  }
+
+  .login-container {
+    background-color: #0f1012;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    padding: 0px;
+    border-radius: 0px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .return-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin-left: 25px !important;
+    margin-top: 25px !important;
+    padding: 0px !important;
+  }
 }
 
 .getting-sets-loading-screen {
@@ -973,6 +1136,24 @@ form.login-form {
   justify-content: center;
   align-items: center;
   height: 90vh;
+}
+
+@media screen and (min-width: 576px) and (max-width: 768px) {
+  .container {
+    padding-left: calc(100vw * 0.04);
+    min-width: 100%;
+  }
+
+  .header-container {
+    display: flex;
+    justify-content: space-between !important;
+    padding: 0px;
+  }
+
+  .newest-set-cards {
+    width: 127px;
+    z-index: 1000;
+  }
 }
 
 @media only screen and (max-width: 390px) {

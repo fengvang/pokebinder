@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Carousel, Image, Card, Col, Container, Row } from "react-bootstrap";
+import { Carousel, Image, Card, Col, Container } from "react-bootstrap";
 import * as MuiIcon from "./MuiIcons";
 
 function CarouselGallery() {
@@ -21,6 +21,19 @@ function CarouselGallery() {
     localStorage.setItem("index", selectedIndex);
     setIndex(selectedIndex);
   };
+
+  // Quick fix for server error when fetching newest set
+  const localSet = localStorage.getItem("newestSet");
+  const localSetCards = localStorage.getItem("newestSetCards");
+
+  if (
+    localSet === `{"error":"Internal server error"}` ||
+    localSetCards === `{"error":"Internal server error"}`
+  ) {
+    localStorage.removeItem("newestSet");
+    localStorage.removeItem("newestSetCards");
+  }
+  // End quick fix
 
   function formatDate(originalDate) {
     const parts = originalDate.split("/");
@@ -164,14 +177,14 @@ function CarouselGallery() {
     <Container>
       {newestSet && newestSetCards && (
         <>
-          <Row className="d-flex align-items-center justify-content-center">
+          <div className="d-flex align-items-center justify-content-center">
             <Image
               src={newestSet.images.logo}
               className="newest-set-img"
               onClick={() => handleSetClicked(newestSet)}
               onLoad={(e) => e.target.classList.add("newest-set-img-loaded")}
             />
-          </Row>
+          </div>
           <div
             className="d-flex align-items-start justify-content-center"
             style={{ fontSize: ".78em" }}

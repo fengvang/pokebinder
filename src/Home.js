@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import React from "react";
+import React, { useEffect } from "react";
 
 import Header from "./Header";
 import SearchForm from "./SearchForm";
@@ -11,13 +11,25 @@ function Home() {
   const location = useLocation();
   const rootPath = location.pathname === "/";
   const searchBySetsPath = location.pathname === "/search-by-set";
-
-  // localStorage.removeItem("order");
+  const loginPath = location.pathname === "/login";
+  const createAccountPath = location.pathname === "/create-account";
 
   if (rootPath) {
     localStorage.removeItem("pokemonName");
     localStorage.removeItem("pokemonSubtype");
   }
+
+  useEffect(() => {
+    if (loginPath || createAccountPath) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [loginPath, createAccountPath]);
 
   return (
     <>
@@ -25,7 +37,7 @@ function Home() {
       {rootPath ? (
         <>
           <SearchForm />
-          {window.innerWidth < 576 ? (
+          {window.innerWidth < 567 || window.innerWidth < 768 ? (
             <MobileCarouselGallery />
           ) : (
             <CarouselGallery />
@@ -35,7 +47,7 @@ function Home() {
       {searchBySetsPath ? (
         <>
           <SearchBySet />
-          {window.innerWidth < 576 ? (
+          {window.innerWidth < 567 || window.innerWidth < 768 ? (
             <MobileCarouselGallery />
           ) : (
             <CarouselGallery />

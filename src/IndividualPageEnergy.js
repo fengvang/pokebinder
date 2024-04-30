@@ -1,11 +1,11 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import { Container, Row, Col, Button, Image } from "react-bootstrap";
+import { useLocation, Link } from "react-router-dom";
+import { Container, Row, Col, Image } from "react-bootstrap";
 import * as MuiIcon from "./MuiIcons";
-import { updateCollection } from "./Functions";
+import { ToastContainer } from "react-toastify";
+import { updateCollection, cardAdded } from "./Functions";
 
 function IndividualPageEnergy() {
   const location = useLocation();
-  const navigate = useNavigate();
   const card = location.state.cardData;
   const currentUser = JSON.parse(localStorage.getItem("user"));
 
@@ -26,18 +26,17 @@ function IndividualPageEnergy() {
       .replace(/^./, (str) => str.toUpperCase());
   }
 
-  const goBackOnePage = () => {
-    navigate(-1);
+  const handleUpdateCollection = () => {
+    updateCollection(currentUser.uid, card);
+    cardAdded();
   };
-
-  function openTCGPlayerMarket() {
-    if (`${card?.tcgplayer.url}`) {
-      window.open(`${card?.tcgplayer.url}`, "_blank");
-    }
-  }
 
   return (
     <Container style={{ marginBottom: "20px" }}>
+      <ToastContainer
+        position={window.innerWidth < 768 ? "bottom-center" : "top-center"}
+        theme="dark"
+      />
       {window.innerWidth < 576 ? (
         <Row style={{ marginTop: "25px" }}>
           <Col
@@ -53,7 +52,7 @@ function IndividualPageEnergy() {
           <Col
             xs="auto"
             md={12}
-            className="d-flex align-items-center justify-content-start"
+            className="d-flex align-items-center justify-content-center mb-5"
           >
             <h1 className="d-flex align-items-center">{card.name}</h1>
           </Col>
@@ -95,9 +94,15 @@ function IndividualPageEnergy() {
                           {prices.high ? `$${prices.high.toFixed(2)}` : "- - -"}
                         </i>
                       </span>
-                      <span className="d-flex align-items-center launch-tcgplayer">
-                        <MuiIcon.LaunchIcon onClick={openTCGPlayerMarket} />
-                      </span>
+                      <Link
+                        to={card?.tcgplayer.url}
+                        target="_blank"
+                        className="launch-tcgplayer"
+                      >
+                        <span className="d-flex align-items-center">
+                          <MuiIcon.LaunchIcon />
+                        </span>
+                      </Link>
                     </Col>
                   </div>
                 )
@@ -121,9 +126,15 @@ function IndividualPageEnergy() {
                   <MuiIcon.UpIcon style={{ color: `var(--bs-green)` }} />
                   <i style={{ paddingLeft: "10px" }}>- - -</i>
                 </span>
-                <span className="d-flex align-items-center launch-tcgplayer">
-                  <MuiIcon.LaunchIcon onClick={openTCGPlayerMarket} />
-                </span>
+                <Link
+                  to={card?.tcgplayer.url}
+                  target="_blank"
+                  className="launch-tcgplayer"
+                >
+                  <span className="d-flex align-items-center">
+                    <MuiIcon.LaunchIcon />
+                  </span>
+                </Link>
               </Col>
             </div>
           )}
@@ -140,10 +151,7 @@ function IndividualPageEnergy() {
               src={card.images.large}
               alt={card.name}
             />
-            <div
-              className="image-overlay"
-              onClick={() => updateCollection(currentUser.uid, card)}
-            >
+            <div className="image-overlay" onClick={handleUpdateCollection}>
               Add to collection
               <MuiIcon.LibraryAddIcon style={{ marginLeft: "5px" }} />
             </div>
@@ -172,13 +180,9 @@ function IndividualPageEnergy() {
                   <b>Last Updated:</b>{" "}
                   <i>
                     {formattedDateString} from{" "}
-                    <a
-                      href="https://www.tcgplayer.com/"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
+                    <Link to="https://www.tcgplayer.com/" target="_blank">
                       TCGplayer
-                    </a>
+                    </Link>
                   </i>
                 </span>
               ) : null}
@@ -219,11 +223,14 @@ function IndividualPageEnergy() {
                               : "- - -"}
                           </i>
                         </Col>
-                        <Col
-                          xs={3}
-                          className="d-flex align-items-center launch-tcgplayer"
-                        >
-                          <MuiIcon.LaunchIcon onClick={openTCGPlayerMarket} />
+                        <Col xs={3} className="d-flex align-items-center">
+                          <Link
+                            to={card?.tcgplayer.url}
+                            target="_blank"
+                            className="launch-tcgplayer"
+                          >
+                            <MuiIcon.LaunchIcon />
+                          </Link>
                         </Col>
                       </Row>
                     </div>
@@ -238,11 +245,6 @@ function IndividualPageEnergy() {
       ) : (
         ""
       )}
-
-      {/* when clicked and if filtered, return to filtered state */}
-      <Button className="button results-individual" onClick={goBackOnePage}>
-        Go back
-      </Button>
     </Container>
   );
 }
