@@ -7,6 +7,8 @@ const { getAuth } = require("firebase-admin/auth");
 const { initializeApp, credential } = require("firebase-admin");
 const admin = require("firebase-admin");
 const serviceAccount = require("./serviceAccountKey.json");
+const cors = require("cors")({ origin: true });
+app.use(cors);
 
 const PORT = process.env.PORT || 5000;
 
@@ -31,7 +33,7 @@ app.post("/search-card", async (req, res) => {
     if (pokemonSubtype === "All") pokemonSubtype = "";
 
     if (pokemonName !== "" && pokemonName !== null && pokemonSubtype !== "") {
-      console.log("calling first if");
+      // console.log("calling first if");
       promises.push(
         pokemon.card
           .where({
@@ -49,7 +51,7 @@ app.post("/search-card", async (req, res) => {
       (pokemonName === "" || pokemonName === null) &&
       pokemonSubtype !== ""
     ) {
-      console.log("calling second if");
+      // console.log("calling second if");
       promises.push(
         pokemon.card
           .where({
@@ -64,7 +66,7 @@ app.post("/search-card", async (req, res) => {
           })
       );
     } else {
-      console.log("calling last if");
+      // console.log("calling last if");
       promises.push(
         pokemon.card
           .where({
@@ -185,51 +187,6 @@ app.post("/get-set-data", async (req, res) => {
   }
 });
 
-// app.post("/filter-data", async (req, res) => {
-//   try {
-//     console.log("Filtering from server");
-//     const setID = req.body.query.setID;
-//     const page = req.body.query.page;
-//     const pageSize = req.body.query.pageSize;
-//     const types =
-//       JSON.parse(req.body.query.types) !== null
-//         ? JSON.parse(req.body.query.types)
-//         : null;
-//     const subtypes = req.body.query.subtypes;
-
-//     let typesQuery = "";
-//     let query = "";
-
-//     if (types === null || undefined) {
-//       query = `set.id:${setID}`;
-//     } else {
-//       if (types?.length > 1) {
-//         for (let i = 0; i < types?.length; ++i) {
-//           typesQuery += `types:${types[i].toLowerCase()}`;
-//           if (i < types?.length - 1) {
-//             typesQuery += " or ";
-//           }
-//         }
-//       } else typesQuery = `types:${types[0].toLowerCase()}`;
-//       query = `set.id:${setID} (${typesQuery})`;
-//     }
-
-//     console.log(query);
-
-//     const data = await pokemon.card.where({
-//       q: query,
-//       orderBy: "number",
-//       page: page,
-//       pageSize: pageSize,
-//     });
-
-//     res.json(data);
-//   } catch (error) {
-//     console.error("Error fetching data:", error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// });
-
 app.post("/get-custom-token", async (req, res) => {
   try {
     const uid = req.body.uid;
@@ -241,7 +198,7 @@ app.post("/get-custom-token", async (req, res) => {
         res.json(customToken);
       })
       .catch((error) => {
-        console.log("Error creating custom token:", error);
+        // console.log("Error creating custom token:", error);
       });
   } catch (error) {
     console.error("Error fetching data:", error);

@@ -4,6 +4,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import * as Icon from "./Icons";
 import { Image } from "react-bootstrap";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 export const setCookie = (name, value, days) => {
   const expires = new Date(
@@ -216,7 +217,7 @@ export function textWithImage(name) {
   }
 }
 
-export const updateCollection = (userId, card) => {
+export const updateCollection = async (userId, card) => {
   const auth = getAuth();
 
   try {
@@ -270,7 +271,88 @@ export const updateCollection = (userId, card) => {
 };
 
 export const cardAdded = () =>
-  toast("Card successfully added to collection", {});
+  toast(
+    <div>
+      <span className="d-flex align-items-center justify-content-center">
+        Card successfully added to collection!
+      </span>
+      <Link
+        to="/collection"
+        className="d-flex align-items-center justify-content-center mt-2"
+      >
+        View Collection
+      </Link>
+    </div>,
+    {}
+  );
+
+export const errorUploadingFile = () =>
+  toast(
+    <div>
+      <span className="d-flex align-items-center justify-content-center">
+        Error uploading image.
+      </span>
+    </div>,
+    {}
+  );
+
+export const errorChangingUsername = () =>
+  toast(
+    <div>
+      <span className="d-flex align-items-center justify-content-center">
+        Error changing username.
+      </span>
+    </div>,
+    {}
+  );
+
+export const errorTryAgain = () =>
+  toast(
+    <div>
+      <span className="d-flex align-items-center justify-content-center">
+        Error, please try again.
+      </span>
+    </div>,
+    {}
+  );
+
+export const errorNotImage = () =>
+  toast(
+    <div>
+      <span className="d-flex align-items-center justify-content-center">
+        Error, only image files are allowed.
+      </span>
+    </div>,
+    {}
+  );
+
+export const profileImageUpdated = () =>
+  toast(
+    <div>
+      <span className="d-flex align-items-center justify-content-center">
+        Profile image updated successfully!
+      </span>
+    </div>,
+    {}
+  );
+
+export const usernameUpdated = () =>
+  toast(
+    <div>
+      <span className="d-flex align-items-center justify-content-center">
+        Username updated successfully!
+      </span>
+    </div>,
+    {}
+  );
+
+export const sortByDate = (collection) => {
+  return collection.sort((a, b) => {
+    const firstDate = new Date(a.dateAddedToCollection);
+    const secondDate = new Date(b.dateAddedToCollection);
+    return firstDate - secondDate;
+  });
+};
 
 export const sortByAlpha = (collection) => {
   return collection?.slice().sort((a, b) => {
@@ -352,51 +434,9 @@ export function truncate(name) {
   return name;
 }
 
-export const fetchAllCards = async () => {
-  try {
-    const allCards = [];
-    const pageSize = 250; // Number of cards per page
-
-    let totalCount = 0;
-    let currentPage = 1;
-    let totalPages = 1; // Initial value
-
-    console.log("fetching page", currentPage);
-
-    do {
-      const response = await fetch(
-        `https://api.pokemontcg.io/v2/cards?page=${currentPage}&pageSize=${pageSize}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch data from page ${currentPage}`);
-      }
-
-      const data = await response.json();
-
-      // Update total count and calculate total pages on the first iteration
-      if (currentPage === 1) {
-        totalCount = data.totalCount;
-        totalPages = Math.ceil(totalCount / pageSize);
-      }
-
-      allCards.push(...data.data);
-
-      currentPage++;
-      console.log("fetching page", currentPage);
-    } while (currentPage <= totalPages);
-
-    sessionStorage.setItem("allCards", JSON.stringify(allCards));
-
-    return allCards;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    throw error;
-  }
-};
+// transform price type (holofoil, 1st edition, reverse holofoil etc) from camel case to normal
+export function formatType(type) {
+  return type
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, (str) => str.toUpperCase());
+}

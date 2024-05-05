@@ -394,6 +394,7 @@ div > form.my-3 {
 
 .collection-card-container {
   width: 200px;
+  min-height: 380px;
   background-color: rgba(0, 0, 0, 0.5);
   align-items: center;
   justify-content: center;
@@ -613,6 +614,42 @@ select.subtype-select {
   color: #fff !important;
   transform: scale(1.2) !important;
 }
+
+/* Fixes issue on deployed build */
+.css-21ve8j.Mui-selected {
+  font-family: "Jaldi", sans-serif !important;
+  background-color: var(--ghost) !important;
+  border: 1px solid var(--flying) !important;
+  color: #fff !important;
+  transform: scale(1.2) !important;
+}
+
+.css-21ve8j.Mui-selected:hover {
+  font-family: "Jaldi", sans-serif !important;
+  background-color: var(--ghost) !important;
+  border: 1px solid var(--flying) !important;
+  color: #fff !important;
+  transform: scale(1.2) !important;
+}
+
+.css-21ve8j {
+  font-family: "Jaldi", sans-serif !important;
+  color: #fff !important;
+  border: 1px solid rgba(0, 0, 0, 0.4) !important;
+  transition: 0.15s ease-in-out !important;
+}
+
+.css-21ve8j:hover,
+.css-21ve8j:active {
+  background-color: rgba(0, 0, 0, 0.4) !important;
+  color: #fff !important;
+  transform: scale(1.2) !important;
+}
+
+.css-21ve8j.Mui-disabled {
+  color: #fff !important;
+}
+/* End fixes issue on deployed build */
 
 .series-card {
   padding: 5px;
@@ -841,6 +878,36 @@ form.login-form {
 .x-icon:hover {
   cursor: pointer;
   color: var(--flying);
+}
+
+.popup-content {
+  font-size: inherit;
+  font-family: "Jaldi", sans-serif !important;
+  color: var(--textcolor) !important;
+  border: none !important;
+  border-radius: 5px !important;
+  background-color: rgba(10, 10, 10, 0.9) !important;
+  width: 15% !important;
+}
+
+.modal-header {
+  width: 100%;
+  border-bottom: 1px solid gray;
+  font-size: 18px;
+  text-align: center;
+  padding: 5px;
+}
+
+.modal-content {
+  width: 100%;
+  padding: 10px 5px;
+}
+
+button.add-to-collection {
+  background-color: var(--ghost) !important;
+  border-radius: 0px;
+  border: none !important;
+  width: 80%;
 }
 
 /* mobile styles */
@@ -1119,6 +1186,7 @@ form.login-form {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    overflow: hidden;
   }
 
   .return-link {
@@ -1128,6 +1196,10 @@ form.login-form {
     margin-left: 25px !important;
     margin-top: 25px !important;
     padding: 0px !important;
+  }
+
+  .popup-content {
+    width: 70% !important;
   }
 }
 
@@ -1154,11 +1226,27 @@ form.login-form {
     width: 127px;
     z-index: 1000;
   }
+
+  .popup-content {
+    width: 70% !important;
+  }
 }
 
 @media only screen and (max-width: 390px) {
   .series-col {
     width: 47.9%;
+  }
+}
+
+@media only screen and (max-width: 375px) {
+  .collection-card-image {
+    width: 100%;
+  }
+
+  .card-collection-close-button {
+    position: relative;
+    left: 65px;
+    top: -25px;
   }
 }
 

@@ -12,6 +12,15 @@ import { getAuth, updateProfile } from "firebase/auth";
 import { getDatabase, ref as dbRef, update } from "firebase/database";
 
 import { Col, Row, Button, Form, Image, InputGroup } from "react-bootstrap";
+import { Slide, ToastContainer } from "react-toastify";
+import {
+  profileImageUpdated,
+  errorUploadingFile,
+  errorChangingUsername,
+  errorTryAgain,
+  errorNotImage,
+  usernameUpdated,
+} from "./Functions";
 
 function Profile() {
   const auth = getAuth();
@@ -29,10 +38,11 @@ function Profile() {
       username: name,
     })
       .then(() => {
-        console.log("Username updated successfully in the database.");
+        // console.log("Username updated successfully in the database.");
       })
       .catch((error) => {
         console.error("Error updating username:", error);
+        errorChangingUsername();
       });
   }
 
@@ -54,6 +64,7 @@ function Profile() {
   const handleUpload = () => {
     if (!image || !image.type.startsWith("image/")) {
       console.error("Please select an image file.");
+      errorNotImage();
       return;
     }
 
@@ -75,10 +86,12 @@ function Profile() {
           })
           .catch((error) => {
             console.error("Error getting download URL:", error);
+            errorTryAgain();
           });
       })
       .catch((error) => {
         console.error("Error uploading file:", error);
+        errorUploadingFile();
       });
   };
 
@@ -88,8 +101,8 @@ function Profile() {
     const oldImageURL = user.photoURL;
     const newImage = extractImageName(imageURL);
 
-    console.log(oldImage);
-    console.log(newImage);
+    // console.log(oldImage);
+    // console.log(newImage);
 
     if (user) {
       updateProfile(user, {
@@ -97,26 +110,28 @@ function Profile() {
       })
         .then(() => {
           localStorage.setItem("user", JSON.stringify(user));
-          console.log("Image updated.");
+          // console.log("Image updated.");
+          profileImageUpdated();
         })
         .catch((error) => {
           console.error(error);
+          errorTryAgain();
         });
     }
 
     // After updating image, delete old profile image from storage
     const storage = getStorage();
-    console.log(oldImage !== newImage && oldImage);
+    // console.log(oldImage !== newImage && oldImage);
     if (oldImage !== newImage && oldImage) {
       try {
-        console.log(oldImageURL);
+        // console.log(oldImageURL);
         const desertRef = ref(storage, oldImageURL);
 
         // delete the file
         deleteObject(desertRef)
           .then(() => {
             // file deleted successfully
-            console.log("Successfully deleted old profile pic");
+            // console.log("Successfully deleted old profile pic");
           })
           .catch((error) => {
             console.error(error);
@@ -143,10 +158,12 @@ function Profile() {
             updateUsernameInDB(currentUser.uid, name);
             setUsername(name);
             localStorage.setItem("user", JSON.stringify(user));
-            console.log("Name updated.");
+            // console.log("Name updated.");
+            usernameUpdated();
           })
           .catch((error) => {
             console.error(error);
+            errorTryAgain();
           });
       }
 
@@ -158,6 +175,11 @@ function Profile() {
 
   return (
     <>
+      <ToastContainer
+        position={window.innerWidth < 768 ? "bottom-center" : "top-center"}
+        theme="dark"
+        transition={Slide}
+      />
       {currentUser && (
         <Col sm={12} md={3} style={{ padding: "25px" }}>
           <Row className="profile-details">

@@ -44,27 +44,27 @@ function CardList() {
     setCurrentPage(page);
 
     try {
-      const response = await fetch("/search-card", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: {
-            name: pokemonName,
-            subtype: pokemonSubtype,
-            page: page,
-            pageSize: 36,
+      const response = await fetch(
+        "https://us-central1-pokebinder-ae627.cloudfunctions.net/app/search-card",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-        }),
-      });
+          body: JSON.stringify({
+            query: {
+              name: pokemonName,
+              subtype: pokemonSubtype,
+              page: page,
+              pageSize: 36,
+            },
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error();
       }
-
-      console.log("pokemonName", pokemonName);
-      console.log("pokemonSubtype", pokemonSubtype);
 
       const url =
         (pokemonSubtype && pokemonName === null) || pokemonName === undefined

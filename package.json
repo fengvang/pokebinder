@@ -1,7 +1,6 @@
 {
   "name": "pokemon-tcg-price-tracker",
   "version": "0.1.0",
-  "proxy": "http://localhost:5000",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.4",
@@ -13,6 +12,7 @@
     "@testing-library/user-event": "^13.5.0",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
+    "cors": "^2.8.5",
     "firebase": "^10.11.0",
     "firebase-admin": "^12.1.0",
     "jsonwebtoken": "^9.0.2",
@@ -24,6 +24,7 @@
     "react-scripts": "5.0.1",
     "react-spinners": "^0.13.8",
     "react-toastify": "^10.0.5",
+    "reactjs-popup": "^2.0.6",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -52,6 +53,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "concurrently": "^8.2.2",
     "nodemon": "^3.1.0"
   }

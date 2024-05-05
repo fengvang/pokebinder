@@ -41,20 +41,23 @@ function SetsCards() {
     setCurrentPage(page);
 
     try {
-      const response = await fetch("/get-set-data", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: {
-            setID: set.id,
-            page: page,
-            pageSize: 36,
-            orderBy: localStorage.getItem("order") || orderBy,
+      const response = await fetch(
+        "https://us-central1-pokebinder-ae627.cloudfunctions.net/app/get-set-data",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-        }),
-      });
+          body: JSON.stringify({
+            query: {
+              setID: set.id,
+              page: page,
+              pageSize: 36,
+              orderBy: localStorage.getItem("order") || orderBy,
+            },
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error();
@@ -85,20 +88,23 @@ function SetsCards() {
     else localStorage.removeItem("order");
 
     try {
-      const response = await fetch("/get-set-data", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: {
-            setID: set.id,
-            page: 1,
-            pageSize: 36,
-            orderBy: order,
+      const response = await fetch(
+        "https://us-central1-pokebinder-ae627.cloudfunctions.net/app/get-set-data",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-        }),
-      });
+          body: JSON.stringify({
+            query: {
+              setID: set.id,
+              page: 1,
+              pageSize: 36,
+              orderBy: order,
+            },
+          }),
+        }
+      );
 
       const data = await response.json();
 
@@ -123,7 +129,11 @@ function SetsCards() {
         <Image
           src={set.images.logo}
           alt={set.name}
-          style={{ height: "150px", width: "auto" }}
+          style={{
+            maxWidth: "25%",
+            height: "auto",
+            objectFit: "contain",
+          }}
         />
       </div>
 

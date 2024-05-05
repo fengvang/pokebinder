@@ -50,15 +50,18 @@ function SearchBySet() {
 
     setLoading(true);
     try {
-      const response = await fetch("/search-set", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: { name: pokemonName, set: set },
-        }),
-      });
+      const response = await fetch(
+        "https://us-central1-pokebinder-ae627.cloudfunctions.net/app/search-set",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            query: { name: pokemonName, set: set },
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to fetch end point");

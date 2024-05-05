@@ -35,20 +35,24 @@ function SearchForm() {
   const searchCard = async () => {
     setLoading(true);
     try {
-      const response = await fetch("/search-card", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: {
-            name: pokemonName,
-            subtype: pokemonSubtype,
-            page: 1,
-            pageSize: 36,
+      const response = await fetch(
+        "https://us-central1-pokebinder-ae627.cloudfunctions.net/app/search-card",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-        }),
-      });
+          body: JSON.stringify({
+            query: {
+              name: pokemonName,
+              subtype: pokemonSubtype,
+              page: 1,
+              pageSize: 36,
+            },
+          }),
+          mode: "cors",
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to fetch end point");
