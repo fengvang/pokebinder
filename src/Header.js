@@ -55,7 +55,7 @@ function Header() {
         localStorage.clear();
         sessionStorage.removeItem("sessionCollectionOriginal");
         sessionStorage.removeItem("sessionCollection");
-        console.log("Successfully logged out");
+        // console.log("Successfully logged out");
 
         setTimeout(() => {
           setLoading(false);
@@ -142,7 +142,7 @@ function Header() {
                   </span>
                 </Dropdown.Toggle>
 
-                <Dropdown.Menu>
+                <Dropdown.Menu style={{ zIndex: "10001" }}>
                   <Dropdown.Item href="/collection">Collection</Dropdown.Item>
                   <Dropdown.Item href={currentUser ? "/profile" : "/"}>
                     Account Settings

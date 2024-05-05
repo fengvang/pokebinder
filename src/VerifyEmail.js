@@ -18,15 +18,18 @@ function VerifyEmail() {
 
   const signInWithTokenAndSendEmail = async () => {
     try {
-      const response = await fetch("/get-custom-token", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          uid: emailNotVerifiedUser.uid,
-        }),
-      });
+      const response = await fetch(
+        "https://us-central1-pokebinder-ae627.cloudfunctions.net/app/get-custom-token",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            uid: emailNotVerifiedUser.uid,
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to fetch end point");
@@ -40,7 +43,7 @@ function VerifyEmail() {
           const user = userCredential.user;
 
           sendEmailVerification(user).then(() => {
-            console.log("sending email");
+            // console.log("sending email");
 
             sessionStorage.removeItem("emailNotVerifiedUserToken");
             sessionStorage.removeItem("emailNotVerifiedUser");
@@ -64,7 +67,7 @@ function VerifyEmail() {
     signOut(auth)
       .then(() => {
         localStorage.removeItem("user");
-        console.log("Successfully logged out");
+        // console.log("Successfully logged out");
       })
       .catch((error) => {
         console.error(error);

@@ -11,6 +11,16 @@
 
 # production
 /build
+/.firebase
+/functions
+/public
+.firebaserc
+database-debug.log
+database.rules.json
+firebase.json
+storage.rules
+ui-debug.log
+README.md
 
 # misc
 .DS_Store

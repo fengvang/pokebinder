@@ -1,13 +1,26 @@
 import { useLocation, Link } from "react-router-dom";
-import { Container, Row, Col, Image } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Image,
+  Form,
+  Button,
+  OverlayTrigger,
+  Tooltip,
+} from "react-bootstrap";
 import * as MuiIcon from "./MuiIcons";
-import { ToastContainer } from "react-toastify";
-import { updateCollection, cardAdded } from "./Functions";
+import { Slide, ToastContainer } from "react-toastify";
+import { updateCollection, cardAdded, formatType } from "./Functions";
+import Popup from "reactjs-popup";
+import "reactjs-popup/dist/index.css";
 
 function IndividualPageEnergy() {
   const location = useLocation();
   const card = location.state.cardData;
   const currentUser = JSON.parse(localStorage.getItem("user"));
+  const [cardCollectionType, setCardCollectionType] = useState(" ");
 
   let formattedDate = null;
   let options;
@@ -19,30 +32,52 @@ function IndividualPageEnergy() {
     formattedDateString = formattedDate.toLocaleDateString("en-US", options);
   }
 
-  // transform price type (holofoil, 1st edition, reverse holofoil etc) from camel case to normal
-  function formatType(type) {
-    return type
-      .replace(/([A-Z])/g, " $1")
-      .replace(/^./, (str) => str.toUpperCase());
-  }
-
   const handleUpdateCollection = () => {
-    updateCollection(currentUser.uid, card);
+    const dateAddedToCollection = new Date().toISOString();
+
+    // console.log("cardCollectionType", cardCollectionType);
+
+    updateCollection(currentUser.uid, {
+      ...card,
+      cardCollectionType:
+        cardCollectionType !== "" ? cardCollectionType : "null",
+      dateAddedToCollection,
+    });
+
     cardAdded();
   };
+
+  const handlePriceTypeChange = (event) => {
+    setCardCollectionType(event.target.value);
+  };
+
+  useEffect(() => {
+    // console.log(cardCollectionType);
+    if (
+      cardCollectionType === " " &&
+      card.tcgplayer?.hasOwnProperty("prices")
+    ) {
+      setCardCollectionType(Object.keys(card.tcgplayer?.prices)[0]);
+      console.log("setting to", Object.keys(card.tcgplayer?.prices)[0]);
+    }
+  }, [cardCollectionType, card]);
 
   return (
     <Container style={{ marginBottom: "20px" }}>
       <ToastContainer
         position={window.innerWidth < 768 ? "bottom-center" : "top-center"}
         theme="dark"
+        transition={Slide}
       />
       {window.innerWidth < 576 ? (
-        <Row style={{ marginTop: "25px" }}>
+        <Row
+          style={{ marginTop: "25px" }}
+          className="d-flex align-items-center justify-content-center"
+        >
           <Col
             xs="auto"
             md={12}
-            className="d-flex align-items-center justify-content-start"
+            className="d-flex align-items-center justify-content-center"
           >
             <h1 className="d-flex align-items-center">{card.name}</h1>
           </Col>
@@ -75,34 +110,64 @@ function IndividualPageEnergy() {
                       style={{ marginBottom: "8px" }}
                     >
                       <span className="d-flex align-items-center">
-                        <MuiIcon.DownIcon style={{ color: `var(--bs-red)` }} />
-                        <i style={{ paddingLeft: "10px" }}>
+                        <OverlayTrigger
+                          placement="bottom"
+                          delay={{ show: 250, hide: 400 }}
+                          overlay={<Tooltip id={"low"}>Low</Tooltip>}
+                        >
+                          <MuiIcon.DownIcon
+                            style={{ color: `var(--bs-red)` }}
+                          />
+                        </OverlayTrigger>
+                        <span style={{ paddingLeft: "10px" }}>
                           {prices.low ? `$${prices.low.toFixed(2)}` : "- - -"}
-                        </i>
+                        </span>
                       </span>
                       <span className="d-flex align-items-center">
-                        <MuiIcon.MarketIcon />
-                        <i style={{ paddingLeft: "10px" }}>
+                        <OverlayTrigger
+                          placement="bottom"
+                          delay={{ show: 250, hide: 400 }}
+                          overlay={<Tooltip id={"market"}>Market</Tooltip>}
+                        >
+                          <MuiIcon.MarketIcon />
+                        </OverlayTrigger>
+                        <span style={{ paddingLeft: "10px" }}>
                           {prices.market
                             ? `$${prices.market.toFixed(2)}`
                             : "- - -"}
-                        </i>
+                        </span>
                       </span>
                       <span className="d-flex align-items-center">
-                        <MuiIcon.UpIcon style={{ color: `var(--bs-green)` }} />
-                        <i style={{ paddingLeft: "10px" }}>
+                        <OverlayTrigger
+                          placement="bottom"
+                          delay={{ show: 250, hide: 400 }}
+                          overlay={<Tooltip id={"high"}>High</Tooltip>}
+                        >
+                          <MuiIcon.UpIcon
+                            style={{ color: `var(--bs-green)` }}
+                          />
+                        </OverlayTrigger>
+                        <span style={{ paddingLeft: "10px" }}>
                           {prices.high ? `$${prices.high.toFixed(2)}` : "- - -"}
-                        </i>
-                      </span>
-                      <Link
-                        to={card?.tcgplayer.url}
-                        target="_blank"
-                        className="launch-tcgplayer"
-                      >
-                        <span className="d-flex align-items-center">
-                          <MuiIcon.LaunchIcon />
                         </span>
-                      </Link>
+                      </span>
+                      <OverlayTrigger
+                        placement="bottom"
+                        delay={{ show: 250, hide: 400 }}
+                        overlay={
+                          <Tooltip id={"launch"}>See at TCGplayer</Tooltip>
+                        }
+                      >
+                        <Link
+                          to={card?.tcgplayer.url}
+                          target="_blank"
+                          className="launch-tcgplayer"
+                        >
+                          <span className="d-flex align-items-center">
+                            <MuiIcon.LaunchIcon />
+                          </span>
+                        </Link>
+                      </OverlayTrigger>
                     </Col>
                   </div>
                 )
@@ -144,17 +209,73 @@ function IndividualPageEnergy() {
       )}
 
       <Row>
-        <Col xs="auto" md={5} className="individual-image-col">
+        <Col xs="auto" sm={12} md={5} className="individual-image-col">
           <div className="image-container">
             <Image
               className="individual-page-image"
               src={card.images.large}
               alt={card.name}
             />
-            <div className="image-overlay" onClick={handleUpdateCollection}>
-              Add to collection
-              <MuiIcon.LibraryAddIcon style={{ marginLeft: "5px" }} />
-            </div>
+            {currentUser ? (
+              card.tcgplayer?.prices &&
+              Object.keys(card.tcgplayer?.prices).length > 1 ? (
+                <>
+                  <Popup
+                    trigger={
+                      <div
+                        className="image-overlay"
+                        onClick={handleUpdateCollection}
+                      >
+                        Add to collection
+                        <MuiIcon.LibraryAddIcon style={{ marginLeft: "5px" }} />
+                      </div>
+                    }
+                    modal
+                  >
+                    <div className="modal-header">Which variant?</div>
+                    <div className="modal-content">
+                      {Object.keys(card.tcgplayer?.prices).map(
+                        (priceType, index) => (
+                          <Form.Check
+                            key={index}
+                            type="radio"
+                            id={`priceType-${index}`}
+                            label={formatType(priceType)}
+                            value={priceType}
+                            checked={cardCollectionType === priceType}
+                            onChange={handlePriceTypeChange}
+                          />
+                        )
+                      )}
+                    </div>
+                    <div className="mb-3 d-flex align-items-center justify-content-center">
+                      <Button
+                        className="add-to-collection"
+                        onClick={handleUpdateCollection}
+                      >
+                        Add to collection
+                      </Button>
+                    </div>
+                  </Popup>
+                </>
+              ) : (
+                <>
+                  <div
+                    className="image-overlay"
+                    onClick={handleUpdateCollection}
+                  >
+                    Add to collection
+                    <MuiIcon.LibraryAddIcon style={{ marginLeft: "5px" }} />
+                  </div>
+                </>
+              )
+            ) : (
+              <Link to="/login">
+                <div className="image-overlay" style={{ color: "#ffffff" }}>
+                  Log in to track collection
+                </div>
+              </Link>
+            )}
           </div>
         </Col>
 

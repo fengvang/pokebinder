@@ -1,16 +1,34 @@
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import { Container, Row, Col, Image } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Image,
+  Form,
+  Button,
+  OverlayTrigger,
+  Tooltip,
+} from "react-bootstrap";
+import { useEffect, useState } from "react";
 import * as MuiIcon from "./MuiIcons";
 import * as TypeIcon from "./Icons";
-import { ToastContainer } from "react-toastify";
+import { Slide, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { textWithImage, updateCollection, cardAdded } from "./Functions";
+import {
+  textWithImage,
+  updateCollection,
+  cardAdded,
+  formatType,
+} from "./Functions";
+import Popup from "reactjs-popup";
+import "reactjs-popup/dist/index.css";
 
 function IndividualPagePokémon() {
   const location = useLocation();
   const navigate = useNavigate();
   const card = location.state.cardData;
   const currentUser = JSON.parse(localStorage.getItem("user"));
+  const [cardCollectionType, setCardCollectionType] = useState(" ");
 
   let formattedDate = null;
   let options;
@@ -20,13 +38,6 @@ function IndividualPagePokémon() {
     formattedDate = new Date(card.tcgplayer.updatedAt);
     options = { month: "short", day: "2-digit", year: "numeric" };
     formattedDateString = formattedDate.toLocaleDateString("en-US", options);
-  }
-
-  // transform price type (holofoil, 1st edition, reverse holofoil etc) from camel case to normal
-  function formatType(type) {
-    return type
-      .replace(/([A-Z])/g, " $1")
-      .replace(/^./, (str) => str.toUpperCase());
   }
 
   function getTypeImg(type) {
@@ -78,20 +89,23 @@ function IndividualPagePokémon() {
     localStorage.setItem("pokemonName", pokemonName);
     localStorage.setItem("pokemonSubtype", "All");
     try {
-      const response = await fetch("/search-card", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: {
-            name: pokemonName,
-            subtype: "",
-            page: 1,
-            pageSize: 36,
+      const response = await fetch(
+        "https://us-central1-pokebinder-ae627.cloudfunctions.net/app/search-card",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-        }),
-      });
+          body: JSON.stringify({
+            query: {
+              name: pokemonName,
+              subtype: "",
+              page: 1,
+              pageSize: 36,
+            },
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to fetch end point");
@@ -110,15 +124,39 @@ function IndividualPagePokémon() {
   };
 
   const handleUpdateCollection = () => {
-    updateCollection(currentUser.uid, card);
+    const dateAddedToCollection = new Date().toISOString();
+
+    updateCollection(currentUser.uid, {
+      ...card,
+      cardCollectionType:
+        cardCollectionType !== "" ? cardCollectionType : "null",
+      dateAddedToCollection,
+    });
+
     cardAdded();
   };
+
+  const handlePriceTypeChange = (event) => {
+    setCardCollectionType(event.target.value);
+  };
+
+  useEffect(() => {
+    // console.log(cardCollectionType);
+    if (
+      cardCollectionType === " " &&
+      card.tcgplayer?.hasOwnProperty("prices")
+    ) {
+      setCardCollectionType(Object.keys(card.tcgplayer?.prices)[0]);
+      // console.log("setting to", Object.keys(card.tcgplayer?.prices)[0]);
+    }
+  }, [cardCollectionType, card]);
 
   return (
     <Container style={{ marginBottom: "20px" }}>
       <ToastContainer
         position={window.innerWidth < 768 ? "bottom-center" : "top-center"}
         theme="dark"
+        transition={Slide}
       />
       {window.innerWidth < 768 ? (
         <Row
@@ -171,13 +209,27 @@ function IndividualPagePokémon() {
                       style={{ marginBottom: "8px" }}
                     >
                       <span className="d-flex align-items-center">
-                        <MuiIcon.DownIcon style={{ color: `var(--bs-red)` }} />
+                        <OverlayTrigger
+                          placement="bottom"
+                          delay={{ show: 250, hide: 400 }}
+                          overlay={<Tooltip id={"low"}>Low</Tooltip>}
+                        >
+                          <MuiIcon.DownIcon
+                            style={{ color: `var(--bs-red)` }}
+                          />
+                        </OverlayTrigger>
                         <span style={{ paddingLeft: "10px" }}>
                           {prices.low ? `$${prices.low.toFixed(2)}` : "- - -"}
                         </span>
                       </span>
                       <span className="d-flex align-items-center">
-                        <MuiIcon.MarketIcon />
+                        <OverlayTrigger
+                          placement="bottom"
+                          delay={{ show: 250, hide: 400 }}
+                          overlay={<Tooltip id={"market"}>Market</Tooltip>}
+                        >
+                          <MuiIcon.MarketIcon />
+                        </OverlayTrigger>
                         <span style={{ paddingLeft: "10px" }}>
                           {prices.market
                             ? `$${prices.market.toFixed(2)}`
@@ -185,20 +237,36 @@ function IndividualPagePokémon() {
                         </span>
                       </span>
                       <span className="d-flex align-items-center">
-                        <MuiIcon.UpIcon style={{ color: `var(--bs-green)` }} />
+                        <OverlayTrigger
+                          placement="bottom"
+                          delay={{ show: 250, hide: 400 }}
+                          overlay={<Tooltip id={"high"}>High</Tooltip>}
+                        >
+                          <MuiIcon.UpIcon
+                            style={{ color: `var(--bs-green)` }}
+                          />
+                        </OverlayTrigger>
                         <span style={{ paddingLeft: "10px" }}>
                           {prices.high ? `$${prices.high.toFixed(2)}` : "- - -"}
                         </span>
                       </span>
-                      <Link
-                        to={card?.tcgplayer.url}
-                        target="_blank"
-                        className="launch-tcgplayer"
+                      <OverlayTrigger
+                        placement="bottom"
+                        delay={{ show: 250, hide: 400 }}
+                        overlay={
+                          <Tooltip id={"launch"}>See at TCGplayer</Tooltip>
+                        }
                       >
-                        <span className="d-flex align-items-center">
-                          <MuiIcon.LaunchIcon />
-                        </span>
-                      </Link>
+                        <Link
+                          to={card?.tcgplayer.url}
+                          target="_blank"
+                          className="launch-tcgplayer"
+                        >
+                          <span className="d-flex align-items-center">
+                            <MuiIcon.LaunchIcon />
+                          </span>
+                        </Link>
+                      </OverlayTrigger>
                     </Col>
                   </div>
                 )
@@ -248,10 +316,58 @@ function IndividualPagePokémon() {
               alt={card.name}
             />
             {currentUser ? (
-              <div className="image-overlay" onClick={handleUpdateCollection}>
-                Add to collection
-                <MuiIcon.LibraryAddIcon style={{ marginLeft: "5px" }} />
-              </div>
+              card.tcgplayer?.prices &&
+              Object.keys(card.tcgplayer?.prices).length > 1 ? (
+                <>
+                  <Popup
+                    trigger={
+                      <div
+                        className="image-overlay"
+                        onClick={handleUpdateCollection}
+                      >
+                        Add to collection
+                        <MuiIcon.LibraryAddIcon style={{ marginLeft: "5px" }} />
+                      </div>
+                    }
+                    modal
+                  >
+                    <div className="modal-header">Which variant?</div>
+                    <div className="modal-content">
+                      {Object.keys(card.tcgplayer?.prices).map(
+                        (priceType, index) => (
+                          <Form.Check
+                            key={index}
+                            type="radio"
+                            id={`priceType-${index}`}
+                            label={formatType(priceType)}
+                            value={priceType}
+                            checked={cardCollectionType === priceType}
+                            onChange={handlePriceTypeChange}
+                          />
+                        )
+                      )}
+                    </div>
+                    <div className="mb-3 d-flex align-items-center justify-content-center">
+                      <Button
+                        className="add-to-collection"
+                        onClick={handleUpdateCollection}
+                      >
+                        Add to collection
+                      </Button>
+                    </div>
+                  </Popup>
+                </>
+              ) : (
+                <>
+                  <div
+                    className="image-overlay"
+                    onClick={handleUpdateCollection}
+                  >
+                    Add to collection
+                    <MuiIcon.LibraryAddIcon style={{ marginLeft: "5px" }} />
+                  </div>
+                </>
+              )
             ) : (
               <Link to="/login">
                 <div className="image-overlay" style={{ color: "#ffffff" }}>

@@ -44,12 +44,15 @@ function CarouselGallery() {
   useEffect(() => {
     const getNewestSet = async () => {
       try {
-        const response = await fetch("/get-newest-set", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          "https://us-central1-pokebinder-ae627.cloudfunctions.net/app/get-newest-set",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         const set = await response.json();
 
@@ -77,19 +80,22 @@ function CarouselGallery() {
   useEffect(() => {
     const getSetData = async (set) => {
       try {
-        const response = await fetch("/get-set-data", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            query: {
-              setID: set?.id,
-              page: 1,
-              pageSize: 10,
+        const response = await fetch(
+          "https://us-central1-pokebinder-ae627.cloudfunctions.net/app/get-set-data",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
             },
-          }),
-        });
+            body: JSON.stringify({
+              query: {
+                setID: set?.id,
+                page: 1,
+                pageSize: 10,
+              },
+            }),
+          }
+        );
 
         const data = await response.json();
 
@@ -116,19 +122,22 @@ function CarouselGallery() {
 
   const handleSetClicked = async (clickedSet) => {
     try {
-      const response = await fetch("/get-set-data", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: {
-            setID: clickedSet.id,
-            page: 1,
-            pageSize: 36,
+      const response = await fetch(
+        "https://us-central1-pokebinder-ae627.cloudfunctions.net/app/get-set-data",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-        }),
-      });
+          body: JSON.stringify({
+            query: {
+              setID: clickedSet.id,
+              page: 1,
+              pageSize: 36,
+            },
+          }),
+        }
+      );
 
       const data = await response.json();
 

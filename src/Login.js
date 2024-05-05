@@ -6,10 +6,10 @@ import {
   getAuth,
   signInWithEmailAndPassword,
   onAuthStateChanged,
-  signInWithPopup,
-  GoogleAuthProvider,
   sendPasswordResetEmail,
-  TwitterAuthProvider,
+  // signInWithPopup,
+  // GoogleAuthProvider,
+  // TwitterAuthProvider,
 } from "firebase/auth";
 import { getDatabase, ref, update } from "firebase/database";
 
@@ -32,8 +32,8 @@ function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [headerHeight, setHeaderHeight] = useState(0);
-  const googleProvider = new GoogleAuthProvider();
-  const twitterProvider = new TwitterAuthProvider();
+  // const googleProvider = new GoogleAuthProvider();
+  // const twitterProvider = new TwitterAuthProvider();
 
   function addUserToDB(userId, name, email) {
     const db = getDatabase();
@@ -53,91 +53,92 @@ function Login() {
     });
   }
 
-  const googleLogin = () => {
-    const auth = getAuth();
-    signInWithPopup(auth, googleProvider)
-      .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        // const credential = GoogleAuthProvider.credentialFromResult(result);
-        // const token = credential.accessToken;
-        // The signed-in user info.
-        const user = result.user;
-        // IdP data available using getAdditionalUserInfo(result)
-        // ...
+  // const googleLogin = () => {
+  //   const auth = getAuth();
 
-        addUserToDB(user.uid, user.displayName, user.email);
+  //   signInWithPopup(auth, googleProvider)
+  //     .then((result) => {
+  //       // This gives you a Google Access Token. You can use it to access the Google API.
+  //       // const credential = GoogleAuthProvider.credentialFromResult(result);
+  //       // const token = credential.accessToken;
+  //       // The signed-in user info.
+  //       const user = result.user;
+  //       // IdP data available using getAdditionalUserInfo(result)
+  //       // ...
 
-        if (userIsLoggedIn) {
-          const userInfo = {
-            uid: user.uid,
-            displayName: user.displayName,
-            email: user.email,
-            photoURL: user.photoURL,
-          };
+  //       addUserToDB(user.uid, user.displayName, user.email);
 
-          localStorage.setItem("user", JSON.stringify(userInfo));
-        }
+  //       if (userIsLoggedIn) {
+  //         const userInfo = {
+  //           uid: user.uid,
+  //           displayName: user.displayName,
+  //           email: user.email,
+  //           photoURL: user.photoURL,
+  //         };
 
-        setTimeout(() => {
-          navigate("/");
-        }, 1500);
-      })
-      .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
+  //         localStorage.setItem("user", JSON.stringify(userInfo));
+  //       }
 
-        console.error(errorCode, errorMessage, email, credential);
-        // ...
-      });
-  };
+  //       setTimeout(() => {
+  //         navigate("/");
+  //       }, 1500);
+  //     })
+  //     .catch((error) => {
+  //       // Handle Errors here.
+  //       const errorCode = error.code;
+  //       const errorMessage = error.message;
+  //       // The email of the user's account used.
+  //       const email = error.customData.email;
+  //       // The AuthCredential type that was used.
+  //       const credential = GoogleAuthProvider.credentialFromError(error);
 
-  const twitterLogin = () => {
-    const auth = getAuth();
+  //       console.error(errorCode, errorMessage, email, credential);
+  //       // ...
+  //     });
+  // };
 
-    signInWithPopup(auth, twitterProvider)
-      .then((result) => {
-        const credential = TwitterAuthProvider.credentialFromResult(result);
-        // eslint-disable-next-line
-        const token = credential.accessToken;
-        // eslint-disable-next-line
-        const secret = credential.secret;
+  // const twitterLogin = () => {
+  //   const auth = getAuth();
 
-        const user = result.user;
+  //   signInWithPopup(auth, twitterProvider)
+  //     .then((result) => {
+  //       const credential = TwitterAuthProvider.credentialFromResult(result);
+  //       // eslint-disable-next-line
+  //       const token = credential.accessToken;
+  //       // eslint-disable-next-line
+  //       const secret = credential.secret;
 
-        addUserToDB(user.uid, user.displayName, user.email);
+  //       const user = result.user;
 
-        if (userIsLoggedIn) {
-          const userInfo = {
-            uid: user.uid,
-            displayName: user.displayName,
-            email: user.email,
-            photoURL: user.photoURL,
-          };
+  //       addUserToDB(user.uid, user.displayName, user.email);
 
-          localStorage.setItem("user", JSON.stringify(userInfo));
-        }
+  //       if (userIsLoggedIn) {
+  //         const userInfo = {
+  //           uid: user.uid,
+  //           displayName: user.displayName,
+  //           email: user.email,
+  //           photoURL: user.photoURL,
+  //         };
 
-        setTimeout(() => {
-          navigate("/");
-        }, 1500);
-      })
-      .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = TwitterAuthProvider.credentialFromError(error);
+  //         localStorage.setItem("user", JSON.stringify(userInfo));
+  //       }
 
-        console.error(errorCode, errorMessage, email, credential);
-      });
-  };
+  //       setTimeout(() => {
+  //         navigate("/");
+  //       }, 1500);
+  //     })
+  //     .catch((error) => {
+  //       // Handle Errors here.
+  //       const errorCode = error.code;
+  //       const errorMessage = error.message;
+  //       // The email of the user's account used.
+  //       const email = error.customData.email;
+  //       // The AuthCredential type that was used.
+  //       const credential = TwitterAuthProvider.credentialFromError(error);
+
+  //       console.error(errorCode, errorMessage, email, credential);
+  //     });
+  // };
 
   const login = (event) => {
     setLoading(true);
@@ -159,7 +160,7 @@ function Login() {
             );
             navigate("/verify-email");
           } else {
-            console.log("email already verified");
+            // console.log("email already verified");
 
             const userInfo = {
               uid: user.uid,
@@ -170,7 +171,7 @@ function Login() {
 
             localStorage.setItem("user", JSON.stringify(userInfo));
 
-            console.log("Successful login!");
+            // console.log("Successful login!");
 
             setTimeout(() => {
               setLoading(false);
@@ -219,13 +220,13 @@ function Login() {
       .then(() => {
         // Password reset email sent!
         // ..
-        console.log("Password reset email sent!");
+        // console.log("Password reset email sent!");
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
 
-        console.log(errorCode, errorMessage);
+        console.error(errorCode, errorMessage);
       });
   }
 
@@ -258,7 +259,7 @@ function Login() {
         <div className="login-container">
           <Row
             className="d-flex justify-content-center"
-            style={{ marginTop: "25px" }}
+            style={{ marginTop: "10px" }}
           >
             <Link
               to="#"
@@ -316,12 +317,12 @@ function Login() {
                 </Button>
                 <Link
                   onClick={handleForgotPassword}
-                  className="d-flex align-items-center justify-content-center my-0"
+                  className="d-flex align-items-center justify-content-center mb-4"
                 >
                   Forgot password?
                 </Link>
 
-                <hr />
+                {/* <hr />
                 <div className="socials-container">
                   Or sign in with your socials
                 </div>
@@ -335,7 +336,7 @@ function Login() {
                   <MuiIcon.FacebookIcon className="facebook-icon" />
 
                   <MuiIcon.XIcon className="x-icon" onClick={twitterLogin} />
-                </div>
+                </div> */}
               </Form.Group>
             </Form>
           </div>

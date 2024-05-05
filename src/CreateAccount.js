@@ -8,9 +8,9 @@ import {
   updateProfile,
   onAuthStateChanged,
   sendEmailVerification,
-  GoogleAuthProvider,
-  signInWithPopup,
-  TwitterAuthProvider,
+  // GoogleAuthProvider,
+  // signInWithPopup,
+  // TwitterAuthProvider,
 } from "firebase/auth";
 import { getDatabase, ref, set } from "firebase/database";
 
@@ -38,8 +38,8 @@ function CreateAccount() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [headerHeight, setHeaderHeight] = useState(0);
-  const googleProvider = new GoogleAuthProvider();
-  const twitterProvider = new TwitterAuthProvider();
+  // const googleProvider = new GoogleAuthProvider();
+  // const twitterProvider = new TwitterAuthProvider();
 
   function addUserToDB(userId, name, email) {
     const db = getDatabase();
@@ -59,92 +59,92 @@ function CreateAccount() {
     });
   }
 
-  const googleLogin = () => {
-    const auth = getAuth();
+  // const googleLogin = () => {
+  //   const auth = getAuth();
 
-    signInWithPopup(auth, googleProvider)
-      .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        // const credential = GoogleAuthProvider.credentialFromResult(result);
-        // const token = credential.accessToken;
-        // The signed-in user info.
-        const user = result.user;
-        // IdP data available using getAdditionalUserInfo(result)
-        // ...
+  //   signInWithPopup(auth, googleProvider)
+  //     .then((result) => {
+  //       // This gives you a Google Access Token. You can use it to access the Google API.
+  //       // const credential = GoogleAuthProvider.credentialFromResult(result);
+  //       // const token = credential.accessToken;
+  //       // The signed-in user info.
+  //       const user = result.user;
+  //       // IdP data available using getAdditionalUserInfo(result)
+  //       // ...
 
-        addUserToDB(user.uid, user.displayName, user.email);
+  //       addUserToDB(user.uid, user.displayName, user.email);
 
-        if (userIsLoggedIn) {
-          const userInfo = {
-            uid: user.uid,
-            displayName: user.displayName,
-            email: user.email,
-            photoURL: user.photoURL,
-          };
+  //       if (userIsLoggedIn) {
+  //         const userInfo = {
+  //           uid: user.uid,
+  //           displayName: user.displayName,
+  //           email: user.email,
+  //           photoURL: user.photoURL,
+  //         };
 
-          localStorage.setItem("user", JSON.stringify(userInfo));
-        }
+  //         localStorage.setItem("user", JSON.stringify(userInfo));
+  //       }
 
-        setTimeout(() => {
-          navigate("/");
-        }, 1500);
-      })
-      .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
+  //       setTimeout(() => {
+  //         navigate("/");
+  //       }, 1500);
+  //     })
+  //     .catch((error) => {
+  //       // Handle Errors here.
+  //       const errorCode = error.code;
+  //       const errorMessage = error.message;
+  //       // The email of the user's account used.
+  //       const email = error.customData.email;
+  //       // The AuthCredential type that was used.
+  //       const credential = GoogleAuthProvider.credentialFromError(error);
 
-        console.error(errorCode, errorMessage, email, credential);
-        // ...
-      });
-  };
+  //       console.error(errorCode, errorMessage, email, credential);
+  //       // ...
+  //     });
+  // };
 
-  const twitterLogin = () => {
-    const auth = getAuth();
+  // const twitterLogin = () => {
+  //   const auth = getAuth();
 
-    signInWithPopup(auth, twitterProvider)
-      .then((result) => {
-        const credential = TwitterAuthProvider.credentialFromResult(result);
-        // eslint-disable-next-line
-        const token = credential.accessToken;
-        // eslint-disable-next-line
-        const secret = credential.secret;
+  //   signInWithPopup(auth, twitterProvider)
+  //     .then((result) => {
+  //       const credential = TwitterAuthProvider.credentialFromResult(result);
+  //       // eslint-disable-next-line
+  //       const token = credential.accessToken;
+  //       // eslint-disable-next-line
+  //       const secret = credential.secret;
 
-        const user = result.user;
+  //       const user = result.user;
 
-        addUserToDB(user.uid, user.displayName, user.email);
+  //       addUserToDB(user.uid, user.displayName, user.email);
 
-        if (userIsLoggedIn) {
-          const userInfo = {
-            uid: user.uid,
-            displayName: user.displayName,
-            email: user.email,
-            photoURL: user.photoURL,
-          };
+  //       if (userIsLoggedIn) {
+  //         const userInfo = {
+  //           uid: user.uid,
+  //           displayName: user.displayName,
+  //           email: user.email,
+  //           photoURL: user.photoURL,
+  //         };
 
-          localStorage.setItem("user", JSON.stringify(userInfo));
-        }
+  //         localStorage.setItem("user", JSON.stringify(userInfo));
+  //       }
 
-        setTimeout(() => {
-          navigate("/");
-        }, 1500);
-      })
-      .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = TwitterAuthProvider.credentialFromError(error);
+  //       setTimeout(() => {
+  //         navigate("/");
+  //       }, 1500);
+  //     })
+  //     .catch((error) => {
+  //       // Handle Errors here.
+  //       const errorCode = error.code;
+  //       const errorMessage = error.message;
+  //       // The email of the user's account used.
+  //       const email = error.customData.email;
+  //       // The AuthCredential type that was used.
+  //       const credential = TwitterAuthProvider.credentialFromError(error);
 
-        console.error(errorCode, errorMessage, email, credential);
-      });
-  };
+  //       console.error(errorCode, errorMessage, email, credential);
+  //     });
+  // };
 
   const createAccount = (event) => {
     const auth = getAuth();
@@ -175,7 +175,7 @@ function CreateAccount() {
               if (userIsLoggedIn) {
                 if (!user.emailVerified) {
                   sendEmailVerification(user).then(() => {
-                    console.log("sending email");
+                    // console.log("sending email");
 
                     navigate("/verify-email");
                   });
@@ -191,7 +191,7 @@ function CreateAccount() {
           console.error(error.message);
         });
     } else {
-      console.log("Password doesn't meet requirements");
+      // console.log("Password doesn't meet requirements");
     }
   };
 
@@ -220,7 +220,7 @@ function CreateAccount() {
       <div className="login-container">
         <Row
           className="d-flex justify-content-center"
-          style={{ marginTop: "0px" }}
+          style={{ marginTop: "10px" }}
         >
           <Link
             to="#"
@@ -356,7 +356,7 @@ function CreateAccount() {
                 Create Account
               </Button>
 
-              <hr />
+              {/* <hr />
               <div className="socials-container">
                 Or create account with your socials
               </div>
@@ -370,7 +370,7 @@ function CreateAccount() {
                 <MuiIcon.FacebookIcon className="facebook-icon" />
 
                 <MuiIcon.XIcon className="x-icon" onClick={twitterLogin} />
-              </div>
+              </div> */}
             </Form.Group>
           </Form>
         </div>
