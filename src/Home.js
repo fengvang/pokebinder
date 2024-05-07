@@ -5,7 +5,6 @@ import Header from "./Header";
 import SearchForm from "./SearchForm";
 import SearchBySet from "./SearchBySet";
 import CarouselGallery from "./CarouselGallery";
-import MobileCarouselGallery from "./MobileCarouselGallery";
 
 function Home() {
   const location = useLocation();
@@ -37,21 +36,13 @@ function Home() {
       {rootPath ? (
         <>
           <SearchForm />
-          {window.innerWidth < 567 || window.innerWidth < 768 ? (
-            <MobileCarouselGallery />
-          ) : (
-            <CarouselGallery />
-          )}{" "}
+          <CarouselGallery />
         </>
       ) : null}
       {searchBySetsPath ? (
         <>
           <SearchBySet />
-          {window.innerWidth < 567 || window.innerWidth < 768 ? (
-            <MobileCarouselGallery />
-          ) : (
-            <CarouselGallery />
-          )}
+          <CarouselGallery />
         </>
       ) : null}
     </>

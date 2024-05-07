@@ -536,16 +536,6 @@ div.card-body {
   cursor: pointer;
 }
 
-.launch-evolves-from {
-  color: var(--ghost);
-}
-
-.launch-evolves-from:hover {
-  color: var(--flying);
-  transition: 0.15s ease-in-out;
-  cursor: pointer;
-}
-
 .main-search-bar {
   border-right: none !important;
 }
@@ -778,12 +768,12 @@ input::file-selector-button {
   margin-right: 0px;
 }
 
-.evolution {
+.span-link {
   color: var(--ghost);
   transition: 0.15s ease-in-out;
 }
 
-.evolution:hover {
+.span-link:hover {
   cursor: pointer;
   color: var(--flying);
 }
@@ -908,6 +898,34 @@ button.add-to-collection {
   border-radius: 0px;
   border: none !important;
   width: 80%;
+}
+
+.series-row-splider {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 10px;
+  width: 25vw;
+}
+
+.series-row-splider:hover {
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.series-row-logo-spilder,
+.series-row-image-splider {
+  transition: transform 0.5s ease-in-out;
+}
+
+.series-row-logo-spilder:hover,
+.series-row-image-splider:hover {
+  cursor: pointer;
+  transform: scale(1.1);
+}
+
+.series-row-image-splider {
+  margin-top: 25px;
 }
 
 /* mobile styles */
@@ -1200,6 +1218,10 @@ button.add-to-collection {
 
   .popup-content {
     width: 70% !important;
+  }
+
+  .series-row-splider {
+    min-width: 100vw;
   }
 }
 

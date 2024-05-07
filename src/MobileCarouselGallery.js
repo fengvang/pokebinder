@@ -78,7 +78,7 @@ function MobileCarouselGallery() {
               query: {
                 setID: set?.id,
                 page: 1,
-                pageSize: 10,
+                pageSize: 12,
               },
             }),
           }
@@ -120,7 +120,7 @@ function MobileCarouselGallery() {
             query: {
               setID: clickedSet.id,
               page: 1,
-              pageSize: 32,
+              pageSize: 36,
             },
           }),
         }
@@ -150,19 +150,21 @@ function MobileCarouselGallery() {
     if (clickedCard.supertype === "Pokémon") {
       navigate(`/pokémon-card?${clickedCard.name}`, {
         state: {
+          setData: newestSet,
           cardData: clickedCard,
-          name: clickedCard.name,
         },
       });
     } else if (clickedCard.supertype === "Trainer") {
       navigate(`/trainer-card?${clickedCard.name}`, {
         state: {
+          setData: newestSet,
           cardData: clickedCard,
         },
       });
     } else if (clickedCard.supertype === "Energy") {
       navigate(`/energy-card?${clickedCard.name}`, {
         state: {
+          setData: newestSet,
           cardData: clickedCard,
         },
       });
