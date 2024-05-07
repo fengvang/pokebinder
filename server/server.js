@@ -7,8 +7,8 @@ const { getAuth } = require("firebase-admin/auth");
 const { initializeApp, credential } = require("firebase-admin");
 const admin = require("firebase-admin");
 const serviceAccount = require("./serviceAccountKey.json");
-const cors = require("cors")({ origin: true });
-app.use(cors);
+const cors = require("cors");
+app.use(cors());
 
 const PORT = process.env.PORT || 5000;
 
@@ -179,6 +179,19 @@ app.post("/get-set-data", async (req, res) => {
       page: page,
       pageSize: pageSize,
     });
+
+    res.json(data);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.post("/get-card-by-id", async (req, res) => {
+  try {
+    const cardID = req.body.query.id;
+
+    const data = await pokemon.card.find(`${cardID}`);
 
     res.json(data);
   } catch (error) {

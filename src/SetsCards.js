@@ -19,18 +19,21 @@ function SetsCards() {
     if (clickedCard.supertype === "Pokémon") {
       navigate(`/pokémon-card?${clickedCard.name}`, {
         state: {
+          setData: set,
           cardData: clickedCard,
         },
       });
     } else if (clickedCard.supertype === "Trainer") {
       navigate(`/trainer-card?${clickedCard.name}`, {
         state: {
+          setData: set,
           cardData: clickedCard,
         },
       });
     } else if (clickedCard.supertype === "Energy") {
       navigate(`/energy-card?${clickedCard.name}`, {
         state: {
+          setData: set,
           cardData: clickedCard,
         },
       });
@@ -130,7 +133,22 @@ function SetsCards() {
           src={set.images.logo}
           alt={set.name}
           style={{
-            maxWidth: "25%",
+            maxWidth:
+              window.innerWidth < 576
+                ? set.series === "Other" ||
+                  set.series === "POP" ||
+                  set.name.includes("Promo")
+                  ? "30%"
+                  : set.name === "151" || set.name === "Paldean Fates"
+                  ? "45%"
+                  : "70%"
+                : set.series === "Other" ||
+                  set.series === "POP" ||
+                  set.name.includes("Promo")
+                ? "15%"
+                : set.name === "151"
+                ? "20%"
+                : "30%",
             height: "auto",
             objectFit: "contain",
           }}

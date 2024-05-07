@@ -176,7 +176,7 @@ function Login() {
             setTimeout(() => {
               setLoading(false);
 
-              navigate("/");
+              navigate(-1);
             }, 1500);
           }
         }

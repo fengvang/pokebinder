@@ -42,6 +42,10 @@ function Collection() {
                 );
 
                 setCollection([...data].reverse());
+
+                if (localStorage.getItem("order")) {
+                  sortCollection();
+                }
               } else {
                 setLoading(false);
                 // console.log("No data available");
@@ -257,6 +261,8 @@ function Collection() {
 
   useEffect(() => {
     getCollectionFromDB(setCollection);
+
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {

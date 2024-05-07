@@ -22,6 +22,9 @@ storage.rules
 ui-debug.log
 README.md
 
+#productionv2
+/src/MobileCarouselGallery.js
+
 # misc
 .DS_Store
 .env.local

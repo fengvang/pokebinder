@@ -140,6 +140,56 @@ function IndividualPagePokémon() {
     setCardCollectionType(event.target.value);
   };
 
+  const handleSetClicked = async () => {
+    const set = location.state.setData;
+    const setData = sessionStorage.getItem(`${set.id}`);
+
+    if (!setData) {
+      try {
+        const response = await fetch(
+          "https://us-central1-pokebinder-ae627.cloudfunctions.net/app/get-set-data",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              query: {
+                setID: set.id,
+                page: 1,
+                pageSize: 36,
+              },
+            }),
+          }
+        );
+
+        const data = await response.json();
+
+        sessionStorage.setItem(`${set.id}`, JSON.stringify(data));
+
+        navigate(`/browse-by-set?${set.series}-${set.name}&page=1`, {
+          state: {
+            set: set,
+            setData: data,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch end point");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    } else {
+      navigate(`/browse-by-set?${set.series}-${set.name}&page=1`, {
+        state: {
+          set: set,
+          setData: JSON.parse(setData),
+        },
+      });
+    }
+  };
+
   useEffect(() => {
     // console.log(cardCollectionType);
     if (
@@ -170,9 +220,6 @@ function IndividualPagePokémon() {
           >
             <h1 className="d-flex align-items-center">
               {textWithImage(card.name)}
-              <span style={{ marginLeft: "10px" }}>
-                {getMultipleTypes(card.types)}
-              </span>
             </h1>
           </Col>
         </Row>
@@ -185,9 +232,6 @@ function IndividualPagePokémon() {
           >
             <h1 className="d-flex align-items-center">
               {textWithImage(card.name)}
-              <span style={{ marginLeft: "10px" }}>
-                {getMultipleTypes(card.types)}
-              </span>
             </h1>
           </Col>
         </Row>
@@ -384,7 +428,10 @@ function IndividualPagePokémon() {
           <div>
             <b>Set </b>
             <span className="card-desc-small-text">
-              {card.set.name} - {card.set.series}
+              {card.set.series} -{" "}
+              <span className="span-link" onClick={handleSetClicked}>
+                {card.set.name}
+              </span>
             </span>
           </div>
 
@@ -397,7 +444,7 @@ function IndividualPagePokémon() {
               <>
                 <b>Evolves from </b>{" "}
                 <span
-                  className="card-desc-small-text evolution"
+                  className="card-desc-small-text span-link"
                   onClick={() => handleEvolveClick(card.evolvesFrom)}
                 >
                   {card.evolvesFrom}
@@ -409,7 +456,7 @@ function IndividualPagePokémon() {
           <div>
             {card.hasOwnProperty("evolvesTo") && card.evolvesTo.length > 0 ? (
               <>
-                <b>Evolves to:</b>{" "}
+                <b>Evolves to </b>{" "}
                 {card.evolvesTo.map((evolution, index) => (
                   <span
                     key={index}
@@ -417,7 +464,7 @@ function IndividualPagePokémon() {
                     onClick={() => handleEvolveClick(evolution)}
                   >
                     {index > 0 ? ", " : ""}
-                    <span className="evolution">{evolution}</span>
+                    <span className="span-link">{evolution}</span>
                   </span>
                 ))}
               </>

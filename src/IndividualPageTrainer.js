@@ -1,4 +1,4 @@
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {
   Container,
@@ -18,6 +18,7 @@ import "reactjs-popup/dist/index.css";
 
 function IndividualPageTrainer() {
   const location = useLocation();
+  const navigate = useNavigate();
   const card = location.state.cardData;
   const currentUser = JSON.parse(localStorage.getItem("user"));
   const [cardCollectionType, setCardCollectionType] = useState(" ");
@@ -47,6 +48,56 @@ function IndividualPageTrainer() {
 
   const handlePriceTypeChange = (event) => {
     setCardCollectionType(event.target.value);
+  };
+
+  const handleSetClicked = async () => {
+    const set = location.state.setData;
+    const setData = sessionStorage.getItem(`${set.id}`);
+
+    if (!setData) {
+      try {
+        const response = await fetch(
+          "https://us-central1-pokebinder-ae627.cloudfunctions.net/app/get-set-data",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              query: {
+                setID: set.id,
+                page: 1,
+                pageSize: 36,
+              },
+            }),
+          }
+        );
+
+        const data = await response.json();
+
+        sessionStorage.setItem(`${set.id}`, JSON.stringify(data));
+
+        navigate(`/browse-by-set?${set.series}-${set.name}&page=1`, {
+          state: {
+            set: set,
+            setData: data,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch end point");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    } else {
+      navigate(`/browse-by-set?${set.series}-${set.name}&page=1`, {
+        state: {
+          set: set,
+          setData: JSON.parse(setData),
+        },
+      });
+    }
   };
 
   useEffect(() => {
@@ -282,9 +333,12 @@ function IndividualPageTrainer() {
 
           <div>
             <b>Set: </b>
-            <i>
-              {card.set.name} - {card.set.series}
-            </i>
+            <span className="card-desc-small-text">
+              {card.set.series} -{" "}
+              <span className="span-link" onClick={handleSetClicked}>
+                {card.set.name}
+              </span>
+            </span>
           </div>
 
           <div>
@@ -293,9 +347,7 @@ function IndividualPageTrainer() {
                 <b>Rules: </b>
                 {card.rules.map((rule, index) => (
                   <div className="list" key={index}>
-                    <p>
-                      <i>{rule.split(":")[0]}</i>
-                    </p>
+                    <p>{rule.split(":")[0]}</p>
                   </div>
                 ))}
               </div>
@@ -311,7 +363,7 @@ function IndividualPageTrainer() {
                 {card.abilities.map((ability, index) => (
                   <div className="list" key={index}>
                     <b>{ability.name}: </b>
-                    <i>{ability.text}</i>
+                    {ability.text}
                   </div>
                 ))}
               </div>
@@ -333,13 +385,10 @@ function IndividualPageTrainer() {
             <div style={{ marginBottom: "8px" }}>
               {card && card.tcgplayer && card.tcgplayer.updatedAt ? (
                 <span>
-                  <b>Last Updated:</b>{" "}
-                  <i>
-                    {formattedDateString} from{" "}
-                    <Link to="https://www.tcgplayer.com/" target="_blank">
-                      TCGplayer
-                    </Link>
-                  </i>
+                  <b>Last Updated:</b> {formattedDateString} from{" "}
+                  <Link to="https://www.tcgplayer.com/" target="_blank">
+                    TCGplayer
+                  </Link>
                 </span>
               ) : null}
             </div>
@@ -393,7 +442,7 @@ function IndividualPageTrainer() {
                   )
               )
             ) : (
-              <i>No price data available</i>
+              <span>No price data available</span>
             )}
           </Col>
           <Col md={7}></Col>

@@ -50,7 +50,6 @@ function SearchForm() {
               pageSize: 36,
             },
           }),
-          mode: "cors",
         }
       );
 

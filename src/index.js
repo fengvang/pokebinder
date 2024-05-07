@@ -27,6 +27,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./style.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { Container } from "react-bootstrap";
+import MobileBrowseSets from "./MobileBrowseSets";
 
 function Layout() {
   const location = useLocation();
@@ -78,7 +79,8 @@ const router = createBrowserRouter([
       },
       {
         path: "/sets",
-        element: <BrowseSets />,
+        element:
+          window.innerWidth < 576 ? <MobileBrowseSets /> : <BrowseSets />,
       },
       {
         path: "/browse-by-set",

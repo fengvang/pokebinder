@@ -440,3 +440,9 @@ export function formatType(type) {
     .replace(/([A-Z])/g, " $1")
     .replace(/^./, (str) => str.toUpperCase());
 }
+
+export function formatDate(originalDate) {
+  const parts = originalDate.split("/");
+  const formattedDate = `${parts[1]}/${parts[2]}/${parts[0]}`;
+  return formattedDate;
+}

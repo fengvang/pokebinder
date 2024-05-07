@@ -1,24 +1,28 @@
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import { Row, Col, Card } from "react-bootstrap";
+import { Col, Image } from "react-bootstrap";
 import LinearProgress from "@mui/material/LinearProgress";
+import { Splide, SplideSlide } from "@splidejs/react-splide";
+import "@splidejs/splide/dist/css/themes/splide-default.min.css";
+
+import { formatDate } from "./Functions";
 
 const series = [
   "Scarlet & Violet",
   "Sword & Shield",
+  "Other",
   "Sun & Moon",
+  "XY",
   "Black & White",
   "HeartGold & SoulSilver",
   "Platinum",
-  "Diamond & Pearl",
-  "NP",
-  "EX",
-  "Other",
   "POP",
-  "Gym",
-  "Neo",
+  "Diamond & Pearl",
+  "EX",
+  "NP",
   "E-Card",
-  "XY",
+  "Neo",
+  "Gym",
   "Base",
 ];
 
@@ -31,6 +35,11 @@ function BrowseSets() {
   const [clickedSeries, setClickedSeries] = useState("");
   const [clickedSet, setClickedSet] = useState("");
   const [dataLoaded, setdataLoaded] = useState(false);
+  const [hoveredSet, setHoveredSet] = useState(
+    JSON.parse(sessionStorage.getItem("newestSet")) || null
+  );
+  const [randomCardImgURL, setRandomCardImgURL] = useState();
+  const [randomCardId, setRandomCardId] = useState();
 
   const getSets = async () => {
     setLoading(true);
@@ -49,6 +58,7 @@ function BrowseSets() {
       const data = await response.json();
 
       setSeriesSets(data);
+      setHoveredSet(data[0]);
 
       sessionStorage.setItem("seriesSets", JSON.stringify(data));
 
@@ -61,12 +71,6 @@ function BrowseSets() {
       setLoading(false);
     }
   };
-
-  function formatDate(originalDate) {
-    const parts = originalDate.split("/");
-    const formattedDate = `${parts[1]}/${parts[2]}/${parts[0]}`;
-    return formattedDate;
-  }
 
   const handleSetClicked = async (clickedSet) => {
     const set = sessionStorage.getItem(`${clickedSet.id}`);
@@ -129,6 +133,56 @@ function BrowseSets() {
     }
   };
 
+  const getCardById = async () => {
+    try {
+      const response = await fetch(
+        "https://us-central1-pokebinder-ae627.cloudfunctions.net/app/get-card-by-id",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            query: {
+              id: randomCardId,
+            },
+          }),
+        }
+      );
+
+      const clickedCard = await response.json();
+
+      if (clickedCard.supertype === "Pokémon") {
+        navigate(`/pokémon-card?${clickedCard.name}`, {
+          state: {
+            setData: hoveredSet,
+            cardData: clickedCard,
+          },
+        });
+      } else if (clickedCard.supertype === "Trainer") {
+        navigate(`/trainer-card?${clickedCard.name}`, {
+          state: {
+            setData: hoveredSet,
+            cardData: clickedCard,
+          },
+        });
+      } else if (clickedCard.supertype === "Energy") {
+        navigate(`/energy-card?${clickedCard.name}`, {
+          state: {
+            setData: hoveredSet,
+            cardData: clickedCard,
+          },
+        });
+      }
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch end point");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   useEffect(() => {
     if (!seriesSets) getSets();
 
@@ -142,6 +196,216 @@ function BrowseSets() {
       setClicked(false);
     }
   }, [seriesSets]);
+
+  useEffect(() => {
+    if (hoveredSet) {
+      const setCode = hoveredSet.id;
+      const randomCardNumber =
+        Math.floor(Math.random() * (hoveredSet.total - 1 + 1)) + 1;
+      let url;
+      let id = hoveredSet.id + "-";
+
+      switch (setCode) {
+        case "swsh12pt5gg":
+          if (randomCardNumber < 10) {
+            url = `https://images.pokemontcg.io/${setCode}/GG0${randomCardNumber}.png`;
+            id += "GG0" + randomCardNumber;
+          } else {
+            url = `https://images.pokemontcg.io/${setCode}/GG${randomCardNumber}.png`;
+            id += "GG" + randomCardNumber;
+          }
+          break;
+        case "swsh12tg":
+          if (randomCardNumber < 10) {
+            url = `https://images.pokemontcg.io/${setCode}/TG0${randomCardNumber}.png`;
+            id += "TG0" + randomCardNumber;
+          } else {
+            url = `https://images.pokemontcg.io/${setCode}/TG${randomCardNumber}.png`;
+            id += "TG" + randomCardNumber;
+          }
+          break;
+        case "swsh11tg":
+          if (randomCardNumber < 10) {
+            url = `https://images.pokemontcg.io/${setCode}/TG0${randomCardNumber}.png`;
+            id += "TG0" + randomCardNumber;
+          } else {
+            url = `https://images.pokemontcg.io/${setCode}/TG${randomCardNumber}.png`;
+            id += "TG" + randomCardNumber;
+          }
+          break;
+        case "swsh10tg":
+          if (randomCardNumber < 10) {
+            url = `https://images.pokemontcg.io/${setCode}/TG0${randomCardNumber}.png`;
+            id += "TG0" + randomCardNumber;
+          } else {
+            url = `https://images.pokemontcg.io/${setCode}/TG${randomCardNumber}.png`;
+            id += "TG" + randomCardNumber;
+          }
+          break;
+        case "swsh9tg":
+          if (randomCardNumber < 10) {
+            url = `https://images.pokemontcg.io/${setCode}/TG0${randomCardNumber}.png`;
+            id += "TG0" + randomCardNumber;
+          } else {
+            url = `https://images.pokemontcg.io/${setCode}/TG${randomCardNumber}.png`;
+            id += "TG" + randomCardNumber;
+          }
+          break;
+        case "cel25c":
+          const cel25cImages = [
+            "https://images.pokemontcg.io/cel25c/2_A.png",
+            "https://images.pokemontcg.io/cel25c/4_A.png",
+            "https://images.pokemontcg.io/cel25c/15_A.png",
+            "https://images.pokemontcg.io/cel25c/15_B.png",
+            "https://images.pokemontcg.io/cel25c/15_C.png",
+            "https://images.pokemontcg.io/cel25c/15_D.png",
+            "https://images.pokemontcg.io/cel25c/73_A.png",
+            "https://images.pokemontcg.io/cel25c/8_A.png",
+            "https://images.pokemontcg.io/cel25c/24_A.png",
+            "https://images.pokemontcg.io/cel25c/20_A.png",
+            "https://images.pokemontcg.io/cel25c/66_A.png",
+            "https://images.pokemontcg.io/cel25c/9_A.png",
+            "https://images.pokemontcg.io/cel25c/86_A.png",
+            "https://images.pokemontcg.io/cel25c/88_A.png",
+            "https://images.pokemontcg.io/cel25c/93_A.png",
+            "https://images.pokemontcg.io/cel25c/17_A.png",
+            "https://images.pokemontcg.io/cel25c/109_A.png",
+            "https://images.pokemontcg.io/cel25c/145_A.png",
+            "https://images.pokemontcg.io/cel25c/107_A.png",
+            "https://images.pokemontcg.io/cel25c/113_A.png",
+            "https://images.pokemontcg.io/cel25c/114_A.png",
+            "https://images.pokemontcg.io/cel25c/54_A.png",
+            "https://images.pokemontcg.io/cel25c/97_A.png",
+            "https://images.pokemontcg.io/cel25c/76_A.png",
+            "https://images.pokemontcg.io/cel25c/60_A.png",
+          ];
+
+          const cel25cIds = [
+            "cel25c-2_A",
+            "cel25c-4_A",
+            "cel25c-15_A1",
+            "cel25c-15_A2",
+            "cel25c-15_A3",
+            "cel25c-15_A4",
+            "cel25c-73_A",
+            "cel25c-8_A",
+            "cel25c-24_A",
+            "cel25c-20_A",
+            "cel25c-66_A",
+            "cel25c-9_A",
+            "cel25c-86_A",
+            "cel25c-88_A",
+            "cel25c-93_A",
+            "cel25c-17_A",
+            "cel25c-109_A",
+            "cel25c-145_A",
+            "cel25c-107_A",
+            "cel25c-113_A",
+            "cel25c-114_A",
+            "cel25c-54_A",
+            "cel25c-97_A",
+            "cel25c-76_A",
+            "cel25c-60_A",
+          ];
+
+          url = cel25cImages[randomCardNumber];
+          id = cel25cIds[randomCardNumber];
+          break;
+        case "swsh45sv":
+          if (randomCardNumber < 10) {
+            url = `https://images.pokemontcg.io/${setCode}/SV00${randomCardNumber}.png`;
+            id += "SV00" + randomCardNumber;
+          } else if (randomCardNumber < 100) {
+            url = `https://images.pokemontcg.io/${setCode}/SV0${randomCardNumber}.png`;
+            id += "SV0" + randomCardNumber;
+          } else {
+            url = `https://images.pokemontcg.io/${setCode}/SV${randomCardNumber}.png`;
+            id += "SV" + randomCardNumber;
+          }
+          break;
+        case "swshp":
+          if (randomCardNumber < 10) {
+            url = `https://images.pokemontcg.io/${setCode}/SWSH00${randomCardNumber}.png`;
+            id += "SWSH00" + randomCardNumber;
+          } else if (randomCardNumber < 100) {
+            url = `https://images.pokemontcg.io/${setCode}/SWSH0${randomCardNumber}.png`;
+            id += "SWSH0" + randomCardNumber;
+          } else {
+            url = `https://images.pokemontcg.io/${setCode}/SWSH${randomCardNumber}.png`;
+            id += "SWSH" + randomCardNumber;
+          }
+          break;
+        case "sma":
+          url = `https://images.pokemontcg.io/${setCode}/SV${randomCardNumber}.png`;
+          id += "SV" + randomCardNumber;
+          break;
+        case "smp":
+          if (randomCardNumber < 10) {
+            url = `https://images.pokemontcg.io/${setCode}/SM0${randomCardNumber}.png`;
+            id += "SM0" + randomCardNumber;
+          } else {
+            url = `https://images.pokemontcg.io/${setCode}/SM${randomCardNumber}.png`;
+            id += "SM" + randomCardNumber;
+          }
+          break;
+        case "xyp":
+          if (randomCardNumber < 10) {
+            url = `https://images.pokemontcg.io/${setCode}/XY0${randomCardNumber}.png`;
+            id += "XY0" + randomCardNumber;
+          } else {
+            url = `https://images.pokemontcg.io/${setCode}/XY${randomCardNumber}.png`;
+            id += "XY" + randomCardNumber;
+          }
+          break;
+        case "bw11":
+          if (randomCardNumber > 115) {
+            const rcNumber = randomCardNumber - 115;
+            url = `https://images.pokemontcg.io/${setCode}/RC${rcNumber}.png`;
+            id += "RC" + randomCardNumber;
+          } else {
+            url = `https://images.pokemontcg.io/${setCode}/${randomCardNumber}.png`;
+            id += randomCardNumber;
+          }
+          break;
+        case "bwp":
+          if (randomCardNumber < 10) {
+            url = `https://images.pokemontcg.io/${setCode}/BW0${randomCardNumber}.png`;
+            id += "BW0" + randomCardNumber;
+          } else {
+            url = `https://images.pokemontcg.io/${setCode}/BW${randomCardNumber}.png`;
+            id += "BW" + randomCardNumber;
+          }
+          break;
+        case "hsp":
+          if (randomCardNumber < 10) {
+            url = `https://images.pokemontcg.io/${setCode}/HGSS0${randomCardNumber}.png`;
+            id += "HGSS0" + randomCardNumber;
+          } else {
+            url = `https://images.pokemontcg.io/${setCode}/HGSS${randomCardNumber}.png`;
+            id += "HGSS" + randomCardNumber;
+          }
+          break;
+        case "dpp":
+          if (randomCardNumber < 10) {
+            url = `https://images.pokemontcg.io/${setCode}/DP0${randomCardNumber}.png`;
+            id += "DP0" + randomCardNumber;
+          } else {
+            url = `https://images.pokemontcg.io/${setCode}/DP${randomCardNumber}.png`;
+            id += "DP" + randomCardNumber;
+          }
+          break;
+        default:
+          url = `https://images.pokemontcg.io/${setCode}/${randomCardNumber}.png`;
+          id += randomCardNumber;
+      }
+
+      setRandomCardImgURL(url);
+      setRandomCardId(id);
+    } else {
+      setRandomCardImgURL("");
+      setRandomCardId("");
+    }
+  }, [hoveredSet]);
 
   localStorage.removeItem("order");
 
@@ -198,62 +462,105 @@ function BrowseSets() {
         </div>
       ) : (
         <>
-          {series.map((item, index) => (
-            <React.Fragment key={index}>
-              <div
-                key={index}
-                className={`mt-5 series-row ${
-                  dataLoaded ? "series-row-loaded" : ""
-                }`}
-              >
-                <h1>{item}</h1>
-              </div>
-              <Row
-                className={`series-row ${
-                  dataLoaded ? "series-row-loaded" : ""
-                }`}
-                xs={2}
-                sm={2}
-                md={4}
-              >
-                {seriesSets !== null &&
-                  Object.entries(seriesSets).map(
-                    ([id, set]) =>
-                      set.series === item && (
-                        <Col key={set.id} className="series-col mx-1 my-1">
-                          <Card className="my-3 series-card">
-                            <Card.Img
-                              variant="top"
-                              src={set.images.logo}
+          <Splide
+            options={{
+              direction: "ttb",
+              height: "70vh",
+              wheel: true,
+              arrows: false,
+            }}
+          >
+            {series.map((item, index) => (
+              <SplideSlide key={item.id} className={"d-flex align-items-start"}>
+                <div
+                  className={`mt-5 series-row ${
+                    dataLoaded ? "series-row-loaded" : ""
+                  }`}
+                >
+                  <h1>{item}</h1>
+                  <div className="d-flex flex-col">
+                    <Col xs={6}>
+                      {seriesSets !== null &&
+                        Object.entries(seriesSets).map(
+                          ([id, set]) =>
+                            set.series === item && (
+                              <>
+                                <span
+                                  key={set.name}
+                                  className="series-row-splider"
+                                  onClick={() => handleSetClicked(set)}
+                                  onMouseEnter={() => setHoveredSet(set)}
+                                >
+                                  <Image
+                                    src={set.images.symbol}
+                                    style={{
+                                      maxWidth: "25px",
+                                      marginRight: "15px",
+                                    }}
+                                    alt={set.name + " symbol"}
+                                  />
+                                  {set.name}
+                                </span>
+                              </>
+                            )
+                        )}
+                    </Col>
+                    <Col
+                      xs={12}
+                      md={6}
+                      className="d-flex flex-column align-items-center justify-content-start"
+                      style={{ width: "25vw" }}
+                    >
+                      {hoveredSet ? (
+                        <>
+                          <Image
+                            src={hoveredSet.images.logo}
+                            style={{
+                              maxWidth:
+                                hoveredSet.series === "Other" ||
+                                hoveredSet.series === "POP" ||
+                                hoveredSet.name.includes("Promo")
+                                  ? "30%"
+                                  : hoveredSet.name === "151"
+                                  ? "45%"
+                                  : "70%",
+                              height: "auto",
+                              marginBottom: "25px",
+                            }}
+                            className="series-row-logo-spilder"
+                            onClick={() => handleSetClicked(hoveredSet)}
+                          />
+                          <div className="text-center">
+                            <h3>{hoveredSet.name}</h3>
+                            <p className="my-0">
+                              Release date: {formatDate(hoveredSet.releaseDate)}
+                            </p>
+                            <p className="my-0">
+                              Total cards: {hoveredSet.total}
+                            </p>
+                            <p className="mt-5 mb-0">
+                              Random card from {hoveredSet.name}
+                            </p>
+                            <Image
+                              src={randomCardImgURL}
+                              alt={`Random card from ${hoveredSet.name}`}
                               style={{
-                                objectFit: "contain",
-                                height: "125px",
+                                maxWidth:
+                                  window.innerWidth < 768 ? "150px" : "200px",
+                                height: "auto",
                               }}
-                              onClick={() => handleSetClicked(set)}
+                              className="series-row-image-splider"
+                              onClick={getCardById}
                             />
-                            <Card.Body>
-                              <Card.Title>
-                                <img
-                                  src={set.images.symbol}
-                                  alt={set.name}
-                                  style={{
-                                    objectFit: "contain",
-                                    height: "32px",
-                                  }}
-                                />
-                                <h4>{set.name}</h4>
-                              </Card.Title>
-                              <Card.Text style={{ fontSize: "1rem" }}>
-                                Release date: {formatDate(set.releaseDate)}
-                              </Card.Text>
-                            </Card.Body>
-                          </Card>
-                        </Col>
-                      )
-                  )}
-              </Row>
-            </React.Fragment>
-          ))}
+                          </div>
+                        </>
+                      ) : null}
+                    </Col>
+                  </div>
+                </div>
+              </SplideSlide>
+            ))}
+          </Splide>
         </>
       )}
     </>

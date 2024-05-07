@@ -1,37 +1,29 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Carousel, Image, Card, Col, Container } from "react-bootstrap";
+import { Image, Container } from "react-bootstrap";
+import { Splide, SplideSlide } from "@splidejs/react-splide";
 import * as MuiIcon from "./MuiIcons";
 
 function CarouselGallery() {
   const [newestSet, setNewestSet] = useState(
-    JSON.parse(localStorage.getItem("newestSet")) || null
+    JSON.parse(sessionStorage.getItem("newestSet")) || null
   );
   const [newestSetCards, setNewestSetCards] = useState(
-    JSON.parse(localStorage.getItem("newestSetCards")) || null
+    JSON.parse(sessionStorage.getItem("newestSetCards")) || null
   );
   const navigate = useNavigate();
 
-  const [index, setIndex] = useState(
-    JSON.parse(localStorage.getItem("index")) || 0
-  );
-
-  const handleSelect = (selectedIndex) => {
-    localStorage.setItem("index", selectedIndex);
-    setIndex(selectedIndex);
-  };
-
   // Quick fix for server error when fetching newest set
-  const localSet = localStorage.getItem("newestSet");
-  const localSetCards = localStorage.getItem("newestSetCards");
+  const localSet = sessionStorage.getItem("newestSet");
+  const localSetCards = sessionStorage.getItem("newestSetCards");
 
   if (
     localSet === `{"error":"Internal server error"}` ||
     localSetCards === `{"error":"Internal server error"}`
   ) {
-    localStorage.removeItem("newestSet");
-    localStorage.removeItem("newestSetCards");
+    sessionStorage.removeItem("newestSet");
+    sessionStorage.removeItem("newestSetCards");
   }
   // End quick fix
 
@@ -59,11 +51,11 @@ function CarouselGallery() {
         setNewestSet(set);
 
         if (
-          localStorage.getItem("newestSet") === null ||
-          (localStorage.getItem("newestSet") !== null &&
-            JSON.parse(localStorage.getItem("newestSet")).id !== set.id)
+          sessionStorage.getItem("newestSet") === null ||
+          (sessionStorage.getItem("newestSet") !== null &&
+            JSON.parse(sessionStorage.getItem("newestSet")).id !== set.id)
         ) {
-          localStorage.setItem("newestSet", JSON.stringify(set));
+          sessionStorage.setItem("newestSet", JSON.stringify(set));
         }
 
         if (!response.ok) {
@@ -91,7 +83,7 @@ function CarouselGallery() {
               query: {
                 setID: set?.id,
                 page: 1,
-                pageSize: 10,
+                pageSize: 12,
               },
             }),
           }
@@ -102,11 +94,11 @@ function CarouselGallery() {
         setNewestSetCards(data);
 
         if (
-          localStorage.getItem("newestSetCards") === null ||
-          (localStorage.getItem("newestSetCards") !== null &&
-            JSON.parse(localStorage.getItem("newestSetCards")) !== data)
+          sessionStorage.getItem("newestSetCards") === null ||
+          (sessionStorage.getItem("newestSetCards") !== null &&
+            JSON.parse(sessionStorage.getItem("newestSetCards")) !== data)
         ) {
-          localStorage.setItem("newestSetCards", JSON.stringify(data));
+          sessionStorage.setItem("newestSetCards", JSON.stringify(data));
         }
 
         if (!response.ok) {
@@ -159,23 +151,25 @@ function CarouselGallery() {
     }
   };
 
-  const handleCardClick = (clickedCard) => {
+  const handleCardClick = (clickedCard, id) => {
     if (clickedCard.supertype === "Pokémon") {
       navigate(`/pokémon-card?${clickedCard.name}`, {
         state: {
+          setData: newestSet,
           cardData: clickedCard,
-          name: clickedCard.name,
         },
       });
     } else if (clickedCard.supertype === "Trainer") {
       navigate(`/trainer-card?${clickedCard.name}`, {
         state: {
+          setData: newestSet,
           cardData: clickedCard,
         },
       });
     } else if (clickedCard.supertype === "Energy") {
       navigate(`/energy-card?${clickedCard.name}`, {
         state: {
+          setData: newestSet,
           cardData: clickedCard,
         },
       });
@@ -204,51 +198,34 @@ function CarouselGallery() {
             Released {formatDate(newestSet.releaseDate)}
           </div>
 
-          <Carousel
-            activeIndex={index}
-            onSelect={handleSelect}
-            indicators={false}
-            style={{ marginTop: "25px" }}
+          <Splide
+            options={{
+              height: "340px",
+              type: "slide",
+              perPage: window.innerWidth < 576 ? 2 : 6,
+              perMove: 1,
+              wheel: true,
+              speed: 1000,
+              easing: "ease",
+            }}
           >
-            <Carousel.Item interval={5000}>
-              <Col
-                className="d-flex align-items-center justify-content-center"
-                style={{ height: "300px" }}
+            {newestSetCards?.data.map((card, index) => (
+              <SplideSlide
+                key={index}
+                className={"d-flex align-items-center justify-content-center"}
               >
-                {newestSetCards?.data.slice(0, 5).map((card, index) => (
-                  <Card.Img
-                    key={index}
-                    src={card.images.small}
-                    alt={card.name}
-                    className="newest-set-cards"
-                    onClick={() => handleCardClick(card)}
-                    onLoad={(e) =>
-                      e.target.classList.add("newest-set-cards-loaded")
-                    }
-                  />
-                ))}
-              </Col>
-            </Carousel.Item>
-            <Carousel.Item interval={5000}>
-              <Col
-                className="d-flex align-items-center justify-content-center"
-                style={{ height: "300px" }}
-              >
-                {newestSetCards?.data.slice(5, 10).map((card, index) => (
-                  <Card.Img
-                    key={index}
-                    src={card.images.small}
-                    alt={card.name}
-                    className="newest-set-cards"
-                    onClick={() => handleCardClick(card)}
-                    onLoad={(e) =>
-                      e.target.classList.add("newest-set-cards-loaded")
-                    }
-                  />
-                ))}
-              </Col>
-            </Carousel.Item>
-          </Carousel>
+                <Image
+                  src={card.images.small}
+                  alt={card.name}
+                  className="newest-set-cards"
+                  onClick={() => handleCardClick(card)}
+                  onLoad={(e) =>
+                    e.target.classList.add("newest-set-cards-loaded")
+                  }
+                />
+              </SplideSlide>
+            ))}
+          </Splide>
         </>
       )}
     </Container>
