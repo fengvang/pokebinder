@@ -17,6 +17,9 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CheckIcon from "@mui/icons-material/Check";
 import ErrorIcon from "@mui/icons-material/Error";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import SettingsIcon from "@mui/icons-material/Settings";
+import { default as Wand } from "@mui/icons-material/AutoFixNormal";
+import InventoryIcon from "@mui/icons-material/Inventory";
 
 export {
   TuneIcon,
@@ -38,4 +41,7 @@ export {
   CheckIcon,
   ErrorIcon,
   FavoriteIcon,
+  SettingsIcon,
+  Wand,
+  InventoryIcon,
 };

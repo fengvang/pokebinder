@@ -217,15 +217,20 @@ export function textWithImage(name) {
   }
 }
 
-export const updateCollection = async (userId, card) => {
+export const updateCollection = async (userId, card, collectionOrWishlist) => {
   const auth = getAuth();
+
+  console.log("collectionOrWishlist: ", collectionOrWishlist);
 
   try {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         console.log("writing collection...");
         const db = getDatabase();
-        const collectionRef = ref(db, "users/" + userId + "/collection");
+        const collectionRef = ref(
+          db,
+          "users/" + userId + "/" + collectionOrWishlist
+        );
 
         get(collectionRef)
           .then((snapshot) => {
@@ -239,7 +244,9 @@ export const updateCollection = async (userId, card) => {
               set(collectionRef, updatedCollection)
                 .then(() => {
                   sessionStorage.setItem(
-                    "sessionCollection",
+                    "session" +
+                      collectionOrWishlist.charAt(0).toUpperCase() +
+                      collectionOrWishlist.slice(1),
                     JSON.stringify(updatedCollection)
                   );
                   console.log("Card added to collection successfully!");
@@ -270,18 +277,27 @@ export const updateCollection = async (userId, card) => {
   console.log("done!");
 };
 
-export const cardAdded = () =>
+export const cardAdded = (collectionOrWishlist) =>
   toast(
     <div>
       <span className="d-flex align-items-center justify-content-center">
-        Card successfully added to collection!
+        Card successfully added!
       </span>
-      <Link
-        to="/collection"
-        className="d-flex align-items-center justify-content-center mt-2"
-      >
-        View Collection
-      </Link>
+      {collectionOrWishlist === "collection" ? (
+        <Link
+          to="/collection"
+          className="d-flex align-items-center justify-content-center mt-2"
+        >
+          View collection
+        </Link>
+      ) : (
+        <Link
+          to="/wishlist"
+          className="d-flex align-items-center justify-content-center mt-2"
+        >
+          View wishlist
+        </Link>
+      )}
     </div>,
     {}
   );

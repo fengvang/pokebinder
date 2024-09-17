@@ -23,6 +23,7 @@ import CreateAccount from "./CreateAccount";
 import Profile from "./Profile";
 import Collection from "./Collection";
 import VerifyEmail from "./VerifyEmail";
+import Wishlist from "./Wishlist";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./style.css";
@@ -93,6 +94,7 @@ const router = createBrowserRouter([
       { path: "/profile", element: <Profile /> },
       { path: "/collection", element: <Collection /> },
       { path: "/verify-email", element: <VerifyEmail /> },
+      { path: "/wishlist", element: <Wishlist /> },
     ],
   },
 ]);

@@ -102,7 +102,7 @@ header > div > div > div.dropdown-toggle:hover {
 }
 
 header > div > div > div.dropdown-menu.show {
-  text-align: center;
+  text-align: left;
   border-radius: 5px;
   position: absolute !important;
   width: 200px;
@@ -111,11 +111,25 @@ header > div > div > div.dropdown-menu.show {
   top: 120% !important;
   transform: translateX(-50%) !important;
   box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.4);
+  background-color: var(--bgcolor) !important;
+}
+
+header > div > div > div > a.dropdown-item:link,
+header > div > div > div > a.dropdown-item:visited {
+  color: #fff !important;
+  padding: 10px;
 }
 
 header > div > div > div > a.dropdown-item:hover,
 header > div > div > div > a.dropdown-item:active {
-  background-color: #ffffff;
+  background-color: #2b2f35 !important;
+  border-radius: 5px;
+  color: #fff !important;
+}
+
+header > div > div > div > a.dropdown-no-hover:hover {
+  background-color: transparent !important;
+  cursor: default;
 }
 
 .modal-btn {
@@ -737,7 +751,7 @@ input::file-selector-button {
 .logout-button:visited {
   background-color: var(--ghost) !important;
   border: 1px solid var(--ghost) !important;
-  border-radius: 0px;
+  border-radius: 5px;
   width: 80px;
 }
 
@@ -908,8 +922,8 @@ form.login-form {
   font-family: "Jaldi", sans-serif !important;
   color: var(--textcolor) !important;
   border: none !important;
-  border-radius: 5px !important;
-  background-color: rgba(10, 10, 10, 0.9) !important;
+  border-radius: 10px !important;
+  background-color: var(--bgcolor) !important;
   width: 15% !important;
 }
 
@@ -917,7 +931,6 @@ form.login-form {
   width: 100%;
   border-bottom: 1px solid gray;
   font-size: 18px;
-  text-align: center;
   padding: 5px;
 }
 
@@ -1194,15 +1207,15 @@ button.add-to-collection {
   }
 
   .mobile-profile-dropdown {
-    color: #000;
     text-align: center;
-    min-width: 70vw;
-    min-height: 20vh;
-    background-color: #ffffff;
+    min-width: 100%;
+    min-height: 100%;
+    background-color: #070809 !important;
     border-radius: 5px;
     box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.4);
-    padding: 8px 0 8px 0;
-    align-content: center;
+    padding: 25px;
+    align-content: start;
+    text-align: start;
   }
 
   .newest-set-cards {
