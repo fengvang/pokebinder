@@ -212,6 +212,12 @@ function CreateAccount() {
     }
   }, []);
 
+  useEffect(() => {
+    document.title = "Pokébinder - Create an Account";
+
+    // eslint-disable-next-line
+  }, []);
+
   return (
     <Container
       className="d-flex align-items-center justify-content-center"

@@ -16,6 +16,7 @@ import XIcon from "@mui/icons-material/X";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CheckIcon from "@mui/icons-material/Check";
 import ErrorIcon from "@mui/icons-material/Error";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
 export {
   TuneIcon,
@@ -36,4 +37,5 @@ export {
   ArrowBackIcon,
   CheckIcon,
   ErrorIcon,
+  FavoriteIcon,
 };

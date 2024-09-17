@@ -51,52 +51,76 @@ function IndividualPageTrainer() {
   };
 
   const handleSetClicked = async () => {
-    const set = location.state.setData;
-    const setData = sessionStorage.getItem(`${set.id}`);
-
-    if (!setData) {
-      try {
-        const response = await fetch(
-          "https://us-central1-pokebinder-ae627.cloudfunctions.net/app/get-set-data",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              query: {
-                setID: set.id,
-                page: 1,
-                pageSize: 36,
-              },
-            }),
-          }
-        );
-
-        const data = await response.json();
-
-        sessionStorage.setItem(`${set.id}`, JSON.stringify(data));
-
-        navigate(`/browse-by-set?${set.series}-${set.name}&page=1`, {
-          state: {
-            set: set,
-            setData: data,
+    try {
+      const response = await fetch(
+        "https://us-central1-pokebinder-ae627.cloudfunctions.net/app/get-set-data",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch end point");
+          body: JSON.stringify({
+            query: {
+              setID: card.set.id,
+              page: 1,
+              pageSize: 36,
+            },
+          }),
         }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    } else {
-      navigate(`/browse-by-set?${set.series}-${set.name}&page=1`, {
+      );
+
+      const data = await response.json();
+
+      sessionStorage.setItem(`${card.set.id}`, JSON.stringify(data));
+
+      navigate(`/browse-by-set?${card.set.series}-${card.set.name}&page=1`, {
         state: {
-          set: set,
-          setData: JSON.parse(setData),
+          set: card.set,
+          setData: data,
         },
       });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch end point");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const getRarityCards = async (rarity) => {
+    try {
+      const response = await fetch(
+        "https://us-central1-pokebinder-ae627.cloudfunctions.net/app/get-rarity-cards",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            query: {
+              rarity: rarity,
+              page: 1,
+              pageSize: 36,
+            },
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch end point");
+      }
+
+      const data = await response.json();
+
+      navigate(`/rarity?${rarity}&page=1`, {
+        state: {
+          cardData: data,
+          rarity: rarity,
+        },
+      });
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
   };
 
@@ -110,6 +134,12 @@ function IndividualPageTrainer() {
       // console.log("setting to", Object.keys(card.tcgplayer?.prices)[0]);
     }
   }, [cardCollectionType, card]);
+
+  useEffect(() => {
+    document.title = `Pokébinder - ${card.name}`;
+
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <Container style={{ marginBottom: "20px" }}>
@@ -144,115 +174,125 @@ function IndividualPageTrainer() {
       )}
 
       {window.innerWidth < 576 ? (
-        <Row xs={12}>
-          {card && card.tcgplayer && card.tcgplayer.prices ? (
-            Object.entries(card.tcgplayer.prices).map(
-              ([type, prices], index) =>
-                index === 0 && (
-                  <div
-                    key={type}
-                    className="d-flex align-items-center justify-content-center"
-                  >
-                    <Col
-                      xs={10}
-                      className="d-flex justify-content-between"
-                      style={{ marginBottom: "8px" }}
+        <>
+          <Row
+            xs={12}
+            className="d-flex align-items-center justify-content-center mt-3"
+          >
+            Updated on {formattedDateString}
+          </Row>
+          <Row xs={12}>
+            {card && card.tcgplayer && card.tcgplayer.prices ? (
+              Object.entries(card.tcgplayer.prices).map(
+                ([type, prices], index) =>
+                  index === 0 && (
+                    <div
+                      key={type}
+                      className="d-flex align-items-center justify-content-center"
                     >
-                      <span className="d-flex align-items-center">
-                        <OverlayTrigger
-                          placement="bottom"
-                          delay={{ show: 250, hide: 400 }}
-                          overlay={<Tooltip id={"low"}>Low</Tooltip>}
-                        >
-                          <MuiIcon.DownIcon
-                            style={{ color: `var(--bs-red)` }}
-                          />
-                        </OverlayTrigger>
-                        <span style={{ paddingLeft: "10px" }}>
-                          {prices.low ? `$${prices.low.toFixed(2)}` : "- - -"}
-                        </span>
-                      </span>
-                      <span className="d-flex align-items-center">
-                        <OverlayTrigger
-                          placement="bottom"
-                          delay={{ show: 250, hide: 400 }}
-                          overlay={<Tooltip id={"market"}>Market</Tooltip>}
-                        >
-                          <MuiIcon.MarketIcon />
-                        </OverlayTrigger>
-                        <span style={{ paddingLeft: "10px" }}>
-                          {prices.market
-                            ? `$${prices.market.toFixed(2)}`
-                            : "- - -"}
-                        </span>
-                      </span>
-                      <span className="d-flex align-items-center">
-                        <OverlayTrigger
-                          placement="bottom"
-                          delay={{ show: 250, hide: 400 }}
-                          overlay={<Tooltip id={"high"}>High</Tooltip>}
-                        >
-                          <MuiIcon.UpIcon
-                            style={{ color: `var(--bs-green)` }}
-                          />
-                        </OverlayTrigger>
-                        <span style={{ paddingLeft: "10px" }}>
-                          {prices.high ? `$${prices.high.toFixed(2)}` : "- - -"}
-                        </span>
-                      </span>
-                      <OverlayTrigger
-                        placement="bottom"
-                        delay={{ show: 250, hide: 400 }}
-                        overlay={
-                          <Tooltip id={"launch"}>See at TCGplayer</Tooltip>
-                        }
+                      <Col
+                        xs={10}
+                        className="d-flex justify-content-between"
+                        style={{ marginBottom: "8px" }}
                       >
-                        <Link
-                          to={card?.tcgplayer.url}
-                          target="_blank"
-                          className="launch-tcgplayer"
-                        >
-                          <span className="d-flex align-items-center">
-                            <MuiIcon.LaunchIcon />
+                        <span className="d-flex align-items-center">
+                          <OverlayTrigger
+                            placement="bottom"
+                            delay={{ show: 250, hide: 400 }}
+                            overlay={<Tooltip id={"low"}>Low</Tooltip>}
+                          >
+                            <MuiIcon.DownIcon
+                              style={{ color: `var(--bs-red)` }}
+                            />
+                          </OverlayTrigger>
+                          <span style={{ paddingLeft: "10px" }}>
+                            {prices.low ? `$${prices.low.toFixed(2)}` : "- - -"}
                           </span>
-                        </Link>
-                      </OverlayTrigger>
-                    </Col>
-                  </div>
-                )
-            )
-          ) : (
-            <div className="d-flex align-items-center justify-content-center">
-              <Col
-                xs={10}
-                className="d-flex justify-content-between"
-                style={{ marginBottom: "8px" }}
-              >
-                <span className="d-flex align-items-center">
-                  <MuiIcon.DownIcon style={{ color: `var(--bs-red)` }} />
-                  <i style={{ paddingLeft: "10px" }}>- - -</i>
-                </span>
-                <span className="d-flex align-items-center">
-                  <MuiIcon.MarketIcon />
-                  <i style={{ paddingLeft: "10px" }}>- - -</i>
-                </span>
-                <span className="d-flex align-items-center">
-                  <MuiIcon.UpIcon style={{ color: `var(--bs-green)` }} />
-                  <i style={{ paddingLeft: "10px" }}>- - -</i>
-                </span>
-                <Link
-                  to={card?.tcgplayer.url}
-                  target="_blank"
-                  className="launch-tcgplayer"
+                        </span>
+                        <span className="d-flex align-items-center">
+                          <OverlayTrigger
+                            placement="bottom"
+                            delay={{ show: 250, hide: 400 }}
+                            overlay={<Tooltip id={"market"}>Market</Tooltip>}
+                          >
+                            <MuiIcon.MarketIcon />
+                          </OverlayTrigger>
+                          <span style={{ paddingLeft: "10px" }}>
+                            {prices.market
+                              ? `$${prices.market.toFixed(2)}`
+                              : "- - -"}
+                          </span>
+                        </span>
+                        <span className="d-flex align-items-center">
+                          <OverlayTrigger
+                            placement="bottom"
+                            delay={{ show: 250, hide: 400 }}
+                            overlay={<Tooltip id={"high"}>High</Tooltip>}
+                          >
+                            <MuiIcon.UpIcon
+                              style={{ color: `var(--bs-green)` }}
+                            />
+                          </OverlayTrigger>
+                          <span style={{ paddingLeft: "10px" }}>
+                            {prices.high
+                              ? `$${prices.high.toFixed(2)}`
+                              : "- - -"}
+                          </span>
+                        </span>
+                        <OverlayTrigger
+                          placement="bottom"
+                          delay={{ show: 250, hide: 400 }}
+                          overlay={
+                            <Tooltip id={"launch"}>See at TCGplayer</Tooltip>
+                          }
+                        >
+                          <Link
+                            to={card?.tcgplayer.url}
+                            target="_blank"
+                            className="launch-tcgplayer"
+                          >
+                            <span className="d-flex align-items-center">
+                              <MuiIcon.LaunchIcon />
+                            </span>
+                          </Link>
+                        </OverlayTrigger>
+                      </Col>
+                    </div>
+                  )
+              )
+            ) : (
+              <div className="d-flex align-items-center justify-content-center">
+                <Col
+                  xs={10}
+                  className="d-flex justify-content-between"
+                  style={{ marginBottom: "8px" }}
                 >
                   <span className="d-flex align-items-center">
-                    <MuiIcon.LaunchIcon />
+                    <MuiIcon.DownIcon style={{ color: `var(--bs-red)` }} />
+                    <span style={{ paddingLeft: "10px" }}>- - -</span>
                   </span>
-                </Link>
-              </Col>
-            </div>
-          )}
-        </Row>
+                  <span className="d-flex align-items-center">
+                    <MuiIcon.MarketIcon />
+                    <span style={{ paddingLeft: "10px" }}>- - -</span>
+                  </span>
+                  <span className="d-flex align-items-center">
+                    <MuiIcon.UpIcon style={{ color: `var(--bs-green)` }} />
+                    <span style={{ paddingLeft: "10px" }}>- - -</span>
+                  </span>
+                  <Link
+                    to={card?.tcgplayer.url}
+                    target="_blank"
+                    className="launch-tcgplayer"
+                  >
+                    <span className="d-flex align-items-center">
+                      <MuiIcon.LaunchIcon />
+                    </span>
+                  </Link>
+                </Col>
+              </div>
+            )}
+          </Row>
+        </>
       ) : (
         ""
       )}
@@ -342,6 +382,23 @@ function IndividualPageTrainer() {
           </div>
 
           <div>
+            <b>Number </b>
+            <span className="card-desc-small-text">
+              {card.number}/{card.set.printedTotal}
+            </span>
+          </div>
+
+          <div>
+            <b>Rarity </b>
+            <span
+              className="card-desc-small-text span-link"
+              onClick={() => getRarityCards(card.rarity)}
+            >
+              {card.rarity}
+            </span>
+          </div>
+
+          <div>
             {card.hasOwnProperty("rules") ? (
               <div>
                 <b>Rules: </b>
@@ -373,7 +430,7 @@ function IndividualPageTrainer() {
           </div>
 
           <div>
-            <b>Artist: </b> <i>{card.artist}</i>
+            <b>Artist: </b> {card.artist}
           </div>
         </Col>
       </Row>
@@ -403,30 +460,48 @@ function IndividualPageTrainer() {
                       </div>
                       <Row className="list price-list " md="auto">
                         <Col xs={3} className="d-flex align-items-center">
-                          <MuiIcon.DownIcon
-                            style={{ color: `var(--bs-red)` }}
-                          />
-                          <i style={{ paddingLeft: "10px" }}>
+                          <OverlayTrigger
+                            placement="bottom"
+                            delay={{ show: 250, hide: 400 }}
+                            overlay={<Tooltip id={"low"}>Low</Tooltip>}
+                          >
+                            <MuiIcon.DownIcon
+                              style={{ color: `var(--bs-red)` }}
+                            />
+                          </OverlayTrigger>
+                          <span style={{ paddingLeft: "10px" }}>
                             {prices.low ? `$${prices.low.toFixed(2)}` : "- - -"}
-                          </i>
+                          </span>
                         </Col>
                         <Col xs={3} className="d-flex align-items-center">
-                          <MuiIcon.MarketIcon />
-                          <i style={{ paddingLeft: "10px" }}>
+                          <OverlayTrigger
+                            placement="bottom"
+                            delay={{ show: 250, hide: 400 }}
+                            overlay={<Tooltip id={"low"}>Market</Tooltip>}
+                          >
+                            <MuiIcon.MarketIcon />
+                          </OverlayTrigger>
+                          <span style={{ paddingLeft: "10px" }}>
                             {prices.market
                               ? `$${prices.market.toFixed(2)}`
                               : "- - -"}
-                          </i>
+                          </span>
                         </Col>
                         <Col xs={3} className="d-flex align-items-center">
-                          <MuiIcon.UpIcon
-                            style={{ color: `var(--bs-green)` }}
-                          />
-                          <i style={{ paddingLeft: "10px" }}>
+                          <OverlayTrigger
+                            placement="bottom"
+                            delay={{ show: 250, hide: 400 }}
+                            overlay={<Tooltip id={"low"}>High</Tooltip>}
+                          >
+                            <MuiIcon.UpIcon
+                              style={{ color: `var(--bs-green)` }}
+                            />
+                          </OverlayTrigger>
+                          <span style={{ paddingLeft: "10px" }}>
                             {prices.high
                               ? `$${prices.high.toFixed(2)}`
                               : "- - -"}
-                          </i>
+                          </span>
                         </Col>
                         <Col xs={3} className="d-flex align-items-center">
                           <Link

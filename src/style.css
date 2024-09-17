@@ -118,6 +118,19 @@ header > div > div > div > a.dropdown-item:active {
   background-color: #ffffff;
 }
 
+.modal-btn {
+  border-radius: 5px !important;
+  background-color: transparent !important;
+  border: 0 !important;
+}
+
+.modal-btn:hover,
+.modal-btn:active,
+.modal-btn:focus {
+  background-color: rgba(0, 0, 0, 0.4) !important;
+  border: 0 !important;
+}
+
 .header-container {
   display: flex;
   justify-content: space-between;
@@ -179,11 +192,17 @@ input.form-range {
 
 .button {
   background-color: var(--ghost) !important;
-  border-radius: 0px;
+  border-radius: 5px !important;
   border: none !important;
   margin-left: 30px;
   width: 100px;
   height: 50px;
+}
+
+button:hover,
+button:active,
+button:focus {
+  border: 0px !important;
 }
 
 .search-button,
@@ -198,7 +217,8 @@ input.form-range {
 }
 
 .search-button:hover,
-.search-button:active {
+.search-button:active,
+.search-button:focus {
   background-color: #674e87 !important;
   border-radius: 7px;
   border-left: none !important;
@@ -241,7 +261,8 @@ a:active {
   border: none !important;
 }
 
-.button:active {
+.button:active,
+.button:focus {
   background-color: var(--ghost) !important;
   border: none !important;
 }
@@ -595,7 +616,12 @@ select.subtype-select {
 .css-r93niq-MuiButtonBase-root-MuiPaginationItem-root:active {
   background-color: rgba(0, 0, 0, 0.4) !important;
   color: #fff !important;
+  border: 1px solid rgba(0, 0, 0, 0.4) !important;
   transform: scale(1.2) !important;
+}
+
+.css-r93niq-MuiButtonBase-root-MuiPaginationItem-root:focus {
+  border: 1px solid rgba(0, 0, 0, 0.4) !important;
 }
 
 .css-r93niq-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected {
@@ -633,7 +659,12 @@ select.subtype-select {
 .css-21ve8j:active {
   background-color: rgba(0, 0, 0, 0.4) !important;
   color: #fff !important;
+  border: 1px solid rgba(0, 0, 0, 0.4) !important;
   transform: scale(1.2) !important;
+}
+
+.css-21ve8j:focus {
+  border: 1px solid rgba(0, 0, 0, 0.4) !important;
 }
 
 .css-21ve8j.Mui-disabled {
@@ -696,7 +727,8 @@ input::file-selector-button {
 }
 
 .upload-button:hover,
-.upload-button:active {
+.upload-button:active,
+.upload-button:focus {
   background-color: var(--flying) !important;
   border: 1px solid var(--flying) !important;
 }
@@ -710,7 +742,8 @@ input::file-selector-button {
 }
 
 .logout-button:hover,
-.logout-button:active {
+.logout-button:active,
+.logout-button:focus {
   background-color: var(--flying) !important;
   border: 1px solid var(--flying) !important;
 }
@@ -926,6 +959,29 @@ button.add-to-collection {
 
 .series-row-image-splider {
   margin-top: 25px;
+}
+
+.modal-content {
+  background-color: var(--bgcolor);
+}
+
+.add-to-button {
+  background-color: var(--ghost);
+  border: none;
+}
+
+.add-to-button:hover {
+  background-color: var(--flying);
+  border: none;
+}
+
+.add-to-button:active {
+  background-color: var(--ghost) !important;
+  border: none !important;
+}
+
+.add-to-button:focus {
+  border: none !important;
 }
 
 /* mobile styles */

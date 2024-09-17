@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 // eslint-disable-next-line
 import app from "./firebase";
 import {
@@ -172,6 +172,12 @@ function Profile() {
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    document.title = `Pokébinder - ${currentUser.displayName}'s Profile`;
+
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <>

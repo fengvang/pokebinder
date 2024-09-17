@@ -147,6 +147,12 @@ function MobileBrowseSets() {
 
   localStorage.removeItem("order");
 
+  useEffect(() => {
+    document.title = "Pokébinder - Browse by Set";
+
+    // eslint-disable-next-line
+  }, []);
+
   return (
     <>
       {isClicked && (

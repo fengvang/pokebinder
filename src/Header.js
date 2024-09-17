@@ -59,7 +59,7 @@ function Header() {
 
         setTimeout(() => {
           setLoading(false);
-          navigate(-1);
+          navigate("/");
         }, 1500);
       })
       .catch((error) => {

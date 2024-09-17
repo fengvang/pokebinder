@@ -273,6 +273,12 @@ function Collection() {
     // eslint-disable-next-line
   }, [sessionStorage.getItem("sessionCollection")]);
 
+  useEffect(() => {
+    document.title = `Pokébinder - ${currentUser.displayName}'s Binder`;
+
+    // eslint-disable-next-line
+  }, []);
+
   return (
     <>
       {currentUser ? (

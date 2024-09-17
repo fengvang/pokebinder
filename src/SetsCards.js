@@ -126,6 +126,12 @@ function SetsCards() {
     }
   };
 
+  useEffect(() => {
+    document.title = `Pokébinder - ${set.name}`;
+
+    // eslint-disable-next-line
+  }, []);
+
   return (
     <>
       <div className="d-flex align-items-center justify-content-center mt-5">
@@ -169,10 +175,10 @@ function SetsCards() {
           <option value="-number">Number Descending</option>
           <option value="name">Name A-Z</option>
           <option value="-name">Name Z-A</option>
-          <option value="-tcgplayer.prices.holofoil">
+          <option value="-tcgplayer.prices.holofoil.mid">
             Market Price - Highest
           </option>
-          <option value="tcgplayer.prices.holofoil">
+          <option value="tcgplayer.prices.holofoil.mid">
             Market Price - Lowest
           </option>
         </Form.Select>

@@ -170,7 +170,7 @@ app.post("/get-set-data", async (req, res) => {
     let orderByParams = req.body.query.orderBy || null;
 
     if (pageSize < 36 && orderByParams === null)
-      orderByParams = "-tcgplayer.prices.holofoil";
+      orderByParams = "-tcgplayer.prices.holofoil.mid";
     else if (orderByParams === null) orderByParams = "number";
 
     const data = await pokemon.card.where({
@@ -191,7 +191,26 @@ app.post("/get-card-by-id", async (req, res) => {
   try {
     const cardID = req.body.query.id;
 
-    const data = await pokemon.card.find(`${cardID}`);
+    const data = await pokemon.card.where({ q: `id:"${cardID}"` });
+
+    res.json(data);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.post("/get-rarity-cards", async (req, res) => {
+  try {
+    const rarity = req.body.query.rarity;
+    const page = req.body.query.page;
+    const pageSize = req.body.query.pageSize;
+
+    const data = await pokemon.card.where({
+      q: `rarity:"${rarity}"`,
+      page: page,
+      pageSize: pageSize,
+    });
 
     res.json(data);
   } catch (error) {

@@ -15,6 +15,7 @@ import SearchResults from "./SearchResults";
 import IndividualPagePokémon from "./IndividualPagePokémon";
 import IndividualPageTrainer from "./IndividualPageTrainer";
 import IndividualPageEnergy from "./IndividualPageEnergy";
+import Rarity from "./Rarity";
 import BrowseSets from "./BrowseSets";
 import BrowseBySetsResults from "./BrowseBySetsResults";
 import Login from "./Login";
@@ -73,6 +74,7 @@ const router = createBrowserRouter([
       },
       { path: "/trainer-card", element: <IndividualPageTrainer /> },
       { path: "/energy-card", element: <IndividualPageEnergy /> },
+      { path: "/rarity", element: <Rarity /> },
       {
         path: "/search-by-set",
         element: null,
