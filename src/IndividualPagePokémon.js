@@ -409,16 +409,107 @@ function IndividualPagePokémon() {
         {/* Mobile view */}
         {window.innerWidth > 768 ? null : (
           <div className="d-flex align-items-center justify-content-center mt-3">
-            <Button className="mx-2 add-to-button">
-              <MuiIcon.LibraryAddIcon /> Add to wishlist
-            </Button>
+            {currentUser ? (
+              card.tcgplayer?.prices &&
+              Object.keys(card.tcgplayer?.prices).length > 1 ? (
+                <>
+                  <Popup
+                    trigger={
+                      <Button className="mx-2 add-to-button">
+                        <MuiIcon.LibraryAddIcon /> Add to wishlist
+                      </Button>
+                    }
+                    modal
+                  >
+                    <div className="modal-header d-flex align-items-center justify-content-center">
+                      Which variant?
+                    </div>
+                    <div className="modal-content">
+                      {Object.keys(card.tcgplayer?.prices).map(
+                        (priceType, index) => (
+                          <Form.Check
+                            key={index}
+                            type="radio"
+                            id={`priceType-${index}`}
+                            label={formatType(priceType)}
+                            value={priceType}
+                            checked={cardCollectionType === priceType}
+                            onChange={handlePriceTypeChange}
+                          />
+                        )
+                      )}
+                    </div>
+                    <div className="mb-3 d-flex align-items-center justify-content-center">
+                      <Button
+                        className="add-to-button"
+                        onClick={() => handleUpdateCollection("wishlist")}
+                      >
+                        Add to wishlist
+                      </Button>
+                    </div>
+                  </Popup>
 
-            <Button
-              className="mx-2 add-to-button"
-              onClick={handleUpdateCollection}
-            >
-              <MuiIcon.FavoriteIcon /> Add to collection
-            </Button>
+                  <Popup
+                    trigger={
+                      <Button className="mx-2 add-to-button">
+                        <MuiIcon.FavoriteIcon /> Add to collection
+                      </Button>
+                    }
+                    modal
+                  >
+                    <div className="modal-header d-flex align-items-center justify-content-center">
+                      Which variant?
+                    </div>
+                    <div className="modal-content">
+                      {Object.keys(card.tcgplayer?.prices).map(
+                        (priceType, index) => (
+                          <Form.Check
+                            key={index}
+                            type="radio"
+                            id={`priceType-${index}`}
+                            label={formatType(priceType)}
+                            value={priceType}
+                            checked={cardCollectionType === priceType}
+                            onChange={handlePriceTypeChange}
+                          />
+                        )
+                      )}
+                    </div>
+                    <div className="mb-3 d-flex align-items-center justify-content-center">
+                      <Button
+                        className="add-to-button"
+                        onClick={() => handleUpdateCollection("collection")}
+                      >
+                        Add to collection
+                      </Button>
+                    </div>
+                  </Popup>
+                </>
+              ) : (
+                <>
+                  <Button
+                    className="mx-2 add-to-button"
+                    onClick={() => handleUpdateCollection("wishlist")}
+                  >
+                    <MuiIcon.LibraryAddIcon />
+                    Add to wishlist
+                  </Button>
+
+                  <Button
+                    className="mx-2 add-to-button"
+                    onClick={() => handleUpdateCollection("collection")}
+                  >
+                    <MuiIcon.FavoriteIcon /> Add to collection
+                  </Button>
+                </>
+              )
+            ) : (
+              <span>
+                Please
+                <Link to="/login"> log in </Link>
+                to track your collection.
+              </span>
+            )}
           </div>
         )}
 

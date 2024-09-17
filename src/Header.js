@@ -46,10 +46,20 @@ function Header() {
           </Row>
           <Button
             className="logout-button"
-            style={{ marginTop: "25px" }}
+            style={{ marginTop: "25px", fontSize: "1.3rem" }}
             onClick={logout}
           >
             Logout
+          </Button>
+          <Button
+            className="logout-button"
+            style={{
+              marginTop: "25px",
+              marginLeft: "25px",
+              fontSize: "1.3rem",
+            }}
+          >
+            Close
           </Button>
         </div>
       </div>

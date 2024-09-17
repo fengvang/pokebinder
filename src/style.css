@@ -878,13 +878,13 @@ form.login-form {
   height: 45px;
   margin-top: 25px;
   margin-bottom: 25px;
-  border-radius: 0px !important;
+  border-radius: 5px !important;
   background-color: var(--ghost) !important;
   border: 0px !important;
 }
 
 .create-account-btn:hover {
-  border-radius: 0px !important;
+  border-radius: 5px !important;
   background-color: var(--flying) !important;
   border: 0px !important;
 }
@@ -1200,7 +1200,7 @@ button.add-to-collection {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.8);
-    z-index: 9999;
+    z-index: 9999999999;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1216,6 +1216,19 @@ button.add-to-collection {
     padding: 25px;
     align-content: start;
     text-align: start;
+    font-size: 1.3rem;
+  }
+
+  div > div > div > div > a:link,
+  div > div > div > div > a:visited {
+    color: #fff !important;
+    padding: 15px;
+  }
+
+  div > div > div > div > a:hover,
+  div > div > div > div > a:active {
+    background-color: #2b2f35 !important;
+    border-radius: 5px;
   }
 
   .newest-set-cards {
