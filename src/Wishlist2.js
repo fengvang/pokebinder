@@ -2,7 +2,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { getDatabase, ref, onValue, get, set } from "firebase/database";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
-import { Image, Form, Row, Col } from "react-bootstrap";
+import { Image, Form, Row, Col, Button } from "react-bootstrap";
 import SyncLoader from "react-spinners/SyncLoader";
 
 import {
@@ -10,6 +10,7 @@ import {
   sortByPrice,
   wishlistTextWithImage,
   sortByDate,
+  formatISODate,
 } from "./Functions";
 import * as MuiIcon from "./MuiIcons";
 
@@ -376,25 +377,31 @@ function Wishlist2() {
                     </div>
                   </Col>
 
-                  <Col className="mx-3 d-flex justify-content-end">
+                  <Col className="mx-3 d-inline-flex flex-column align-items-center">
+                    <span>
+                      Card added on {formatISODate(card?.dateAddedToCollection)}
+                    </span>
+
                     <Link
                       to={card?.tcgplayer.url}
                       target="_blank"
                       className="launch-tcgplayer"
                     >
-                      <span className="d-flex align-items-center">
-                        <MuiIcon.LaunchIcon />
-                      </span>
+                      <Button id="tcg-player-button">
+                        Check out on TCG Player
+                      </Button>
                     </Link>
-                  </Col>
 
-                  <MuiIcon.CloseIcon
-                    className="card-wishlist-close-button"
-                    style={{ color: "rgba(255,255,255,0.1)" }}
-                    onClick={() =>
-                      removeCardFromCollection(index, setCollection)
-                    }
-                  />
+                    <div className="d-flex align-items-center justify-content-center">
+                      <MuiIcon.DeleteIcon
+                        className="card-wishlist-close-button"
+                        style={{ color: "rgba(255,255,255,0.1)" }}
+                        onClick={() =>
+                          removeCardFromCollection(index, setCollection)
+                        }
+                      />
+                    </div>
+                  </Col>
                 </div>
               ))
             )}

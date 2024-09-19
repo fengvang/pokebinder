@@ -555,3 +555,11 @@ export function formatDate(originalDate) {
   const formattedDate = `${parts[1]}/${parts[2]}/${parts[0]}`;
   return formattedDate;
 }
+
+export function formatISODate(ISODate) {
+  const date = new Date(ISODate);
+  const options = { month: "short", day: "2-digit", year: "numeric" };
+  const formattedDate = date.toLocaleDateString("en-US", options);
+
+  return formattedDate;
+}

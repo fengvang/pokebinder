@@ -458,10 +458,6 @@ div > form.my-3 {
   transition: 0.15s ease-in-out !important;
 }
 
-.wishlist-card-container:hover {
-  background-color: rgba(115, 87, 151, 0.2);
-}
-
 .collection-card-image {
   width: 170px;
   margin: 0px 0px 15px 0px;
@@ -474,7 +470,7 @@ div > form.my-3 {
 }
 
 .wishlist-card-image {
-  width: 50px;
+  width: 150px;
   transition: transform 0.5s ease, opacity 0.5s ease-in-out !important;
 }
 
@@ -1032,6 +1028,20 @@ button.add-to-collection {
 
 .add-to-button:focus {
   border: none !important;
+}
+
+#tcg-player-button,
+#tcg-player-button:active {
+  background-color: var(--ghost) !important;
+  border: none !important;
+  width: 180px;
+  transition: 0.15s ease-in-out;
+}
+
+#tcg-player-button:hover {
+  background-color: var(--flying) !important;
+  border: none;
+  width: 180px;
 }
 
 /* mobile styles */

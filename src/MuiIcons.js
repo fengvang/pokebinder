@@ -20,6 +20,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { default as Wand } from "@mui/icons-material/AutoFixNormal";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export {
   TuneIcon,
@@ -44,4 +45,5 @@ export {
   SettingsIcon,
   Wand,
   InventoryIcon,
+  DeleteIcon,
 };
