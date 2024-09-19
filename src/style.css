@@ -445,6 +445,23 @@ div > form.my-3 {
   background-color: rgba(115, 87, 151, 0.2);
 }
 
+.wishlist-card-container {
+  width: 95%;
+  background-color: rgba(0, 0, 0, 0.5);
+  align-items: center;
+  justify-content: space-between;
+  display: inline-flex;
+  flex-direction: row;
+  margin: 5px;
+  padding: 10px;
+  border-radius: 8px;
+  transition: 0.15s ease-in-out !important;
+}
+
+.wishlist-card-container:hover {
+  background-color: rgba(115, 87, 151, 0.2);
+}
+
 .collection-card-image {
   width: 170px;
   margin: 0px 0px 15px 0px;
@@ -456,6 +473,15 @@ div > form.my-3 {
   transform: scale(1.08);
 }
 
+.wishlist-card-image {
+  width: 50px;
+  transition: transform 0.5s ease, opacity 0.5s ease-in-out !important;
+}
+
+.wishlist-card-image:hover {
+  cursor: pointer;
+}
+
 .card-collection-close-button {
   position: relative;
   left: 76px;
@@ -464,6 +490,17 @@ div > form.my-3 {
 }
 
 .card-collection-close-button:hover {
+  color: #ffffff !important;
+  cursor: pointer;
+}
+
+.card-wishlist-close-button {
+  position: relative;
+  top: 0px;
+  transition: 0.15s ease-in-out !important;
+}
+
+.card-wishlist-close-button:hover {
   color: #ffffff !important;
   cursor: pointer;
 }
@@ -1304,6 +1341,10 @@ button.add-to-collection {
 
   .series-row-splider {
     min-width: 100vw;
+  }
+
+  .wishlist-card-image {
+    width: 25px !important;
   }
 }
 

@@ -23,7 +23,7 @@ import CreateAccount from "./CreateAccount";
 import Profile from "./Profile";
 import Collection from "./Collection";
 import VerifyEmail from "./VerifyEmail";
-import Wishlist from "./Wishlist";
+import Wishlist from "./Wishlist2";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./style.css";

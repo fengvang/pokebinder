@@ -33,17 +33,21 @@ function IndividualPageTrainer() {
     formattedDateString = formattedDate.toLocaleDateString("en-US", options);
   }
 
-  const handleUpdateCollection = () => {
+  const handleUpdateCollection = (collectionOrWishlist) => {
     const dateAddedToCollection = new Date().toISOString();
 
-    updateCollection(currentUser.uid, {
-      ...card,
-      cardCollectionType:
-        cardCollectionType !== "" ? cardCollectionType : "null",
-      dateAddedToCollection,
-    });
+    updateCollection(
+      currentUser.uid,
+      {
+        ...card,
+        cardCollectionType:
+          cardCollectionType !== "" ? cardCollectionType : "null",
+        dateAddedToCollection,
+      },
+      collectionOrWishlist
+    );
 
-    cardAdded();
+    cardAdded(collectionOrWishlist);
   };
 
   const handlePriceTypeChange = (event) => {
@@ -305,23 +309,27 @@ function IndividualPageTrainer() {
               src={card.images.large}
               alt={card.name}
             />
+          </div>
+        </Col>
+
+        {/* Mobile view */}
+        {window.innerWidth > 768 ? null : (
+          <div className="d-flex align-items-center justify-content-center mt-3">
             {currentUser ? (
               card.tcgplayer?.prices &&
               Object.keys(card.tcgplayer?.prices).length > 1 ? (
                 <>
                   <Popup
                     trigger={
-                      <div
-                        className="image-overlay"
-                        onClick={handleUpdateCollection}
-                      >
-                        Add to collection
-                        <MuiIcon.LibraryAddIcon style={{ marginLeft: "5px" }} />
-                      </div>
+                      <Button className="mx-2 add-to-button">
+                        <MuiIcon.LibraryAddIcon /> Add to wishlist
+                      </Button>
                     }
                     modal
                   >
-                    <div className="modal-header">Which variant?</div>
+                    <div className="modal-header d-flex align-items-center justify-content-center">
+                      Which variant?
+                    </div>
                     <div className="modal-content">
                       {Object.keys(card.tcgplayer?.prices).map(
                         (priceType, index) => (
@@ -339,8 +347,44 @@ function IndividualPageTrainer() {
                     </div>
                     <div className="mb-3 d-flex align-items-center justify-content-center">
                       <Button
-                        className="add-to-collection"
-                        onClick={handleUpdateCollection}
+                        className="add-to-button"
+                        onClick={() => handleUpdateCollection("wishlist")}
+                      >
+                        Add to wishlist
+                      </Button>
+                    </div>
+                  </Popup>
+
+                  <Popup
+                    trigger={
+                      <Button className="mx-2 add-to-button">
+                        <MuiIcon.FavoriteIcon /> Add to collection
+                      </Button>
+                    }
+                    modal
+                  >
+                    <div className="modal-header d-flex align-items-center justify-content-center">
+                      Which variant?
+                    </div>
+                    <div className="modal-content">
+                      {Object.keys(card.tcgplayer?.prices).map(
+                        (priceType, index) => (
+                          <Form.Check
+                            key={index}
+                            type="radio"
+                            id={`priceType-${index}`}
+                            label={formatType(priceType)}
+                            value={priceType}
+                            checked={cardCollectionType === priceType}
+                            onChange={handlePriceTypeChange}
+                          />
+                        )
+                      )}
+                    </div>
+                    <div className="mb-3 d-flex align-items-center justify-content-center">
+                      <Button
+                        className="add-to-button"
+                        onClick={() => handleUpdateCollection("collection")}
                       >
                         Add to collection
                       </Button>
@@ -349,24 +393,31 @@ function IndividualPageTrainer() {
                 </>
               ) : (
                 <>
-                  <div
-                    className="image-overlay"
-                    onClick={handleUpdateCollection}
+                  <Button
+                    className="mx-2 add-to-button"
+                    onClick={() => handleUpdateCollection("wishlist")}
                   >
-                    Add to collection
-                    <MuiIcon.LibraryAddIcon style={{ marginLeft: "5px" }} />
-                  </div>
+                    <MuiIcon.LibraryAddIcon />
+                    Add to wishlist
+                  </Button>
+
+                  <Button
+                    className="mx-2 add-to-button"
+                    onClick={() => handleUpdateCollection("collection")}
+                  >
+                    <MuiIcon.FavoriteIcon /> Add to collection
+                  </Button>
                 </>
               )
             ) : (
-              <Link to="/login">
-                <div className="image-overlay" style={{ color: "#ffffff" }}>
-                  Log in to track collection
-                </div>
-              </Link>
+              <span>
+                Please
+                <Link to="/login"> log in </Link>
+                to track your collection.
+              </span>
             )}
           </div>
-        </Col>
+        )}
 
         <Col md={7} className="individual-card-info">
           <h4>Card Description</h4>
@@ -434,6 +485,118 @@ function IndividualPageTrainer() {
           </div>
         </Col>
       </Row>
+
+      {window.innerWidth > 768 ? (
+        <Row style={{ padding: "12px" }}>
+          <Col
+            xs="auto"
+            md={5}
+            className="d-flex justify-content-center align-items-center"
+          >
+            {currentUser ? (
+              card.tcgplayer?.prices &&
+              Object.keys(card.tcgplayer?.prices).length > 1 ? (
+                <>
+                  <Popup
+                    trigger={
+                      <Button className="mx-2 add-to-button">
+                        <MuiIcon.LibraryAddIcon /> Add to wishlist
+                      </Button>
+                    }
+                    modal
+                  >
+                    <div className="modal-header d-flex align-items-center justify-content-center">
+                      Which variant?
+                    </div>
+                    <div className="modal-content">
+                      {Object.keys(card.tcgplayer?.prices).map(
+                        (priceType, index) => (
+                          <Form.Check
+                            key={index}
+                            type="radio"
+                            id={`priceType-${index}`}
+                            label={formatType(priceType)}
+                            value={priceType}
+                            checked={cardCollectionType === priceType}
+                            onChange={handlePriceTypeChange}
+                          />
+                        )
+                      )}
+                    </div>
+                    <div className="mb-3 d-flex align-items-center justify-content-center">
+                      <Button
+                        className="add-to-button"
+                        onClick={() => handleUpdateCollection("wishlist")}
+                      >
+                        Add to wishlist
+                      </Button>
+                    </div>
+                  </Popup>
+
+                  <Popup
+                    trigger={
+                      <Button className="mx-2 add-to-button">
+                        <MuiIcon.FavoriteIcon /> Add to collection
+                      </Button>
+                    }
+                    modal
+                  >
+                    <div className="modal-header d-flex align-items-center justify-content-center">
+                      Which variant?
+                    </div>
+                    <div className="modal-content">
+                      {Object.keys(card.tcgplayer?.prices).map(
+                        (priceType, index) => (
+                          <Form.Check
+                            key={index}
+                            type="radio"
+                            id={`priceType-${index}`}
+                            label={formatType(priceType)}
+                            value={priceType}
+                            checked={cardCollectionType === priceType}
+                            onChange={handlePriceTypeChange}
+                          />
+                        )
+                      )}
+                    </div>
+                    <div className="mb-3 d-flex align-items-center justify-content-center">
+                      <Button
+                        className="add-to-button"
+                        onClick={() => handleUpdateCollection("collection")}
+                      >
+                        Add to collection
+                      </Button>
+                    </div>
+                  </Popup>
+                </>
+              ) : (
+                <>
+                  <Button
+                    className="mx-2 add-to-button"
+                    onClick={() => handleUpdateCollection("wishlist")}
+                  >
+                    <MuiIcon.LibraryAddIcon />
+                    Add to wishlist
+                  </Button>
+
+                  <Button
+                    className="mx-2 add-to-button"
+                    onClick={() => handleUpdateCollection("collection")}
+                  >
+                    <MuiIcon.FavoriteIcon /> Add to collection
+                  </Button>
+                </>
+              )
+            ) : (
+              <span>
+                Please
+                <Link to="/login"> log in </Link>
+                to track your collection.
+              </span>
+            )}
+          </Col>
+        </Row>
+      ) : null}
 
       {window.innerWidth > 576 ? (
         <Row className="second-row" style={{ padding: "12px" }}>
