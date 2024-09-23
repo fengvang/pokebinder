@@ -344,11 +344,11 @@ function Wishlist2() {
                     onLoad={(e) => e.target.classList.add("card-image-loaded")}
                   />
 
-                  <Col className="mx-3">
+                  <Col style={{ marginLeft: "20px" }} md={3}>
                     <span>{wishlistTextWithImage(card.name)}</span>
                   </Col>
 
-                  <Col>
+                  <Col style={{ marginLeft: "20px" }} md={3}>
                     <div>
                       {card.tcgplayer?.prices?.holofoil?.market ||
                       card.tcgplayer?.prices?.["1stEditionHolofoil"]?.market ||
@@ -378,28 +378,28 @@ function Wishlist2() {
                   </Col>
 
                   <Col className="mx-3 d-inline-flex flex-column align-items-center">
-                    <span>
-                      Card added on {formatISODate(card?.dateAddedToCollection)}
+                    <span className="mb-3">
+                      Added on {formatISODate(card?.dateAddedToCollection)}
                     </span>
 
                     <Link
                       to={card?.tcgplayer.url}
                       target="_blank"
-                      className="launch-tcgplayer"
+                      className="launch-tcgplayer mb-3"
                     >
-                      <Button id="tcg-player-button">
-                        Check out on TCG Player
-                      </Button>
+                      <Button id="tcg-player-button">Buy on TCG Player</Button>
                     </Link>
 
                     <div className="d-flex align-items-center justify-content-center">
-                      <MuiIcon.DeleteIcon
-                        className="card-wishlist-close-button"
-                        style={{ color: "rgba(255,255,255,0.1)" }}
+                      <Button
+                        id="tcg-player-button"
                         onClick={() =>
                           removeCardFromCollection(index, setCollection)
                         }
-                      />
+                      >
+                        <MuiIcon.DeleteIcon className="card-wishlist-close-button" />{" "}
+                        Remove
+                      </Button>
                     </div>
                   </Col>
                 </div>
@@ -408,7 +408,7 @@ function Wishlist2() {
           </Row>
         </>
       ) : (
-        <span>No cards in collection</span>
+        <span>No cards in wishlist</span>
       )}
     </>
   );

@@ -1034,14 +1034,13 @@ button.add-to-collection {
 #tcg-player-button:active {
   background-color: var(--ghost) !important;
   border: none !important;
-  width: 180px;
+  width: 137px;
   transition: 0.15s ease-in-out;
 }
 
 #tcg-player-button:hover {
   background-color: var(--flying) !important;
   border: none;
-  width: 180px;
 }
 
 /* mobile styles */
