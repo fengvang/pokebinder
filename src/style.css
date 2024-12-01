@@ -1355,6 +1355,23 @@ button.add-to-collection {
   .wishlist-card-image {
     width: 25px !important;
   }
+
+  .wishlist-card-image {
+    width: 33% !important;
+    min-height: 100%;
+    transition: transform 0.5s ease, opacity 0.5s ease-in-out !important;
+  }
+
+  .mobile-card-wishlist-name,
+  .mobile-card-wishlist-price {
+    display: none;
+  }
+
+  .mobile-card-wishlist-functions {
+    width: 66% !important;
+    margin-left: 25px !important;
+    align-items: center !important;
+  }
 }
 
 .getting-sets-loading-screen {

@@ -344,11 +344,21 @@ function Wishlist2() {
                     onLoad={(e) => e.target.classList.add("card-image-loaded")}
                   />
 
-                  <Col style={{ marginLeft: "20px" }} md={3}>
-                    <span>{wishlistTextWithImage(card.name)}</span>
+                  <Col
+                    style={{ marginLeft: "20px" }}
+                    md={3}
+                    className="mobile-card-wishlist-name"
+                  >
+                    <span style={{ fontSize: "1.25rem" }}>
+                      {wishlistTextWithImage(card.name)}
+                    </span>
                   </Col>
 
-                  <Col style={{ marginLeft: "20px" }} md={3}>
+                  <Col
+                    style={{ marginLeft: "20px" }}
+                    md={3}
+                    className="mobile-card-wishlist-price"
+                  >
                     <div>
                       {card.tcgplayer?.prices?.holofoil?.market ||
                       card.tcgplayer?.prices?.["1stEditionHolofoil"]?.market ||
@@ -356,20 +366,22 @@ function Wishlist2() {
                       card.tcgplayer?.prices?.["1stEditionNormal"]?.market ||
                       card.tcgplayer?.prices?.normal?.market ? (
                         <>
-                          $
-                          {card.tcgplayer?.prices?.holofoil?.market.toFixed(
-                            2
-                          ) ||
-                            card.tcgplayer?.prices?.[
-                              "1stEditionHolofoil"
-                            ]?.market.toFixed(2) ||
-                            card.tcgplayer?.prices?.reverseHolofoil?.market.toFixed(
+                          <span style={{ fontWeight: "bold" }}>
+                            $
+                            {card.tcgplayer?.prices?.holofoil?.market.toFixed(
                               2
                             ) ||
-                            card.tcgplayer?.prices?.[
-                              "1stEditionNormal"
-                            ]?.market.toFixed(2) ||
-                            card.tcgplayer?.prices?.normal?.market.toFixed(2)}
+                              card.tcgplayer?.prices?.[
+                                "1stEditionHolofoil"
+                              ]?.market.toFixed(2) ||
+                              card.tcgplayer?.prices?.reverseHolofoil?.market.toFixed(
+                                2
+                              ) ||
+                              card.tcgplayer?.prices?.[
+                                "1stEditionNormal"
+                              ]?.market.toFixed(2) ||
+                              card.tcgplayer?.prices?.normal?.market.toFixed(2)}
+                          </span>
                         </>
                       ) : (
                         <span>No data</span>
@@ -377,31 +389,109 @@ function Wishlist2() {
                     </div>
                   </Col>
 
-                  <Col className="mx-3 d-inline-flex flex-column align-items-center">
-                    <span className="mb-3">
-                      Added on {formatISODate(card?.dateAddedToCollection)}
-                    </span>
-
-                    <Link
-                      to={card?.tcgplayer.url}
-                      target="_blank"
-                      className="launch-tcgplayer mb-3"
-                    >
-                      <Button id="tcg-player-button">Buy on TCG Player</Button>
-                    </Link>
-
-                    <div className="d-flex align-items-center justify-content-center">
-                      <Button
-                        id="tcg-player-button"
-                        onClick={() =>
-                          removeCardFromCollection(index, setCollection)
-                        }
+                  {window.innerWidth < 576 ? (
+                    <>
+                      <Col
+                        className="d-inline-flex flex-column align-items-start"
+                        style={{ marginLeft: "15px", height: "100%" }}
                       >
-                        <MuiIcon.DeleteIcon className="card-wishlist-close-button" />{" "}
-                        Remove
-                      </Button>
-                    </div>
-                  </Col>
+                        <span style={{ fontSize: "1.25rem" }}>
+                          {wishlistTextWithImage(card.name)}
+                        </span>
+                        <div>
+                          {card.tcgplayer?.prices?.holofoil?.market ||
+                          card.tcgplayer?.prices?.["1stEditionHolofoil"]
+                            ?.market ||
+                          card.tcgplayer?.prices?.reverseHolofoil?.market ||
+                          card.tcgplayer?.prices?.["1stEditionNormal"]
+                            ?.market ||
+                          card.tcgplayer?.prices?.normal?.market ? (
+                            <span style={{ fontWeight: "bold" }}>
+                              $
+                              {card.tcgplayer?.prices?.holofoil?.market.toFixed(
+                                2
+                              ) ||
+                                card.tcgplayer?.prices?.[
+                                  "1stEditionHolofoil"
+                                ]?.market.toFixed(2) ||
+                                card.tcgplayer?.prices?.reverseHolofoil?.market.toFixed(
+                                  2
+                                ) ||
+                                card.tcgplayer?.prices?.[
+                                  "1stEditionNormal"
+                                ]?.market.toFixed(2) ||
+                                card.tcgplayer?.prices?.normal?.market.toFixed(
+                                  2
+                                )}
+                            </span>
+                          ) : (
+                            <span>No data</span>
+                          )}
+                        </div>
+
+                        <span>
+                          Added {formatISODate(card?.dateAddedToCollection)}
+                        </span>
+
+                        <div
+                          className="d-flex align-items-end justify-content-between"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                          }}
+                        >
+                          <Link
+                            to={card?.tcgplayer.url}
+                            target="_blank"
+                            className="launch-tcgplayer px-0 py-0"
+                          >
+                            <Button id="tcg-player-button">
+                              Buy on TCG Player
+                            </Button>
+                          </Link>
+
+                          <MuiIcon.DeleteIcon
+                            onClick={() =>
+                              removeCardFromCollection(index, setCollection)
+                            }
+                            className="card-wishlist-close-button"
+                          />
+                        </div>
+                      </Col>
+                    </>
+                  ) : (
+                    <>
+                      <Col className="d-inline-flex flex-column align-items-center mobile-card-wishlist-functions">
+                        <span className="mb-3">
+                          <span>
+                            Added {formatISODate(card?.dateAddedToCollection)}
+                          </span>
+                        </span>
+
+                        <Link
+                          to={card?.tcgplayer.url}
+                          target="_blank"
+                          className="launch-tcgplayer mb-3"
+                        >
+                          <Button id="tcg-player-button">
+                            Buy on TCG Player
+                          </Button>
+                        </Link>
+
+                        <div className="d-flex align-items-center justify-content-center">
+                          <Button
+                            id="tcg-player-button"
+                            onClick={() =>
+                              removeCardFromCollection(index, setCollection)
+                            }
+                          >
+                            <MuiIcon.DeleteIcon className="card-wishlist-close-button" />{" "}
+                            Remove
+                          </Button>
+                        </div>
+                      </Col>
+                    </>
+                  )}
                 </div>
               ))
             )}
