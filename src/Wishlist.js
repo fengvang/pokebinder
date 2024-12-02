@@ -14,7 +14,7 @@ import {
 } from "./Functions";
 import * as MuiIcon from "./MuiIcons";
 
-function Collection() {
+function Wishlist() {
   const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem("user"));
   const [collection, setCollection] = useState(null);
@@ -29,17 +29,14 @@ function Collection() {
       onAuthStateChanged(auth, (user) => {
         if (user) {
           const db = getDatabase();
-          const collectionRef = ref(db, `users/${user.uid}/collection`);
+          const collectionRef = ref(db, `users/${user.uid}/wishlist`);
           onValue(
             collectionRef,
             (snapshot) => {
               if (snapshot.exists()) {
                 const data = snapshot.val();
 
-                sessionStorage.setItem(
-                  "sessionCollection",
-                  JSON.stringify(data)
-                );
+                sessionStorage.setItem("sessionWishlist", JSON.stringify(data));
 
                 setCollection([...data].reverse());
 
@@ -70,42 +67,42 @@ function Collection() {
     switch (localStorage.getItem("order")) {
       case "newest":
         sortedCollection = sortByDate(
-          JSON.parse(sessionStorage.getItem("sessionCollection"))
+          JSON.parse(sessionStorage.getItem("sessionWishlist"))
         );
         setCollection(sortedCollection.reverse());
         break;
       case "oldest":
         setCollection(
-          sortByDate(JSON.parse(sessionStorage.getItem("sessionCollection")))
+          sortByDate(JSON.parse(sessionStorage.getItem("sessionWishlist")))
         );
         break;
       case "name":
         sortedCollection = sortByAlpha(
-          JSON.parse(sessionStorage.getItem("sessionCollection")).slice()
+          JSON.parse(sessionStorage.getItem("sessionWishlist")).slice()
         );
         setCollection(sortedCollection);
         break;
       case "-name":
         sortedCollection = sortByAlpha(
-          JSON.parse(sessionStorage.getItem("sessionCollection"))?.slice()
+          JSON.parse(sessionStorage.getItem("sessionWishlist"))?.slice()
         ).reverse();
         setCollection(sortedCollection);
         break;
       case "-tcgplayer.prices.holofoil":
         sortedCollection = sortByPrice(
-          JSON.parse(sessionStorage.getItem("sessionCollection"))?.slice()
+          JSON.parse(sessionStorage.getItem("sessionWishlist"))?.slice()
         );
         setCollection(sortedCollection);
         break;
       case "tcgplayer.prices.holofoil":
         sortedCollection = sortByPrice(
-          JSON.parse(sessionStorage.getItem("sessionCollection"))?.slice()
+          JSON.parse(sessionStorage.getItem("sessionWishlist"))?.slice()
         ).reverse();
         setCollection(sortedCollection);
         break;
       default:
         sortedCollection = sortByDate(
-          JSON.parse(sessionStorage.getItem("sessionCollection"))
+          JSON.parse(sessionStorage.getItem("sessionWishlist"))
         );
         setCollection(sortedCollection.reverse());
     }
@@ -178,7 +175,7 @@ function Collection() {
       onAuthStateChanged(auth, (user) => {
         if (user) {
           const db = getDatabase();
-          const collectionRef = ref(db, "users/" + user.uid + "/collection");
+          const collectionRef = ref(db, "users/" + user.uid + "/wishlist");
 
           get(collectionRef)
             .then((snapshot) => {
@@ -234,12 +231,12 @@ function Collection() {
                     setCollection(tempCollectionOnDB.slice());
 
                     sessionStorage.setItem(
-                      "sessionCollection",
+                      "sessionWishlist",
                       JSON.stringify(Object.values(sortedTempCollectionOnDB))
                     );
 
                     if (sortedTempCollectionOnDB.length === 0)
-                      sessionStorage.removeItem("sessionCollection");
+                      sessionStorage.removeItem("sessionWishlist");
                     // console.log("Collection updated on DB.");
                   })
                   .catch((error) => {
@@ -266,15 +263,15 @@ function Collection() {
   }, []);
 
   useEffect(() => {
-    if (!sessionStorage.getItem("sessionCollection"))
+    if (!sessionStorage.getItem("sessionWishlist"))
       getCollectionFromDB(setCollection);
     else sortCollection();
 
     // eslint-disable-next-line
-  }, [sessionStorage.getItem("sessionCollection")]);
+  }, [sessionStorage.getItem("sessionWishlist")]);
 
   useEffect(() => {
-    document.title = `Pokébinder - ${currentUser.displayName}'s Binder`;
+    document.title = `Pokébinder - ${currentUser.displayName}'s Wishlist`;
 
     // eslint-disable-next-line
   }, []);
@@ -287,10 +284,10 @@ function Collection() {
             {collection ? (
               <>
                 <h1 style={{ fontFamily: "Josefin Sans" }}>
-                  {currentUser.displayName}'s Binder
+                  {currentUser.displayName}'s Wishlist
                 </h1>
                 <h5>
-                  Collection worth: ${collectionWorth()} ({collection.length}{" "}
+                  Wishlist price: ${collectionWorth()} ({collection.length}{" "}
                   cards)
                 </h5>
 
@@ -333,7 +330,7 @@ function Collection() {
               </h5>
             ) : collection === null ? (
               <h5 className="d-flex align-items-center justify-content-center">
-                Collection is empty!
+                Wishlist is empty!
               </h5>
             ) : (
               collection?.map((card, index) => (
@@ -401,4 +398,4 @@ function Collection() {
   );
 }
 
-export default Collection;
+export default Wishlist;

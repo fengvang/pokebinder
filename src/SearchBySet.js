@@ -96,6 +96,12 @@ function SearchBySet() {
     }
   }, [toastCountdown]);
 
+  useEffect(() => {
+    document.title = "Pokébinder - Search by Set";
+
+    // eslint-disable-next-line
+  }, []);
+
   return (
     <div className="mt-5">
       <Col className="d-flex justify-content-center align-items-center">

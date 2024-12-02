@@ -15,6 +15,7 @@ import SearchResults from "./SearchResults";
 import IndividualPagePokémon from "./IndividualPagePokémon";
 import IndividualPageTrainer from "./IndividualPageTrainer";
 import IndividualPageEnergy from "./IndividualPageEnergy";
+import Rarity from "./Rarity";
 import BrowseSets from "./BrowseSets";
 import BrowseBySetsResults from "./BrowseBySetsResults";
 import Login from "./Login";
@@ -22,6 +23,7 @@ import CreateAccount from "./CreateAccount";
 import Profile from "./Profile";
 import Collection from "./Collection";
 import VerifyEmail from "./VerifyEmail";
+import Wishlist from "./Wishlist2";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./style.css";
@@ -73,6 +75,7 @@ const router = createBrowserRouter([
       },
       { path: "/trainer-card", element: <IndividualPageTrainer /> },
       { path: "/energy-card", element: <IndividualPageEnergy /> },
+      { path: "/rarity", element: <Rarity /> },
       {
         path: "/search-by-set",
         element: null,
@@ -91,6 +94,7 @@ const router = createBrowserRouter([
       { path: "/profile", element: <Profile /> },
       { path: "/collection", element: <Collection /> },
       { path: "/verify-email", element: <VerifyEmail /> },
+      { path: "/wishlist", element: <Wishlist /> },
     ],
   },
 ]);

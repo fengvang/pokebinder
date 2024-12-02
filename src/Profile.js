@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 // eslint-disable-next-line
 import app from "./firebase";
 import {
@@ -122,7 +122,12 @@ function Profile() {
     // After updating image, delete old profile image from storage
     const storage = getStorage();
     // console.log(oldImage !== newImage && oldImage);
-    if (oldImage !== newImage && oldImage) {
+    if (
+      oldImage !== newImage &&
+      oldImage &&
+      oldImageURL !==
+        "https://firebasestorage.googleapis.com/v0/b/pokebinder-ae627.appspot.com/o/images%2Fdefault_img.webp?alt=media&token=734408c8-a8ee-466f-893c-79e535d2fd4c"
+    ) {
       try {
         // console.log(oldImageURL);
         const desertRef = ref(storage, oldImageURL);
@@ -173,6 +178,12 @@ function Profile() {
     }
   };
 
+  useEffect(() => {
+    document.title = `Pokébinder - ${currentUser.displayName}'s Profile`;
+
+    // eslint-disable-next-line
+  }, []);
+
   return (
     <>
       <ToastContainer
@@ -190,7 +201,11 @@ function Profile() {
             <p>{currentUser.email}</p>
           </Row>
           <Image
-            src={profileImage || currentUser.photoURL}
+            src={
+              profileImage ||
+              currentUser.photoURL ||
+              "https://firebasestorage.googleapis.com/v0/b/pokebinder-ae627.appspot.com/o/images%2Fdefault_img.webp?alt=media&token=734408c8-a8ee-466f-893c-79e535d2fd4c"
+            }
             alt={currentUser.displayName}
             style={{
               height: "200px",

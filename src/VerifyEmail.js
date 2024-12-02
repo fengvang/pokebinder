@@ -85,6 +85,12 @@ function VerifyEmail() {
     // eslint-disable-next-line
   }, []);
 
+  useEffect(() => {
+    document.title = "Pokébinder - Verify Email";
+
+    // eslint-disable-next-line
+  }, []);
+
   return (
     <>
       <Container

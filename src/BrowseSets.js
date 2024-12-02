@@ -152,25 +152,25 @@ function BrowseSets() {
 
       const clickedCard = await response.json();
 
-      if (clickedCard.supertype === "Pokémon") {
-        navigate(`/pokémon-card?${clickedCard.name}`, {
+      if (clickedCard.data[0].supertype === "Pokémon") {
+        navigate(`/pokémon-card?${clickedCard.data[0].name}`, {
           state: {
             setData: hoveredSet,
-            cardData: clickedCard,
+            cardData: clickedCard.data[0],
           },
         });
-      } else if (clickedCard.supertype === "Trainer") {
-        navigate(`/trainer-card?${clickedCard.name}`, {
+      } else if (clickedCard.data[0].supertype === "Trainer") {
+        navigate(`/trainer-card?${clickedCard.data[0].name}`, {
           state: {
             setData: hoveredSet,
-            cardData: clickedCard,
+            cardData: clickedCard.data[0],
           },
         });
-      } else if (clickedCard.supertype === "Energy") {
-        navigate(`/energy-card?${clickedCard.name}`, {
+      } else if (clickedCard.data[0].supertype === "Energy") {
+        navigate(`/energy-card?${clickedCard.data[0].name}`, {
           state: {
             setData: hoveredSet,
-            cardData: clickedCard,
+            cardData: clickedCard.data[0],
           },
         });
       }
@@ -196,6 +196,12 @@ function BrowseSets() {
       setClicked(false);
     }
   }, [seriesSets]);
+
+  useEffect(() => {
+    document.title = "Pokébinder - Browse by Set";
+
+    // eslint-disable-next-line
+  }, []);
 
   useEffect(() => {
     if (hoveredSet) {
@@ -479,7 +485,7 @@ function BrowseSets() {
                 >
                   <h1>{item}</h1>
                   <div className="d-flex flex-col">
-                    <Col xs={6}>
+                    <Col xs={12} md={6}>
                       {seriesSets !== null &&
                         Object.entries(seriesSets).map(
                           ([id, set]) =>

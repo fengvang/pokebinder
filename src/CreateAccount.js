@@ -160,9 +160,12 @@ function CreateAccount() {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           const user = userCredential.user;
+          const imageURL =
+            "https://firebasestorage.googleapis.com/v0/b/pokebinder-ae627.appspot.com/o/images%2Fdefault_img.webp?alt=media&token=734408c8-a8ee-466f-893c-79e535d2fd4c";
 
           updateProfile(user, {
             displayName: username || email,
+            photoURL: imageURL,
           })
             .then(() => {
               addUserToDB(user.uid, username, email);
@@ -210,6 +213,12 @@ function CreateAccount() {
       const height = header.getBoundingClientRect().height;
       setHeaderHeight(height);
     }
+  }, []);
+
+  useEffect(() => {
+    document.title = "Pokébinder - Create an Account";
+
+    // eslint-disable-next-line
   }, []);
 
   return (

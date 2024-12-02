@@ -116,6 +116,99 @@ export function collectionTextWithImage(name) {
   }
 }
 
+export function wishlistTextWithImage(name) {
+  let substrIndex, updatedName;
+
+  switch (true) {
+    case name.includes("BREAK"):
+      substrIndex = name.indexOf("BREAK");
+      updatedName = name.slice(0, substrIndex);
+
+      return (
+        <span>
+          {updatedName}{" "}
+          <Image src={Icon.breaklogo} alt="BREAK" style={{ width: "60px" }} />
+        </span>
+      );
+    case name.includes("-GX"):
+      substrIndex = name.indexOf("-GX");
+      updatedName = name.slice(0, substrIndex);
+
+      return (
+        <span>
+          {updatedName} &nbsp;
+          <Image src={Icon.gx} alt="GX" style={{ width: "35px" }} />
+        </span>
+      );
+    case name.includes("ex") && name !== "Toxapex":
+      substrIndex = name.indexOf("ex");
+      updatedName = name.slice(0, substrIndex);
+
+      return (
+        <span>
+          {updatedName}{" "}
+          <Image src={Icon.ex} alt="ex" style={{ width: "25px" }} />
+        </span>
+      );
+    case name.includes("-EX"):
+      substrIndex = name.indexOf("-EX");
+      updatedName = name.slice(0, substrIndex);
+
+      return (
+        <span>
+          {updatedName}{" "}
+          <Image src={Icon.exOld} alt="EX" style={{ width: "30px" }} />
+        </span>
+      );
+    case name.includes(" V") &&
+      !name.includes("VMAX") &&
+      !name.includes("VSTAR"):
+      substrIndex = name.lastIndexOf("V");
+      updatedName = name.slice(0, substrIndex);
+
+      return (
+        <span>
+          {updatedName}{" "}
+          <Image
+            src={Icon.v}
+            alt="V"
+            style={{ width: window.innerWidth < 768 ? "20px" : "25px" }}
+          />
+        </span>
+      );
+    case name.includes("VMAX"):
+      substrIndex = name.indexOf("VMAX");
+      updatedName = name.slice(0, substrIndex);
+
+      return (
+        <span>
+          {updatedName}{" "}
+          <Image
+            src={Icon.vmax}
+            alt="VMAX"
+            style={{ width: window.innerWidth < 768 ? "35px" : "40px" }}
+          />
+        </span>
+      );
+    case name.includes("VSTAR"):
+      substrIndex = name.indexOf("VSTAR");
+      updatedName = name.slice(0, substrIndex);
+
+      return (
+        <span>
+          {updatedName}{" "}
+          <Image
+            src={Icon.vstar}
+            alt="VSTAR"
+            style={{ width: window.innerWidth < 768 ? "35px" : "40px" }}
+          />
+        </span>
+      );
+    default:
+      return <span>{name}</span>;
+  }
+}
+
 export function textWithImage(name) {
   let substrIndex, updatedName;
 
@@ -217,15 +310,20 @@ export function textWithImage(name) {
   }
 }
 
-export const updateCollection = async (userId, card) => {
+export const updateCollection = async (userId, card, collectionOrWishlist) => {
   const auth = getAuth();
+
+  console.log("collectionOrWishlist: ", collectionOrWishlist);
 
   try {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         console.log("writing collection...");
         const db = getDatabase();
-        const collectionRef = ref(db, "users/" + userId + "/collection");
+        const collectionRef = ref(
+          db,
+          "users/" + userId + "/" + collectionOrWishlist
+        );
 
         get(collectionRef)
           .then((snapshot) => {
@@ -239,7 +337,9 @@ export const updateCollection = async (userId, card) => {
               set(collectionRef, updatedCollection)
                 .then(() => {
                   sessionStorage.setItem(
-                    "sessionCollection",
+                    "session" +
+                      collectionOrWishlist.charAt(0).toUpperCase() +
+                      collectionOrWishlist.slice(1),
                     JSON.stringify(updatedCollection)
                   );
                   console.log("Card added to collection successfully!");
@@ -270,18 +370,27 @@ export const updateCollection = async (userId, card) => {
   console.log("done!");
 };
 
-export const cardAdded = () =>
+export const cardAdded = (collectionOrWishlist) =>
   toast(
     <div>
       <span className="d-flex align-items-center justify-content-center">
-        Card successfully added to collection!
+        Card successfully added!
       </span>
-      <Link
-        to="/collection"
-        className="d-flex align-items-center justify-content-center mt-2"
-      >
-        View Collection
-      </Link>
+      {collectionOrWishlist === "collection" ? (
+        <Link
+          to="/collection"
+          className="d-flex align-items-center justify-content-center mt-2"
+        >
+          View collection
+        </Link>
+      ) : (
+        <Link
+          to="/wishlist"
+          className="d-flex align-items-center justify-content-center mt-2"
+        >
+          View wishlist
+        </Link>
+      )}
     </div>,
     {}
   );
@@ -444,5 +553,13 @@ export function formatType(type) {
 export function formatDate(originalDate) {
   const parts = originalDate.split("/");
   const formattedDate = `${parts[1]}/${parts[2]}/${parts[0]}`;
+  return formattedDate;
+}
+
+export function formatISODate(ISODate) {
+  const date = new Date(ISODate);
+  const options = { month: "short", day: "2-digit", year: "numeric" };
+  const formattedDate = date.toLocaleDateString("en-US", options);
+
   return formattedDate;
 }

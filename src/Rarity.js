@@ -3,16 +3,15 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Image } from "react-bootstrap";
 import Pagination from "@mui/material/Pagination";
 
-function CardList() {
+function Rarity() {
   const location = useLocation();
   const navigate = useNavigate();
   const [pokemonCardList, setPokemonCardList] = useState(null);
-  const [pokemonName, setPokemonName] = useState("");
-  const [pokemonSubtype, setPokemonSubtype] = useState("");
   const numPages =
     pokemonCardList?.totalCount && pokemonCardList?.pageSize
       ? Math.ceil(pokemonCardList.totalCount / pokemonCardList.pageSize)
       : 0;
+  const rarity = location.state.rarity;
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -21,8 +20,6 @@ function CardList() {
       navigate(`/pokémon-card?${clickedCard.name}`, {
         state: {
           cardData: clickedCard,
-          name: pokemonName,
-          subtype: pokemonSubtype,
         },
       });
     } else if (clickedCard.supertype === "Trainer") {
@@ -45,7 +42,7 @@ function CardList() {
 
     try {
       const response = await fetch(
-        "https://us-central1-pokebinder-ae627.cloudfunctions.net/app/search-card",
+        "https://us-central1-pokebinder-ae627.cloudfunctions.net/app/get-rarity-cards",
         {
           method: "POST",
           headers: {
@@ -53,8 +50,7 @@ function CardList() {
           },
           body: JSON.stringify({
             query: {
-              name: pokemonName,
-              subtype: pokemonSubtype,
+              rarity: rarity,
               page: page,
               pageSize: 36,
             },
@@ -66,23 +62,12 @@ function CardList() {
         throw new Error();
       }
 
-      const url =
-        (pokemonSubtype && pokemonName === null) || pokemonName === undefined
-          ? `/results?${pokemonSubtype}&page=${page}`
-          : (pokemonName && pokemonSubtype === null) ||
-            pokemonSubtype === undefined
-          ? `/results?${pokemonName}&page=${page}`
-          : `/results?${pokemonName}&${pokemonSubtype}&page=${page}`;
+      const data = await response.json();
 
-      const cardData = await response.json();
-
-      navigate(url, {
+      navigate(`/rarity?${rarity}&page=${page}`, {
         state: {
-          cardData: cardData,
-          query: {
-            name: pokemonName,
-            subtype: pokemonSubtype,
-          },
+          cardData: data,
+          rarity: rarity,
         },
       });
     } catch (error) {
@@ -93,13 +78,11 @@ function CardList() {
   useEffect(() => {
     const cardData = location.state.cardData;
     setPokemonCardList(cardData);
-    setPokemonName(localStorage.getItem("pokemonName"));
-    setPokemonSubtype(localStorage.getItem("pokemonSubtype"));
     setCurrentPage(cardData?.page);
   }, [location.state.cardData]);
 
   useEffect(() => {
-    document.title = `Pokébinder - ${pokemonName}`;
+    document.title = `Pokébinder - ${rarity}`;
 
     // eslint-disable-next-line
   }, []);
@@ -112,17 +95,22 @@ function CardList() {
             No data found
           </h5>
         ) : (
-          pokemonCardList?.data.map((card) => (
-            <span key={card.id} className="card-image-col">
-              <Image
-                className="card-image"
-                src={card.images.small}
-                alt={card.name}
-                onClick={() => handleCardClick(card)}
-                onLoad={(e) => e.target.classList.add("card-image-loaded")}
-              />
-            </span>
-          ))
+          <>
+            <h1>
+              {rarity} ({pokemonCardList?.totalCount} cards)
+            </h1>
+            {pokemonCardList?.data.map((card) => (
+              <span key={card.id} className="card-image-col">
+                <Image
+                  className="card-image"
+                  src={card.images.small}
+                  alt={card.name}
+                  onClick={() => handleCardClick(card)}
+                  onLoad={(e) => e.target.classList.add("card-image-loaded")}
+                />
+              </span>
+            ))}
+          </>
         )}
 
         <div>
@@ -161,4 +149,4 @@ function CardList() {
   );
 }
 
-export default CardList;
+export default Rarity;

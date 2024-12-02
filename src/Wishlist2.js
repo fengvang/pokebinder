@@ -1,20 +1,20 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { getDatabase, ref, onValue, get, set } from "firebase/database";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
-import { Image, Form, Row } from "react-bootstrap";
+import { Image, Form, Row, Col, Button } from "react-bootstrap";
 import SyncLoader from "react-spinners/SyncLoader";
 
 import {
   sortByAlpha,
   sortByPrice,
-  collectionTextWithImage,
-  formatType,
+  wishlistTextWithImage,
   sortByDate,
+  formatISODate,
 } from "./Functions";
 import * as MuiIcon from "./MuiIcons";
 
-function Collection() {
+function Wishlist2() {
   const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem("user"));
   const [collection, setCollection] = useState(null);
@@ -29,17 +29,14 @@ function Collection() {
       onAuthStateChanged(auth, (user) => {
         if (user) {
           const db = getDatabase();
-          const collectionRef = ref(db, `users/${user.uid}/collection`);
+          const collectionRef = ref(db, `users/${user.uid}/wishlist`);
           onValue(
             collectionRef,
             (snapshot) => {
               if (snapshot.exists()) {
                 const data = snapshot.val();
 
-                sessionStorage.setItem(
-                  "sessionCollection",
-                  JSON.stringify(data)
-                );
+                sessionStorage.setItem("sessionWishlist", JSON.stringify(data));
 
                 setCollection([...data].reverse());
 
@@ -70,42 +67,42 @@ function Collection() {
     switch (localStorage.getItem("order")) {
       case "newest":
         sortedCollection = sortByDate(
-          JSON.parse(sessionStorage.getItem("sessionCollection"))
+          JSON.parse(sessionStorage.getItem("sessionWishlist"))
         );
         setCollection(sortedCollection.reverse());
         break;
       case "oldest":
         setCollection(
-          sortByDate(JSON.parse(sessionStorage.getItem("sessionCollection")))
+          sortByDate(JSON.parse(sessionStorage.getItem("sessionWishlist")))
         );
         break;
       case "name":
         sortedCollection = sortByAlpha(
-          JSON.parse(sessionStorage.getItem("sessionCollection")).slice()
+          JSON.parse(sessionStorage.getItem("sessionWishlist")).slice()
         );
         setCollection(sortedCollection);
         break;
       case "-name":
         sortedCollection = sortByAlpha(
-          JSON.parse(sessionStorage.getItem("sessionCollection"))?.slice()
+          JSON.parse(sessionStorage.getItem("sessionWishlist"))?.slice()
         ).reverse();
         setCollection(sortedCollection);
         break;
       case "-tcgplayer.prices.holofoil":
         sortedCollection = sortByPrice(
-          JSON.parse(sessionStorage.getItem("sessionCollection"))?.slice()
+          JSON.parse(sessionStorage.getItem("sessionWishlist"))?.slice()
         );
         setCollection(sortedCollection);
         break;
       case "tcgplayer.prices.holofoil":
         sortedCollection = sortByPrice(
-          JSON.parse(sessionStorage.getItem("sessionCollection"))?.slice()
+          JSON.parse(sessionStorage.getItem("sessionWishlist"))?.slice()
         ).reverse();
         setCollection(sortedCollection);
         break;
       default:
         sortedCollection = sortByDate(
-          JSON.parse(sessionStorage.getItem("sessionCollection"))
+          JSON.parse(sessionStorage.getItem("sessionWishlist"))
         );
         setCollection(sortedCollection.reverse());
     }
@@ -178,7 +175,7 @@ function Collection() {
       onAuthStateChanged(auth, (user) => {
         if (user) {
           const db = getDatabase();
-          const collectionRef = ref(db, "users/" + user.uid + "/collection");
+          const collectionRef = ref(db, "users/" + user.uid + "/wishlist");
 
           get(collectionRef)
             .then((snapshot) => {
@@ -234,12 +231,12 @@ function Collection() {
                     setCollection(tempCollectionOnDB.slice());
 
                     sessionStorage.setItem(
-                      "sessionCollection",
+                      "sessionWishlist",
                       JSON.stringify(Object.values(sortedTempCollectionOnDB))
                     );
 
                     if (sortedTempCollectionOnDB.length === 0)
-                      sessionStorage.removeItem("sessionCollection");
+                      sessionStorage.removeItem("sessionWishlist");
                     // console.log("Collection updated on DB.");
                   })
                   .catch((error) => {
@@ -266,15 +263,15 @@ function Collection() {
   }, []);
 
   useEffect(() => {
-    if (!sessionStorage.getItem("sessionCollection"))
+    if (!sessionStorage.getItem("sessionWishlist"))
       getCollectionFromDB(setCollection);
     else sortCollection();
 
     // eslint-disable-next-line
-  }, [sessionStorage.getItem("sessionCollection")]);
+  }, [sessionStorage.getItem("sessionWishlist")]);
 
   useEffect(() => {
-    document.title = `Pokébinder - ${currentUser.displayName}'s Binder`;
+    document.title = `Pokébinder - ${currentUser.displayName}'s Wishlist`;
 
     // eslint-disable-next-line
   }, []);
@@ -287,10 +284,10 @@ function Collection() {
             {collection ? (
               <>
                 <h1 style={{ fontFamily: "Josefin Sans" }}>
-                  {currentUser.displayName}'s Binder
+                  {currentUser.displayName}'s Wishlist
                 </h1>
                 <h5>
-                  Collection worth: ${collectionWorth()} ({collection.length}{" "}
+                  Wishlist price: ${collectionWorth()} ({collection.length}{" "}
                   cards)
                 </h5>
 
@@ -333,72 +330,178 @@ function Collection() {
               </h5>
             ) : collection === null ? (
               <h5 className="d-flex align-items-center justify-content-center">
-                Collection is empty!
+                Wishlist is empty!
               </h5>
             ) : (
               collection?.map((card, index) => (
                 // not sitting at the same height
-                <div key={index} className="collection-card-container">
-                  <MuiIcon.CloseIcon
-                    className="card-collection-close-button"
-                    style={{ color: "rgba(255,255,255,0.1)" }}
-                    onClick={() =>
-                      removeCardFromCollection(index, setCollection)
-                    }
-                  />
-
-                  <span style={{ position: "relative", top: "-24px" }}>
-                    {collectionTextWithImage(card.name)}
-                  </span>
-                  <span style={{ position: "relative", top: "-15px" }}>
-                    {card.cardCollectionType === " " ? (
-                      <span>&nbsp;</span>
-                    ) : (
-                      `(${formatType(card?.cardCollectionType)})`
-                    )}
-                  </span>
-
+                <div key={index} className="wishlist-card-container">
                   <Image
-                    className="collection-card-image"
+                    className="wishlist-card-image"
                     src={card.images.small}
                     alt={card.name}
                     onClick={() => handleCardClick(card)}
                     onLoad={(e) => e.target.classList.add("card-image-loaded")}
                   />
-                  <div>
-                    {card.tcgplayer?.prices?.holofoil?.market ||
-                    card.tcgplayer?.prices?.["1stEditionHolofoil"]?.market ||
-                    card.tcgplayer?.prices?.reverseHolofoil?.market ||
-                    card.tcgplayer?.prices?.["1stEditionNormal"]?.market ||
-                    card.tcgplayer?.prices?.normal?.market ? (
-                      <>
-                        $
-                        {card.tcgplayer?.prices?.holofoil?.market.toFixed(2) ||
-                          card.tcgplayer?.prices?.[
-                            "1stEditionHolofoil"
-                          ]?.market.toFixed(2) ||
-                          card.tcgplayer?.prices?.reverseHolofoil?.market.toFixed(
-                            2
-                          ) ||
-                          card.tcgplayer?.prices?.[
-                            "1stEditionNormal"
-                          ]?.market.toFixed(2) ||
-                          card.tcgplayer?.prices?.normal?.market.toFixed(2)}
-                      </>
-                    ) : (
-                      <span>No data</span>
-                    )}
-                  </div>
+
+                  <Col
+                    style={{ marginLeft: "20px" }}
+                    md={3}
+                    className="mobile-card-wishlist-name"
+                  >
+                    <span style={{ fontSize: "1.25rem" }}>
+                      {wishlistTextWithImage(card.name)}
+                    </span>
+                  </Col>
+
+                  <Col
+                    style={{ marginLeft: "20px" }}
+                    md={3}
+                    className="mobile-card-wishlist-price"
+                  >
+                    <div>
+                      {card.tcgplayer?.prices?.holofoil?.market ||
+                      card.tcgplayer?.prices?.["1stEditionHolofoil"]?.market ||
+                      card.tcgplayer?.prices?.reverseHolofoil?.market ||
+                      card.tcgplayer?.prices?.["1stEditionNormal"]?.market ||
+                      card.tcgplayer?.prices?.normal?.market ? (
+                        <>
+                          <span style={{ fontWeight: "bold" }}>
+                            $
+                            {card.tcgplayer?.prices?.holofoil?.market.toFixed(
+                              2
+                            ) ||
+                              card.tcgplayer?.prices?.[
+                                "1stEditionHolofoil"
+                              ]?.market.toFixed(2) ||
+                              card.tcgplayer?.prices?.reverseHolofoil?.market.toFixed(
+                                2
+                              ) ||
+                              card.tcgplayer?.prices?.[
+                                "1stEditionNormal"
+                              ]?.market.toFixed(2) ||
+                              card.tcgplayer?.prices?.normal?.market.toFixed(2)}
+                          </span>
+                        </>
+                      ) : (
+                        <span>No data</span>
+                      )}
+                    </div>
+                  </Col>
+
+                  {window.innerWidth < 576 ? (
+                    <>
+                      <Col
+                        className="d-inline-flex flex-column align-items-start"
+                        style={{ marginLeft: "15px", height: "100%" }}
+                      >
+                        <span style={{ fontSize: "1.25rem" }}>
+                          {wishlistTextWithImage(card.name)}
+                        </span>
+                        <div>
+                          {card.tcgplayer?.prices?.holofoil?.market ||
+                          card.tcgplayer?.prices?.["1stEditionHolofoil"]
+                            ?.market ||
+                          card.tcgplayer?.prices?.reverseHolofoil?.market ||
+                          card.tcgplayer?.prices?.["1stEditionNormal"]
+                            ?.market ||
+                          card.tcgplayer?.prices?.normal?.market ? (
+                            <span style={{ fontWeight: "bold" }}>
+                              $
+                              {card.tcgplayer?.prices?.holofoil?.market.toFixed(
+                                2
+                              ) ||
+                                card.tcgplayer?.prices?.[
+                                  "1stEditionHolofoil"
+                                ]?.market.toFixed(2) ||
+                                card.tcgplayer?.prices?.reverseHolofoil?.market.toFixed(
+                                  2
+                                ) ||
+                                card.tcgplayer?.prices?.[
+                                  "1stEditionNormal"
+                                ]?.market.toFixed(2) ||
+                                card.tcgplayer?.prices?.normal?.market.toFixed(
+                                  2
+                                )}
+                            </span>
+                          ) : (
+                            <span>No data</span>
+                          )}
+                        </div>
+
+                        <span>
+                          Added {formatISODate(card?.dateAddedToCollection)}
+                        </span>
+
+                        <div
+                          className="d-flex align-items-end justify-content-between"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                          }}
+                        >
+                          <Link
+                            to={card?.tcgplayer.url}
+                            target="_blank"
+                            className="launch-tcgplayer px-0 py-0"
+                          >
+                            <Button id="tcg-player-button">
+                              Buy on TCG Player
+                            </Button>
+                          </Link>
+
+                          <MuiIcon.DeleteIcon
+                            onClick={() =>
+                              removeCardFromCollection(index, setCollection)
+                            }
+                            className="card-wishlist-close-button"
+                          />
+                        </div>
+                      </Col>
+                    </>
+                  ) : (
+                    <>
+                      <Col className="d-inline-flex flex-column align-items-center mobile-card-wishlist-functions">
+                        <span className="mb-3">
+                          <span>
+                            Added {formatISODate(card?.dateAddedToCollection)}
+                          </span>
+                        </span>
+
+                        <Link
+                          to={card?.tcgplayer.url}
+                          target="_blank"
+                          className="launch-tcgplayer mb-3"
+                        >
+                          <Button id="tcg-player-button">
+                            Buy on TCG Player
+                          </Button>
+                        </Link>
+
+                        <div className="d-flex align-items-center justify-content-center">
+                          <Button
+                            id="tcg-player-button"
+                            onClick={() =>
+                              removeCardFromCollection(index, setCollection)
+                            }
+                          >
+                            <MuiIcon.DeleteIcon className="card-wishlist-close-button" />{" "}
+                            Remove
+                          </Button>
+                        </div>
+                      </Col>
+                    </>
+                  )}
                 </div>
               ))
             )}
           </Row>
         </>
       ) : (
-        <span>No cards in collection</span>
+        <span>No cards in wishlist</span>
       )}
     </>
   );
 }
 
-export default Collection;
+export default Wishlist2;

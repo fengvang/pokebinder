@@ -102,7 +102,7 @@ header > div > div > div.dropdown-toggle:hover {
 }
 
 header > div > div > div.dropdown-menu.show {
-  text-align: center;
+  text-align: left;
   border-radius: 5px;
   position: absolute !important;
   width: 200px;
@@ -111,11 +111,38 @@ header > div > div > div.dropdown-menu.show {
   top: 120% !important;
   transform: translateX(-50%) !important;
   box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.4);
+  background-color: var(--bgcolor) !important;
+}
+
+header > div > div > div > a.dropdown-item:link,
+header > div > div > div > a.dropdown-item:visited {
+  color: #fff !important;
+  padding: 10px;
 }
 
 header > div > div > div > a.dropdown-item:hover,
 header > div > div > div > a.dropdown-item:active {
-  background-color: #ffffff;
+  background-color: #2b2f35 !important;
+  border-radius: 5px;
+  color: #fff !important;
+}
+
+header > div > div > div > a.dropdown-no-hover:hover {
+  background-color: transparent !important;
+  cursor: default;
+}
+
+.modal-btn {
+  border-radius: 5px !important;
+  background-color: transparent !important;
+  border: 0 !important;
+}
+
+.modal-btn:hover,
+.modal-btn:active,
+.modal-btn:focus {
+  background-color: rgba(0, 0, 0, 0.4) !important;
+  border: 0 !important;
 }
 
 .header-container {
@@ -179,11 +206,17 @@ input.form-range {
 
 .button {
   background-color: var(--ghost) !important;
-  border-radius: 0px;
+  border-radius: 5px !important;
   border: none !important;
   margin-left: 30px;
   width: 100px;
   height: 50px;
+}
+
+button:hover,
+button:active,
+button:focus {
+  border: 0px !important;
 }
 
 .search-button,
@@ -198,7 +231,8 @@ input.form-range {
 }
 
 .search-button:hover,
-.search-button:active {
+.search-button:active,
+.search-button:focus {
   background-color: #674e87 !important;
   border-radius: 7px;
   border-left: none !important;
@@ -241,7 +275,8 @@ a:active {
   border: none !important;
 }
 
-.button:active {
+.button:active,
+.button:focus {
   background-color: var(--ghost) !important;
   border: none !important;
 }
@@ -410,6 +445,19 @@ div > form.my-3 {
   background-color: rgba(115, 87, 151, 0.2);
 }
 
+.wishlist-card-container {
+  width: 95%;
+  background-color: rgba(0, 0, 0, 0.5);
+  align-items: center;
+  justify-content: space-between;
+  display: inline-flex;
+  flex-direction: row;
+  margin: 5px;
+  padding: 10px;
+  border-radius: 8px;
+  transition: 0.15s ease-in-out !important;
+}
+
 .collection-card-image {
   width: 170px;
   margin: 0px 0px 15px 0px;
@@ -421,6 +469,15 @@ div > form.my-3 {
   transform: scale(1.08);
 }
 
+.wishlist-card-image {
+  width: 150px;
+  transition: transform 0.5s ease, opacity 0.5s ease-in-out !important;
+}
+
+.wishlist-card-image:hover {
+  cursor: pointer;
+}
+
 .card-collection-close-button {
   position: relative;
   left: 76px;
@@ -429,6 +486,17 @@ div > form.my-3 {
 }
 
 .card-collection-close-button:hover {
+  color: #ffffff !important;
+  cursor: pointer;
+}
+
+.card-wishlist-close-button {
+  position: relative;
+  top: 0px;
+  transition: 0.15s ease-in-out !important;
+}
+
+.card-wishlist-close-button:hover {
   color: #ffffff !important;
   cursor: pointer;
 }
@@ -595,7 +663,12 @@ select.subtype-select {
 .css-r93niq-MuiButtonBase-root-MuiPaginationItem-root:active {
   background-color: rgba(0, 0, 0, 0.4) !important;
   color: #fff !important;
+  border: 1px solid rgba(0, 0, 0, 0.4) !important;
   transform: scale(1.2) !important;
+}
+
+.css-r93niq-MuiButtonBase-root-MuiPaginationItem-root:focus {
+  border: 1px solid rgba(0, 0, 0, 0.4) !important;
 }
 
 .css-r93niq-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected {
@@ -633,7 +706,12 @@ select.subtype-select {
 .css-21ve8j:active {
   background-color: rgba(0, 0, 0, 0.4) !important;
   color: #fff !important;
+  border: 1px solid rgba(0, 0, 0, 0.4) !important;
   transform: scale(1.2) !important;
+}
+
+.css-21ve8j:focus {
+  border: 1px solid rgba(0, 0, 0, 0.4) !important;
 }
 
 .css-21ve8j.Mui-disabled {
@@ -696,7 +774,8 @@ input::file-selector-button {
 }
 
 .upload-button:hover,
-.upload-button:active {
+.upload-button:active,
+.upload-button:focus {
   background-color: var(--flying) !important;
   border: 1px solid var(--flying) !important;
 }
@@ -705,12 +784,13 @@ input::file-selector-button {
 .logout-button:visited {
   background-color: var(--ghost) !important;
   border: 1px solid var(--ghost) !important;
-  border-radius: 0px;
+  border-radius: 5px;
   width: 80px;
 }
 
 .logout-button:hover,
-.logout-button:active {
+.logout-button:active,
+.logout-button:focus {
   background-color: var(--flying) !important;
   border: 1px solid var(--flying) !important;
 }
@@ -831,13 +911,13 @@ form.login-form {
   height: 45px;
   margin-top: 25px;
   margin-bottom: 25px;
-  border-radius: 0px !important;
+  border-radius: 5px !important;
   background-color: var(--ghost) !important;
   border: 0px !important;
 }
 
 .create-account-btn:hover {
-  border-radius: 0px !important;
+  border-radius: 5px !important;
   background-color: var(--flying) !important;
   border: 0px !important;
 }
@@ -875,8 +955,8 @@ form.login-form {
   font-family: "Jaldi", sans-serif !important;
   color: var(--textcolor) !important;
   border: none !important;
-  border-radius: 5px !important;
-  background-color: rgba(10, 10, 10, 0.9) !important;
+  border-radius: 10px !important;
+  background-color: var(--bgcolor) !important;
   width: 15% !important;
 }
 
@@ -884,7 +964,6 @@ form.login-form {
   width: 100%;
   border-bottom: 1px solid gray;
   font-size: 18px;
-  text-align: center;
   padding: 5px;
 }
 
@@ -926,6 +1005,42 @@ button.add-to-collection {
 
 .series-row-image-splider {
   margin-top: 25px;
+}
+
+.modal-content {
+  background-color: var(--bgcolor);
+}
+
+.add-to-button {
+  background-color: var(--ghost);
+  border: none;
+}
+
+.add-to-button:hover {
+  background-color: var(--flying);
+  border: none;
+}
+
+.add-to-button:active {
+  background-color: var(--ghost) !important;
+  border: none !important;
+}
+
+.add-to-button:focus {
+  border: none !important;
+}
+
+#tcg-player-button,
+#tcg-player-button:active {
+  background-color: var(--ghost) !important;
+  border: none !important;
+  width: 137px;
+  transition: 0.15s ease-in-out;
+}
+
+#tcg-player-button:hover {
+  background-color: var(--flying) !important;
+  border: none;
 }
 
 /* mobile styles */
@@ -1131,22 +1246,35 @@ button.add-to-collection {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.8);
-    z-index: 9999;
+    z-index: 9999999999;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
   .mobile-profile-dropdown {
-    color: #000;
     text-align: center;
-    min-width: 70vw;
-    min-height: 20vh;
-    background-color: #ffffff;
+    min-width: 100%;
+    min-height: 100%;
+    background-color: #070809 !important;
     border-radius: 5px;
     box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.4);
-    padding: 8px 0 8px 0;
-    align-content: center;
+    padding: 25px;
+    align-content: start;
+    text-align: start;
+    font-size: 1.3rem;
+  }
+
+  div > div > div > div > a:link,
+  div > div > div > div > a:visited {
+    color: #fff !important;
+    padding: 15px;
+  }
+
+  div > div > div > div > a:hover,
+  div > div > div > div > a:active {
+    background-color: #2b2f35 !important;
+    border-radius: 5px;
   }
 
   .newest-set-cards {
@@ -1222,6 +1350,27 @@ button.add-to-collection {
 
   .series-row-splider {
     min-width: 100vw;
+  }
+
+  .wishlist-card-image {
+    width: 25px !important;
+  }
+
+  .wishlist-card-image {
+    width: 33% !important;
+    min-height: 100%;
+    transition: transform 0.5s ease, opacity 0.5s ease-in-out !important;
+  }
+
+  .mobile-card-wishlist-name,
+  .mobile-card-wishlist-price {
+    display: none;
+  }
+
+  .mobile-card-wishlist-functions {
+    width: 66% !important;
+    margin-left: 25px !important;
+    align-items: center !important;
   }
 }
 

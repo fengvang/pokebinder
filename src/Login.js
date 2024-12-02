@@ -188,6 +188,12 @@ function Login() {
       });
   };
 
+  useEffect(() => {
+    document.title = "Pokébinder - Login";
+
+    // eslint-disable-next-line
+  }, []);
+
   function showLoadingScreen() {
     return (
       isLoading && (

@@ -5,6 +5,7 @@ import { getAuth, signOut } from "firebase/auth";
 import { Row, Button, Container, Dropdown, Image } from "react-bootstrap";
 import PropagateLoader from "react-spinners/PropagateLoader";
 import HeaderSearchBar from "./HeaderSearchBar";
+import * as MuiIcon from "./MuiIcons";
 
 function Header() {
   const navigate = useNavigate();
@@ -28,18 +29,37 @@ function Header() {
         onClick={() => setDropdownClicked(false)}
       >
         <div className="mobile-profile-dropdown">
-          <Row>
-            <Link to="/collection">Collection</Link>
+          <Row className="mb-3">
+            <Link to="/collection">
+              <MuiIcon.InventoryIcon sx={{ mr: 1 }} /> Collection
+            </Link>
           </Row>
-          <Row>
-            <Link to="/profile">Account Settings</Link>
+          <Row className="mb-3">
+            <Link to="/wishlist">
+              <MuiIcon.Wand sx={{ mr: 1 }} /> Wishlist
+            </Link>
+          </Row>
+          <Row className="mb-3">
+            <Link to="/profile">
+              <MuiIcon.SettingsIcon sx={{ mr: 1 }} /> Account Settings
+            </Link>
           </Row>
           <Button
             className="logout-button"
-            style={{ marginTop: "25px" }}
+            style={{ marginTop: "25px", fontSize: "1.3rem" }}
             onClick={logout}
           >
             Logout
+          </Button>
+          <Button
+            className="logout-button"
+            style={{
+              marginTop: "25px",
+              marginLeft: "25px",
+              fontSize: "1.3rem",
+            }}
+          >
+            Close
           </Button>
         </div>
       </div>
@@ -59,7 +79,7 @@ function Header() {
 
         setTimeout(() => {
           setLoading(false);
-          navigate(-1);
+          navigate("/");
         }, 1500);
       })
       .catch((error) => {
@@ -143,12 +163,17 @@ function Header() {
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu style={{ zIndex: "10001" }}>
-                  <Dropdown.Item href="/collection">Collection</Dropdown.Item>
+                  <Dropdown.Item href="/collection">
+                    <MuiIcon.InventoryIcon sx={{ mr: 1 }} /> Collection
+                  </Dropdown.Item>
+                  <Dropdown.Item href="/wishlist">
+                    <MuiIcon.Wand sx={{ mr: 1 }} /> Wishlist
+                  </Dropdown.Item>
                   <Dropdown.Item href={currentUser ? "/profile" : "/"}>
-                    Account Settings
+                    <MuiIcon.SettingsIcon sx={{ mr: 1 }} /> Account Settings
                   </Dropdown.Item>
 
-                  <Dropdown.Item>
+                  <Dropdown.Item className="dropdown-no-hover">
                     <Button
                       className="logout-button"
                       style={{ marginTop: "10px" }}
